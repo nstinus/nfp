@@ -26,8 +26,6 @@ HEADERS += typedefs.h
 HEADERS += MovieYear.h
 HEADERS += RatingDate.h
 
-SOURCES += RatingDate.cpp
-
 
 CONFIG(release, debug|release) {
 	TARGET = datamodel

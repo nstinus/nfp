@@ -3,24 +3,9 @@
 #include <QDate>
 #include <QString>
 
-usint RatingDate::getUSInt()
-{
-    return _value;
-}
-
-QDate RatingDate::getQDate()
-{
-    return QDate::fromJulianDay(_value);
-}
-
-std::string RatingDate::getStdString()
-{
-    return getQDate().toString().toStdString();
-}
-
 void RatingDate::set(const usint &v)
 {
-    _value = v;
+    _value = v - (usint)RATINGDATE__OFFSET;
 }
 
 void RatingDate::set(const QDate &v)
