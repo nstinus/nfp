@@ -1,0 +1,8 @@
+*.a
+*.o
+Makefile*
+.DS_Store
+debug
+release
+data
+original_data
