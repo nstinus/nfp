@@ -23,9 +23,9 @@ INCLUDEPATH += /Users/nico/projects/dev/nfp/src/model/
 #HEADERS += typedefs.h
 #HEADERS += MovieYear.h
 #HEADERS += RatingDate.h
-HEADERS += Ratings.h
+HEADERS += Rating.h
 
-SOURCES += ../Ratings.cpp
+SOURCES += ../Rating.cpp
 SOURCES += main.cpp
 
 TARGET = model_test

@@ -1,9 +1,7 @@
 #include <glog/logging.h>
 
 //#include ".RatingDate.h"
-#include "Ratings.h"
-
-//#include <QDate>
+#include "Rating.h"
 
 
 int main (int argc, char const *argv[])
@@ -42,10 +40,14 @@ int main (int argc, char const *argv[])
         << " MAX: " << RatingDate::MAX().getUSInt() << std::endl;
     DLOG(INFO) << "";*/
     
-    Ratings a(1);
+    /*Ratings a(1);
     Ratings b(2);
     Ratings c(10);
-    Ratings d(100480507);
+    Ratings d(100480507);*/
+    
+    Rating a(17770, 480189, 5, 1234);
+    DLOG_VAR(a.movie_id());
+    DLOG_VAR(a.user_id());
     
     return 0;
 }

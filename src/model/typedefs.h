@@ -5,7 +5,8 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 
 typedef unsigned short int usint;
-typedef boost::gregorian::date date;
-typedef std::string string;
+typedef unsigned long int ulong;
+//typedef boost::gregorian::date date;
+//typedef std::string string;
 
 #endif

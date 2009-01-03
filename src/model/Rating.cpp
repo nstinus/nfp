@@ -1,11 +1,12 @@
 #include "Rating.h"
 
-Rating::Rating()
-{
-    this = new Rating(0, 0, 0, 0);
-}
 
-Rating::Rating(const ushort &movie_id, const uint &user, const rate &r, const ushort &d);
+/*Rating::Rating()
+{
+    Rating(0, 0, 0, 0);
+}*/
+
+Rating::Rating(const ushort &movie_id, const uint &user_id, const rate &r, const ushort &d)
 {
     DLOG(INFO) << "Rating::Rating()";
     DLOG_VAR(RATING__MOVIE_ID_SIZE);
@@ -13,47 +14,48 @@ Rating::Rating(const ushort &movie_id, const uint &user, const rate &r, const us
     DLOG_VAR(RATING__RATE_SIZE);
     DLOG_VAR(RATING__DATE_SIZE);
     DLOG_VAR(RATING__SIZE);
-    DLOG_VAR(RATING__ROUND_SIZE);
+    DLOG_VAR((int)RATING__ROUND_SIZE);
     
-    const uint data_size = (uint)(RATING__ROUND_SIZE);
-    
-    DLOG(INFO) << "Now trying to allocate " << data_size
-        << "B of memory (" << data_size * (uint)(8) << "b)";
-    _data = (char*)malloc((int)data_size);
+    _data = (char*) malloc( (int)RATING__ROUND_SIZE * sizeof(char) );
     if (_data == NULL) {
         LOG(FATAL) << "Unable to allocate memory";
     }
     else {
         DLOG(INFO) << "Memory successfully allocated " << _data;
+        DLOG_VAR(sizeof(_data));
     }
     
-    setMovie_id(movie_id);
-    setUser(user);
-    setRate(r);
-    setDate(d);
+    set_movie_id(movie_id);
+    set_user_id(user_id);
+    //setRate(r);
+    //setDate(d);
 }
 
-void Rating:: setMovie_id(const ushort &movie_id)
+Rating::~Rating()
 {
-    
+    free(_data);
 }
 
-ushort Rating::getMovieId()
+ushort Rating::movie_id()
 {
-    return (ushort)(_data >> (RATINGS__USER_ID_SIZE + RATINGS__RATE_SIZE + RATINGS__DATE_SIZE));
+    return (ushort)((uint) (*(uint*)&_data[4]) >> 2) & (uint)0x7FFF;
 }
 
-uint Rating::getUser()
+uint Rating::user_id()
 {
-    return (uint)(_data >> (RATINGS__RATE_SIZE + RATINGS__DATE_SIZE) & RATING__USER_SIZE);
+    return ((uint) (*(uint*)&_data[1]) >> 7) & (uint)0x07FFFF;
 }
 
-rate Rating::getRate()
+void Rating::set_movie_id(const ushort &movie_id)
 {
-    return (rate)((_data >> RATINGS__DATE_SIZE) & (char)RATINGS__RATE_SIZE);
+    *(uint*)&_data[4] = (*(uint*)&_data[4] & (uint)0xFFFE0004)
+        | (((uint)movie_id << 2) & (uint)0x001FFFB);
 }
 
-ushort Rating::getDate()
+void Rating::set_user_id(const uint &u_id)
 {
-    return (ushort)(_data & (ushort)RATING__DATE_SIZE)
+    *(uint*)&_data[1] = (*(uint*)&_data[1] & (uint)0xFA00007F)
+        | (((uint)u_id << 7) & (uint)0x03FFFF80);
 }
+
+
