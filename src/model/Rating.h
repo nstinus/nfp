@@ -18,8 +18,6 @@
 //#define RATINGS__DATE_ORIGIN
 
 
-typedef unsigned char rate;
-
 class Rating
 {
 private:
@@ -27,17 +25,17 @@ private:
 
 public:
     //Rating();
-    Rating(const ushort &, const uint &, const rate &, const ushort &);
+    Rating(const ushort &, const uint &, const uchar &, const ushort &);
     ~Rating();
     
     ushort movie_id();
     uint user_id();
-    //ate rate();
+    uchar rate();
     //date date();
     
     void set_movie_id(const ushort &);
     void set_user_id(const uint &);
-    //void set_rate(const rate &);
+    void set_rate(const uchar &);
     //void set_date(const date &);
 };
 

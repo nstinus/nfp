@@ -1,6 +1,6 @@
 QT -= gui
 
-CONFIG += debug
+CONFIG += release
 
 CONFIG(release, debug|release):message(Release build!)
 CONFIG(debug, debug|release):message(Debug build!)

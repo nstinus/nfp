@@ -1,12 +1,12 @@
 #include "Rating.h"
-
+#include "macros.h"
 
 /*Rating::Rating()
 {
     Rating(0, 0, 0, 0);
 }*/
 
-Rating::Rating(const ushort &movie_id, const uint &user_id, const rate &r, const ushort &d)
+Rating::Rating(const ushort &movie_id, const uint &user_id, const uchar &r, const ushort &d)
 {
     DLOG(INFO) << "Rating::Rating()";
     DLOG_VAR(RATING__MOVIE_ID_SIZE);
@@ -27,7 +27,7 @@ Rating::Rating(const ushort &movie_id, const uint &user_id, const rate &r, const
     
     set_movie_id(movie_id);
     set_user_id(user_id);
-    //setRate(r);
+    set_rate(r);
     //setDate(d);
 }
 
@@ -46,6 +46,11 @@ uint Rating::user_id()
     return ((uint) (*(uint*)&_data[1]) >> 7) & (uint)0x07FFFF;
 }
 
+uchar Rating::rate()
+{
+    return ((*(uchar*)&_data[1]) >> 4) & (uchar)0x7;
+}
+
 void Rating::set_movie_id(const ushort &movie_id)
 {
     *(uint*)&_data[4] = (*(uint*)&_data[4] & (uint)0xFFFE0004)
@@ -56,6 +61,11 @@ void Rating::set_user_id(const uint &u_id)
 {
     *(uint*)&_data[1] = (*(uint*)&_data[1] & (uint)0xFA00007F)
         | (((uint)u_id << 7) & (uint)0x03FFFF80);
+}
+
+void Rating::set_rate(const uchar &u_id)
+{
+    *(uchar*)&_data[1] = (*(uchar*)&_data[1] & (uchar)0x8F) | (((uchar)u_id << 4) & (uchar)0x70);
 }
 
 
