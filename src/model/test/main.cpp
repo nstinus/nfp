@@ -2,7 +2,7 @@
 
 #include "Rating.h"
 
-#include <list>
+//#include <list>
 #include <string>
 
 
@@ -58,7 +58,26 @@ int main (int argc, char const *argv[])
     uint us;
     uchar r;
     
-    #define NB_ITER 10000000
+    #define NB_ITER 40000000
+    
+    LOG(INFO) << "Reying to allocate " << NB_ITER << " longs";
+    long int** longs = (long**)malloc(NB_ITER * sizeof(long));
+    for (int i = 0; i < NB_ITER; ++i)
+    {
+        longs[i] = new long(i);
+    }
+    sleep(5);
+    LOG(INFO) << "Ok, that's done. Cleaning up";
+    for (int i = 0; i < NB_ITER; ++i)
+    {
+        //printf("%d\n", ints[i]);
+        delete longs[i];
+    }
+    free(longs);
+    LOG(INFO) << "Done messing with those shitty longs";
+    
+    sleep(10);
+        
     
     /*LOG(INFO) << "Starting " << NB_ITER << " gets";
     for (int i = 0; i< NB_ITER; ++i)
@@ -70,22 +89,35 @@ int main (int argc, char const *argv[])
     LOG(INFO) << "End of " << NB_ITER << " gets";
     */
     
-    std::list<Rating*> L;
+    //std::list<Rating*> L;
+    LOG(INFO) << "sizeof(Rating) = " << sizeof(Rating);
+    Rating** L;
+    L = (Rating**)malloc(NB_ITER * sizeof(Rating*));
+    
+    LOG(INFO) << "Amount of memory needed " << sizeof(Rating) * NB_ITER / 1024 / 1024 << " Mo";
     
     LOG(INFO) << "Creating " << NB_ITER << " Rating in a std::list";
     for (int i = 0; i < NB_ITER; ++i)
     {
         DLOG(INFO) << "Created item " << i;
-        L.push_back(new Rating((ushort)(i % 177701),
+        /*L.push_back(new Rating((ushort)(i % 177701),
                                (uint)(i % 480190),
                                (uchar)(i % 5),
                                (ushort)(i % 1000)));
+        */
+        L[i] = new Rating((ushort)(i % 177701),
+            (uint)(i % 480190),
+            (uchar)(i % 5),
+            (ushort)(i % 1000));
     }
     LOG(INFO) << "End of creation";
     
     //LOG(INFO) << (int)L[NB_ITER-10]->movie_id();
     
+    sleep(5);
+    
     LOG(INFO) << "Deletion...";
+    /*
     std::list<Rating*>::iterator iter = L.begin();
     while(iter != L.end())
     {
@@ -97,8 +129,18 @@ int main (int argc, char const *argv[])
         delete *iter;
         ++iter;
     }
+    */
+    for (int i = 0; i < NB_ITER; ++i)
+    {
+        mov = L[i]->movie_id();
+        us = L[i]->user_id();
+        r = L[i]->rate();
+        
+        DLOG(INFO) << "Deleting " << mov << " " << us << " " << (uint)r;
+        delete L[i];
+    }
     LOG(INFO) << "Finished!";
-
+    free(L);
     
     return 0;
 }
