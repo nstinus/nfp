@@ -4,7 +4,7 @@ from datetime import datetime
 
 conn = sqlite3.connect('data/nfp.sqlite')
 cur = conn.cursor()
-cur.execute("select distinct date from rating limit 10")
+cur.execute("select distinct date from rating")
 
 data = map(lambda x: datetime(*map(lambda y: int(y), x[0].split('-'))).toordinal(), cur.fetchall())
 
