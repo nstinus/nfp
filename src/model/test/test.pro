@@ -15,7 +15,7 @@ CONFIG += stl
 CONFIG += x86
 CONFIG -= app_bundle
 
-LIBS += /usr/local/lib/libglog.dylib
+LIBS += /usr/local/lib/libglog.a
 #LIBS += /usr/local/lib/libboost_date_time-xgcc40-mt.dylib
 
 INCLUDEPATH += /Users/nico/projects/dev/nfp/src/model/

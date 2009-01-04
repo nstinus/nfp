@@ -48,18 +48,26 @@ int main (int argc, char const *argv[])
     Ratings d(100480507);
     */
     LOG_VAR(sizeof(Rating)); 
-    #if 0
     Rating a(17770, 480189, (uchar)4, 1234);
     
     LOG_VAR(a.movie_id());
     LOG_VAR(a.user_id());
     LOG_VAR((uint)a.rate());
-    #endif
+    LOG_VAR(a.date());
+    LOG(INFO);
+    a.set_user_id(54321);
+    LOG_VAR(a.movie_id());
+    LOG_VAR(a.user_id());
+    LOG_VAR((uint)a.rate());
+    LOG_VAR(a.date());
+    
+    
     
     ushort mov;
     uint us;
     uchar r;
     
+    #if 0
     #define NB_ITER 101000000
     
     #if 0
@@ -152,5 +160,48 @@ int main (int argc, char const *argv[])
     LOG(INFO) << "Finished!";
     //free(L);
     
+    #endif
+    
+    const int NB_RATINGS = 150000000;
+    Rating** Ratings = (Rating**)malloc(NB_RATINGS * sizeof(Rating*));
+    
+    LOG(INFO) << "Creating " << NB_RATINGS << " Rating s.";
+    Rating* tmpRating;
+    for (int i = 0; i < NB_RATINGS; ++i)
+    {
+        tmpRating = new Rating((ushort)(i % 177701),
+                               (uint)(i % 480190),
+                               (uchar)(i % 5),
+                               (ushort)(i % 1000));
+        if (tmpRating) {
+            Ratings[i]= tmpRating;
+        }
+        else {
+            LOG(ERROR) << "new() failed!";
+            break;
+        }
+    }
+    LOG(INFO) << "Done creating.";
+    //LOG(INFO) << "sleep(1)";
+    //sleep(1);
+    char msg[35];
+    for (int i = 0; i < NB_RATINGS; ++i)
+    {
+        sprintf(msg, "%9d %6d %6d %1d %5d\n", i,
+                                              Ratings[i]->movie_id(),
+                                              Ratings[i]->user_id(),
+                                              (uint)Ratings[i]->rate(),
+                                              Ratings[i]->movie_id()
+                                              );
+        DLOG(INFO) << std::string(msg);
+    }
+    
+    LOG(INFO) << "Deleting...";
+    for (int i = 0; i < NB_RATINGS; ++i)
+    {
+        delete Ratings[i];
+    }
+    LOG(INFO) << "Done";
+    free(Ratings);
     return 0;
 }
