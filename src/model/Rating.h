@@ -26,10 +26,16 @@
 /*      - the getters just do silly casts.                                                       */
 /*                                                                                               */
 /*************************************************************************************************/
+/*                                                                                               */
+/*  Build:                                                                                       */
+/*      There-s no build! That shit is header only. Just include this file.                      */
+/*                                                                                               */
+/*************************************************************************************************/
 
 
 #include "macros.h"
 #include "typedefs.h"
+
 
 const uint RATING__DATE_POS      = 0;
 const uint RATING__RATE_POS      = 2;
@@ -43,25 +49,71 @@ const uint RATING__MOVIE_ID_MASK = 0x7FFF;
 
 const uint RATING_DATA_SIZE      = 8;
 
-
 class Rating
 {
 private:
     char _data[RATING_DATA_SIZE];
 
 public:
-    Rating(const ushort &, const uint &, const uchar &, const ushort &);
-    ~Rating();
+    Rating::Rating(const ushort &movie_id, const uint &user_id, const uchar &r, const ushort &d)
+    {
+        DLOG(INFO) << "Rating::Rating()";
+
+        set_movie_id(movie_id);
+        set_user_id(user_id);
+        set_rate(r);
+        set_date(d);
+    }
+
+    //Rating::~Rating();
+
+
+    /*************/
+    /*  Getters  */
+    /*************/
+
+    ushort Rating::movie_id() { return *(ushort*)&_data[RATING__MOVIE_ID_POS]; };
+
+    uint Rating::user_id()
+    { 
+        return *((uint*)&_data[RATING__USER_ID_POS]) & (uint)RATING__USER_ID_MASK;
+    };
+
+    uchar Rating::rate() { return (uchar)_data[RATING__USER_ID_POS]; };
+
+    ushort Rating::date()
+    {
+        return _data[RATING__DATE_POS];
+    }
+
+
+    /*************/
+    /*  Setters  */
+    /*************/
+
+    void Rating::set_movie_id(const ushort &movie_id)
+    {
+        DLOG(INFO) << "Movie_id = " << (movie_id & (ushort)RATING__MOVIE_ID_MASK);
+        *(ushort*)&_data[RATING__MOVIE_ID_POS] = (movie_id & (ushort)RATING__MOVIE_ID_MASK);
+    };
+
+    void Rating::set_user_id(const uint &u_id)
+    {
+        uint toto = u_id;
+        toto = 0;
+    }
+
+    void Rating::set_rate(const uchar &r)
+    {
+        _data[RATING__RATE_POS] = (char)(r & (uchar)RATING__RATE_MASK);
+    };
+
+    void Rating::set_date(const ushort &d)
+    {
+        ushort toto = d;
+        toto = 0;
+    }
     
-    ushort movie_id();
-    uint user_id();
-    uchar rate();
-    ushort date();
-    
-    void set_movie_id(const ushort &);
-    void set_user_id(const uint &);
-    void set_rate(const uchar &);
-    void set_date(const ushort &);
 };
 
 #endif // __RATING_H__

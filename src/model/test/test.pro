@@ -20,12 +20,9 @@ LIBS += /usr/local/lib/libglog.dylib
 
 INCLUDEPATH += /Users/nico/projects/dev/nfp/src/model/
 
-#HEADERS += typedefs.h
-#HEADERS += MovieYear.h
-#HEADERS += RatingDate.h
+
 HEADERS += Rating.h
 
-SOURCES += ../Rating.cpp
 SOURCES += main.cpp
 
 TARGET = model_test
