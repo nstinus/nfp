@@ -15,10 +15,15 @@
 /*  Visual representation of the data:                                                           */
 /*                                                                                               */
 /*      Bytes :      |       |       |       |       |       |       |       |       |           */
-/*      char[i]:             7       6       5       4       3       2       1       0           */
+/*      char[i]:     -       7       6       5       4       3       2       1       0           */
 /*      Fields:      |X--------------X    X------------------X    X--X   X-----------X           */
 /*      Name:        |    Movie_id   |        User_id        |  Rate |      Date     |           */
 /*      Size:        |       15      |           19          |    3  |       12      |           */
+/*                                                                                               */
+/*  General considerations:                                                                      */
+/*                                                                                               */
+/*      - the data integrity check is made at the insertion. (masks).                            */
+/*      - the getters just do silly casts.                                                       */
 /*                                                                                               */
 /*************************************************************************************************/
 
@@ -26,18 +31,17 @@
 #include "macros.h"
 #include "typedefs.h"
 
-const int RATING__DATE_POS      = 0;
-const int RATING__RATE_POS      = 2;
-const int RATING__USER_ID_POS   = 3;
-const int RATING__MOVOE_ID_POS  = 6;
+const uint RATING__DATE_POS      = 0;
+const uint RATING__RATE_POS      = 2;
+const uint RATING__USER_ID_POS   = 3;
+const uint RATING__MOVIE_ID_POS  = 6;
 
-const int RATING_DATE_MASK      = 0x0FFF;
-const int RATING__RATE_MASK     = 0x0007;
-const int RATING__USER_ID_MASK  = 0x0007FFFF;
-const int RATING__MOVOE_ID_MAKS = 0x7FFF;
+const uint RATING__DATE_MASK     = 0x0FFF;
+const uint RATING__RATE_MASK     = 0x0007;
+const uint RATING__USER_ID_MASK  = 0x0007FFFF;
+const uint RATING__MOVIE_ID_MASK = 0x7FFF;
 
-const int RATING_DATA_SIZE      = 8;
-
+const uint RATING_DATA_SIZE      = 8;
 
 
 class Rating
@@ -46,19 +50,18 @@ private:
     char _data[RATING_DATA_SIZE];
 
 public:
-    //Rating();
     Rating(const ushort &, const uint &, const uchar &, const ushort &);
     ~Rating();
     
     ushort movie_id();
     uint user_id();
     uchar rate();
-    //date date();
+    ushort date();
     
     void set_movie_id(const ushort &);
     void set_user_id(const uint &);
     void set_rate(const uchar &);
-    //void set_date(const date &);
+    void set_date(const ushort &);
 };
 
 #endif // __RATING_H__

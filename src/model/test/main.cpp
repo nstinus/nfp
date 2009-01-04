@@ -2,7 +2,7 @@
 
 #include "Rating.h"
 
-//#include <list>
+#include <list>
 #include <string>
 
 
@@ -47,20 +47,23 @@ int main (int argc, char const *argv[])
     Ratings c(10);
     Ratings d(100480507);
     */
-    
+    LOG_VAR(sizeof(Rating)); 
+    #if 0
     Rating a(17770, 480189, (uchar)4, 1234);
     
     LOG_VAR(a.movie_id());
     LOG_VAR(a.user_id());
     LOG_VAR((uint)a.rate());
+    #endif
     
     ushort mov;
     uint us;
     uchar r;
     
-    #define NB_ITER 40000000
+    #define NB_ITER 101000000
     
-    LOG(INFO) << "Reying to allocate " << NB_ITER << " longs";
+    #if 0
+    LOG(INFO) << "Trying to allocate " << NB_ITER << " longs";
     long int** longs = (long**)malloc(NB_ITER * sizeof(long));
     for (int i = 0; i < NB_ITER; ++i)
     {
@@ -77,9 +80,10 @@ int main (int argc, char const *argv[])
     LOG(INFO) << "Done messing with those shitty longs";
     
     sleep(10);
+    #endif
         
-    
-    /*LOG(INFO) << "Starting " << NB_ITER << " gets";
+    #if 0
+    LOG(INFO) << "Starting " << NB_ITER << " gets";
     for (int i = 0; i< NB_ITER; ++i)
     {
         mov = a.movie_id();
@@ -87,37 +91,42 @@ int main (int argc, char const *argv[])
         r = a.rate();        
     }
     LOG(INFO) << "End of " << NB_ITER << " gets";
-    */
+    #endif
     
-    //std::list<Rating*> L;
-    LOG(INFO) << "sizeof(Rating) = " << sizeof(Rating);
-    Rating** L;
-    L = (Rating**)malloc(NB_ITER * sizeof(Rating*));
+    std::list<Rating*> L;
+    //Rating** L;
+    //L = (Rating**)malloc(NB_ITER * sizeof(Rating*));
     
     LOG(INFO) << "Amount of memory needed " << sizeof(Rating) * NB_ITER / 1024 / 1024 << " Mo";
     
-    LOG(INFO) << "Creating " << NB_ITER << " Rating in a std::list";
+    LOG(INFO) << "Creating " << NB_ITER << " Rating in a std::list (L)";
     for (int i = 0; i < NB_ITER; ++i)
     {
         DLOG(INFO) << "Created item " << i;
-        /*L.push_back(new Rating((ushort)(i % 177701),
+        L.push_back(new Rating((ushort)(i % 177701),
                                (uint)(i % 480190),
                                (uchar)(i % 5),
                                (ushort)(i % 1000)));
-        */
+        /*
         L[i] = new Rating((ushort)(i % 177701),
             (uint)(i % 480190),
             (uchar)(i % 5),
             (ushort)(i % 1000));
+        */
     }
+    
     LOG(INFO) << "End of creation";
+    LOG_VAR(L.size());
     
-    //LOG(INFO) << (int)L[NB_ITER-10]->movie_id();
     
-    sleep(5);
+    #define WAIT 10
+    LOG(INFO) << "Now waiting " << WAIT << " secs...";
+    
+    
+    sleep(WAIT);
     
     LOG(INFO) << "Deletion...";
-    /*
+    
     std::list<Rating*>::iterator iter = L.begin();
     while(iter != L.end())
     {
@@ -129,7 +138,7 @@ int main (int argc, char const *argv[])
         delete *iter;
         ++iter;
     }
-    */
+    /*
     for (int i = 0; i < NB_ITER; ++i)
     {
         mov = L[i]->movie_id();
@@ -139,8 +148,9 @@ int main (int argc, char const *argv[])
         DLOG(INFO) << "Deleting " << mov << " " << us << " " << (uint)r;
         delete L[i];
     }
+    */
     LOG(INFO) << "Finished!";
-    free(L);
+    //free(L);
     
     return 0;
 }
