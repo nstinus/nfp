@@ -55,7 +55,12 @@ private:
     char _data[RATING_DATA_SIZE];
 
 public:
-    Rating::Rating(const ushort &movie_id, const uint &user_id, const uchar &r, const ushort &d)
+    Rating::Rating()
+    {
+        Rating(0, 0, 0, 0);
+    }
+    
+    Rating::Rating(ushort const& movie_id, uint const& user_id, uchar const& r, ushort const& d)
     {
         set_movie_id(movie_id);
         set_user_id(user_id);
@@ -89,24 +94,24 @@ public:
     /*  Setters  */
     /*************/
 
-    void Rating::set_movie_id(const ushort &movie_id)
+    void Rating::set_movie_id(ushort const& movie_id)
     {
         *(ushort*)&_data[RATING__MOVIE_ID_POS] = (movie_id & (ushort)RATING__MOVIE_ID_MASK);
     };
 
-    void Rating::set_user_id(const uint &u_id)
+    void Rating::set_user_id(uint const& u_id)
     {
         *(uint*)&_data[RATING__USER_ID_POS] =
             *(uint*)&_data[RATING__USER_ID_POS] & (uint)0xFFFFFFFF - (uint)RATING__USER_ID_MASK;
         *(uint*)&_data[RATING__USER_ID_POS] |= u_id & (uint)RATING__USER_ID_MASK;
     }
 
-    void Rating::set_rate(const uchar &r)
+    void Rating::set_rate(uchar const& r)
     {
         _data[RATING__RATE_POS] = (char)(r & (uchar)RATING__RATE_MASK);
     };
 
-    void Rating::set_date(const ushort &d)
+    void Rating::set_date(ushort const& d)
     {
         *(ushort*)&_data[RATING__DATE_POS] = (d & (ushort)RATING__DATE_MASK);
     }
