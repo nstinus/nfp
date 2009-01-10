@@ -1,6 +1,9 @@
 #include <tclap/CmdLine.h>
 #include <glog/logging.h>
 
+#include <stdio.h>
+#include <stdlib.h>
+
 // Qt
 #include <QDir>
 #include <QString>
@@ -20,8 +23,6 @@ typedef unsigned char uchar;
 //typedef std::list<std::string> stringList;
 //typedef std::list<std::string>::iterator stringListIterator;
 
-//#define SHM_START_KEY 0
-//#define SHM_NB_SEGMENTS = 1000;
 
 int main (int argc, char** argv)
 {
@@ -31,26 +32,53 @@ int main (int argc, char** argv)
     google::InstallFailureSignalHandler();
     
     // Commandline handling
-    TCLAP::CmdLine cmd("Loads a training_set in shared memory.", ' ', "");
-    TCLAP::ValueArg<std::string> pathArg("p",
-                                         "path",
-	                                     "Path where the training_set files are located.",
-	                                     true,
-	                                     "training_set",
-                                         "string");
+    TCLAP::CmdLine cmd("Loads `training_set'-like files in shared memory.", ' ', "" __DATE__ " " __TIME__ "");
+    char* defPath = getenv("NFP_TRAINING_SET");
+    if (defPath == NULL)
+        defPath = "";
+    TCLAP::ValueArg<std::string> pathArg("i",
+        "input_data",
+	    std::string("Path where the data files are located.")
+            + std::string("These files should have the same")
+            + std::string("format as the original training_set. ")
+            + std::string("Will try to read the environment variable NFP_TRAINING_SET <")
+            + defPath
+            + std::string("> if unspecified."),
+        false,
+        defPath,
+        "string");
     TCLAP::ValueArg<std::string> filterArg("f",
-                                           "filter",
-                                 	       "Filename filter.",
-                                 	       false,
-                                 	       "mv_*.txt",
-                                           "string");
+        "filter",
+        "Filename filter. Default is `mv_*.txt'",
+        false,
+        "mv_*.txt",
+        "string");
+    TCLAP::ValueArg<int> movieIdArg("m",
+        "movie_id",
+        std::string("Will be passed to a mv_%07d.txt filter. ")
+            + std::string("Useful to load a specific movie_id from the training_set."),
+        false,
+        -1,
+        "int");
     
     cmd.add(pathArg);
     cmd.add(filterArg);
+    cmd.add(movieIdArg);
     cmd.parse(argc, argv);
 
 	std::string path = pathArg.getValue();
-    std::string filter = filterArg.getValue();
+    std::string filter;
+	if (movieIdArg.getValue() > -1) {
+        char f[12];
+        sprintf(f, "mv_%07d.txt", movieIdArg.getValue());
+        filter = f;
+	}
+	else if (!filterArg.getValue().empty()) {
+	    filter = filterArg.getValue();
+	}
+	//else {
+    //    filter = "*";
+	//}
     
 	LOG(INFO) << "path = " << path;
 	LOG(INFO) << "filter = " << filter;
@@ -74,7 +102,7 @@ int main (int argc, char** argv)
     
     for (std::list<QString>::iterator it = files.begin(); it != files.end(); ++it)
     {
-        LOG(INFO) << "Proceeding file " << (*it).toStdString();
+        LOG(INFO) << "Processing file " << (*it).toStdString();
         QString filePath = training_set_dir.absolutePath() + QString("/") + (*it);
         QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
