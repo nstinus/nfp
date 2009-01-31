@@ -74,7 +74,7 @@ public:
     Rating();
     Rating(ushort const&, uint const&, uchar const&, ushort const&);
     Rating(int const&, int const&, int const&, std::string const&);
-    Rating(char* const&);
+    Rating(char*);
     
     //virtual ~Rating();
 
@@ -85,14 +85,12 @@ public:
     ushort movie_id() const;
     //int movie_id() const;
     uint user_id() const;
-    uchar rate() const;
+    uchar raw_rate() const;
+    ushort rate() const;
     ushort raw_date() const;
     std::string date() const;
-    std::string toStdString();
-
-//protected:
-    
-    //char const* getData() const;
+    std::string to_string();
+    char* data() const;
 
     /*************/
     /*  Setters  */

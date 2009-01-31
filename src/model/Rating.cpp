@@ -1,4 +1,5 @@
 #include "Rating.h"
+#include <glog/logging.h>
 
 #include <QDate>
 //#include <glog/logging.h>
@@ -33,9 +34,12 @@ NFP::Rating::Rating(int const& m, int const& u, int const& r, std::string const&
 }
 
 
-NFP::Rating::Rating(char* const& data)
+NFP::Rating::Rating(char* data)
 {
-    memcpy(data, _data, (size_t)RATING_DATA_SIZE);
+    memcpy(_data, data, RATING_DATA_SIZE);
+    if (*data != *_data)
+        LOG(ERROR) << "Ouch!";
+    LOG(INFO) << to_string();
 }
 
 ushort NFP::Rating::movie_id() const
@@ -54,9 +58,14 @@ uint NFP::Rating::user_id() const
     return *((uint*)&_data[BASICRATING__USER_ID_POS]) & (uint)BASICRATING__USER_ID_MASK;
 }
 
-uchar NFP::Rating::rate() const
+uchar NFP::Rating::raw_rate() const
 {
     return _data[BASICRATING__RATE_POS];
+}
+
+ushort NFP::Rating::rate() const
+{
+    return (ushort)_data[BASICRATING__RATE_POS];
 }
 
 ushort NFP::Rating::raw_date() const
@@ -69,17 +78,14 @@ std::string NFP::Rating::date() const
     return DateUS2S(raw_date());
 }
 
-/*std::string NFP::Rating::date() const
+char* NFP::Rating::data() const
 {
-    std::string ret = "";
-    return ret
-}*/
+    char ret[RATING_DATA_SIZE];
+    memcpy(ret, _data, RATING_DATA_SIZE);
+    return ret;
+}
 
-/*char const* NFP::Rating::getData() {
-    return _data;
-};*/
-
-std::string NFP::Rating::toStdString()
+std::string NFP::Rating::to_string()
 {
     char ret[40];
     sprintf(ret, "%05d %010d %1d %10s",

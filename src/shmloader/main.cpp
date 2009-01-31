@@ -167,7 +167,17 @@ int main (int argc, char** argv)
                     << date;
                 NFP::Rating* r = new NFP::Rating(movie_id, user_id, rate, date);
                 ratings.push_back(r);
-                DLOG(INFO) << "R " << r->toStdString() ;
+                DLOG(INFO) << "R " << r->to_string() ;
+                
+                // Test for data()
+                char data[RATING_DATA_SIZE];
+                memcpy(data, r->data(), RATING_DATA_SIZE);
+                if(*r->data() != *data)
+                    LOG(ERROR) << "memcpy failed! " << (int)(*data) << " vs " << (int)(*r->data());
+                NFP::Rating* r2 = new NFP::Rating(data);
+                if(*r2->data() != *data)
+                    LOG(ERROR) << "data() failed! " << (int)(*data) << " vs " << (int)(*r2->data());
+                
                 
             }
         } while (!line.isNull());
@@ -178,9 +188,8 @@ int main (int argc, char** argv)
     //LOG(INFO) << ratings.size() << " ratings found";
     
     //Means calculations
-    //LOG(INFO) << ratings.size() << " ratings found";
+    LOG(INFO) << ratings.size() << " ratings found";
     
-    #if 0
     QMap<ushort, ulong> ratingsSummedByMovie;
     QMap<ushort, uint> nbRatingsByMovie;
     QMap<ushort, double> meanRateByMovie;
@@ -295,6 +304,7 @@ int main (int argc, char** argv)
     #endif
     
     /*
+    {
     int shmid;
     NFP::Rating* shmPtr;
     
@@ -345,6 +355,7 @@ int main (int argc, char** argv)
     
     shmctl(shmid, IPC_RMID, NULL);
     LOG(INFO) << "Deleting shm segment";
+    }
     */
     
     // Clean-up
@@ -352,7 +363,6 @@ int main (int argc, char** argv)
     for (QList<NFP::Rating*>::iterator it = ratings.begin(); it != ratings.end(); ++it)
             delete (*it);
             
-    #endif
     ratings.clear();
     
     LOG(INFO) << "Bye-bye!";
