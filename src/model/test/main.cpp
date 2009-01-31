@@ -1,9 +1,12 @@
 #include <glog/logging.h>
 
-#include "Rating.h"
+//#include "Rating.h"
 
-#include <list>
+//#include <list>
 #include <string>
+
+#include <QDate>
+#include <QString>
 
 
 int main (int argc, char const *argv[])
@@ -11,6 +14,8 @@ int main (int argc, char const *argv[])
     google::InitGoogleLogging(argv[0]);
     google::InstallFailureSignalHandler();
     
+    #if 0
+    {
     const int NB_RATINGS = 300000000;
     Rating* Ratings = new Rating[NB_RATINGS];
     
@@ -41,6 +46,27 @@ int main (int argc, char const *argv[])
     
     delete[] Ratings;
     LOG(INFO) << "Done";
+    }
+    #endif
+    
+    if (QDate(2009, 11, 11).isValid())
+        LOG(INFO) << "Date is valid...";
+        
+    LOG(INFO) << QDate(2009, 11, 11).toString(QString("yyyy-MM-dd")).toStdString();
+    
+    QDate min = QDate();
+    if (min.isNull())
+        LOG(INFO) << "Date is null and it's normal...";
+        
+    min = QDate::fromString(QString("1999-11-11"), QString("yyyy-MM-dd"));
+    if (min.isNull())
+        LOG(ERROR) << "Date shouldn't be null...";
+        
+    LOG(INFO) << "S " << min.toString(QString("yyyy-MM-dd")).toStdString() << " "
+        << "J " << min.toJulianDay() << " "
+        << "JS " << QDate::fromJulianDay(min.toJulianDay()).toString("yyyy-MM-dd").toStdString();
+    
+    
     
     return 0;
 }

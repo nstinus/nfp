@@ -18,7 +18,11 @@ LIBS += /usr/local/lib/libglog.dylib
 
 INCLUDEPATH += /Users/nico/projects/dev/nfp/src/model/
 
+SOURCES += ../model/BasicRating.cpp
 SOURCES += main.cpp
+
+target.path += $(NFP_BIN_DIR)
+INSTALLS += target
 
 TARGET = shmloader
 

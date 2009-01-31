@@ -1,5 +1,5 @@
-#ifndef __BASICRATING_H__
-#define __BASICRATING_H__
+#ifndef __NFP__BASICRATING_H__
+#define __NFP__BASICRATING_H__
 
 /*************************************************************************************************/
 /*                                          BasicRating                                          */
@@ -32,9 +32,14 @@
 /*                                                                                               */
 /*************************************************************************************************/
 
+#include <string>
+
 typedef unsigned short int usint;
 typedef unsigned long int ulong;
 typedef unsigned char uchar;
+
+typedef unsigned int uint;
+typedef unsigned short ushort;
 
 const uint BASICRATING__DATE_POS      = 0;
 const uint BASICRATING__RATE_POS      = 2;
@@ -46,10 +51,15 @@ const uint BASICRATING__RATE_MASK     = 0x0007;
 const uint BASICRATING__USER_ID_MASK  = 0x0007FFFF;
 const uint BASICRATING__MOVIE_ID_MASK = 0x7FFF;
 
-const uint RATING_DATA_SIZE      = 8;
+const uint RATING_DATA_SIZE = 8;
+
+const uint BASICRATING__DATE_OFFSET = 2451494;
 
 namespace NFP
 {
+
+std::string DateUS2S(ushort const&);
+ushort DateS2US(std::string const&);
 
 class BasicRating
 {
@@ -57,72 +67,46 @@ private:
     char _data[RATING_DATA_SIZE];
 
 public:
-    BasicRating::BasicRating()
-    {
-        BasicRating(0, 0, 0, 0);
-    }
+    /*****************/
+    /*  Constructor  */
+    /*****************/    
     
-    BasicRating::BasicRating(ushort const& movie_id,
-                             uint const& user_id,
-                             uchar const& r,
-                             ushort const& d)
-    {
-        set_movie_id(movie_id);
-        set_user_id(user_id);
-        set_rate(r);
-        set_date(d);
-    }
-
+    BasicRating();
+    BasicRating(ushort const&, uint const&, uchar const&, ushort const&);
+    BasicRating(int const&, int const&, int const&, std::string const&);
+    BasicRating(char* const&);
+    
+    //virtual ~BasicRating();
 
     /*************/
     /*  Getters  */
     /*************/
 
-    ushort BasicRating::movie_id() { return *(ushort*)&_data[BASICRATING__MOVIE_ID_POS]; };
+    ushort movie_id() const;
+    //int movie_id() const;
+    uint user_id() const;
+    uchar rate() const;
+    ushort date() const;
+    //std::string date() const;
+    std::string toStdString();
 
-    uint BasicRating::user_id()
-    { 
-        return *((uint*)&_data[BASICRATING__USER_ID_POS]) & (uint)BASICRATING__USER_ID_MASK;
-    };
-
-    uchar BasicRating::rate() { return _data[BASICRATING__RATE_POS]; };
-
-    ushort BasicRating::date()
-    {
-        return *(ushort*)&_data[BASICRATING__DATE_POS];
-    }
-
-    char const* BasicRating::getData() {return _data; };
-
+//protected:
+    
+    //char const* getData() const;
 
     /*************/
     /*  Setters  */
     /*************/
 
-    void BasicRating::set_movie_id(ushort const& movie_id)
-    {
-        *(ushort*)&_data[BASICRATING__MOVIE_ID_POS] = (movie_id & (ushort)BASICRATING__MOVIE_ID_MASK);
-    };
-
-    void BasicRating::set_user_id(uint const& u_id)
-    {
-        *(uint*)&_data[BASICRATING__USER_ID_POS] =
-            *(uint*)&_data[BASICRATING__USER_ID_POS] & (uint)0xFFFFFFFF - (uint)BASICRATING__USER_ID_MASK;
-        *(uint*)&_data[BASICRATING__USER_ID_POS] |= u_id & (uint)BASICRATING__USER_ID_MASK;
-    }
-
-    void BasicRating::set_rate(uchar const& r)
-    {
-        _data[BASICRATING__RATE_POS] = (char)(r & (uchar)BASICRATING__RATE_MASK);
-    };
-
-    void BasicRating::set_date(ushort const& d)
-    {
-        *(ushort*)&_data[BASICRATING__DATE_POS] = (d & (ushort)BASICRATING__DATE_MASK);
-    }
+public:
+    
+    void set_movie_id(ushort const&);
+    void set_user_id(uint const&);
+    void set_rate(uchar const&);
+    void set_date(ushort const&);
 
 };
 
 } // NFP
 
-#endif // __BASICRATING_H__
+#endif // __NFP__BASICRATING_H__
