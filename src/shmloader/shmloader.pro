@@ -1,6 +1,6 @@
 QT -= gui
 
-CONFIG += debug
+CONFIG += release
 
 CONFIG(release, debug|release):message(Release build!)
 CONFIG(debug, debug|release):message(Debug build!)
@@ -18,7 +18,7 @@ LIBS += /usr/local/lib/libglog.dylib
 
 INCLUDEPATH += /Users/nico/projects/dev/nfp/src/model/
 
-SOURCES += ../model/BasicRating.cpp
+SOURCES += ../model/Rating.cpp
 SOURCES += main.cpp
 
 target.path += $(NFP_BIN_DIR)

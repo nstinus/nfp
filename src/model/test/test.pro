@@ -22,7 +22,7 @@ INCLUDEPATH += /Users/nico/projects/dev/nfp/src/model/
 
 
 HEADERS += ../Rating.h
-HEADERS += ../BasicRating.h
+HEADERS += ../Rating.h
 
 SOURCES += main.cpp
 

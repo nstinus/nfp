@@ -1,12 +1,29 @@
-#ifndef __RATING_H__
-#define __RATING_H__
+#ifndef __NFP__BASICRATING_H__
+#define __NFP__BASICRATING_H__
 
 /*************************************************************************************************/
-/*                                            Rating                                             */
+/*                                          Rating                                          */
 /*************************************************************************************************/
 /*                                                                                               */
 /*  Abstract:                                                                                    */
-/*    Offers fancy/human-friendly getters and setters for BasicRating                            */
+/*    Low-level representation for a rating from the training_set.                               */
+/*    The fields are: movie_id [0, 17770],   card = 17770  < 2**15 -> 15 bits                    */
+/*                    user_id  [6, 2649429], card = 480189 < 2**19 -> 19 bits                    */
+/*                    rate     [1, 5],       card = 5      < 2**3  ->  3 bits                    */
+/*                    date     [0, 2182],    card = 2182   < 2**12 -> 12 bits                    */
+/*                                                                                               */
+/*  Visual representation of the data:                                                           */
+/*                                                                                               */
+/*      Bytes :      |       |       |       |       |       |       |       |       |           */
+/*      char[i]:     -       7       6       5       4       3       2       1       0           */
+/*      Fields:      |X--------------X    X------------------X    X--X   X-----------X           */
+/*      Name:        |    Movie_id   |        User_id        |  Rate |      Date     |           */
+/*      Size:        |       15      |           19          |    3  |       12      |           */
+/*                                                                                               */
+/*  General considerations:                                                                      */
+/*                                                                                               */
+/*      - the data integrity check is made at the insertion. (masks).                            */
+/*      - the getters just do silly casts.                                                       */
 /*                                                                                               */
 /*************************************************************************************************/
 /*                                                                                               */
@@ -16,120 +33,80 @@
 /*************************************************************************************************/
 
 #include <string>
-#include <QDate>
 
-#include "BasicRating.h"
+typedef unsigned short int usint;
+typedef unsigned long int ulong;
+typedef unsigned char uchar;
 
-// int value in JulianDay of the min value of the training set: 
+typedef unsigned int uint;
+typedef unsigned short ushort;
 
-const uint RATING__DATE_OFFSET = 2451494;
+const uint BASICRATING__DATE_POS      = 0;
+const uint BASICRATING__RATE_POS      = 2;
+const uint BASICRATING__USER_ID_POS   = 3;
+const uint BASICRATING__MOVIE_ID_POS  = 6;
+
+const uint BASICRATING__DATE_MASK     = 0x0FFF;
+const uint BASICRATING__RATE_MASK     = 0x0007;
+const uint BASICRATING__USER_ID_MASK  = 0x0007FFFF;
+const uint BASICRATING__MOVIE_ID_MASK = 0x7FFF;
+
+const uint RATING_DATA_SIZE = 8;
+
+const uint BASICRATING__DATE_OFFSET = 2451494;
 
 namespace NFP
 {
 
+std::string DateUS2S(ushort const&);
+ushort DateS2US(std::string const&);
+
 class Rating
 {
 private:
-    BasicRating _rating;
-    
+    char _data[RATING_DATA_SIZE];
+
 public:
+    /*****************/
+    /*  Constructor  */
+    /*****************/    
     
-    /******************/
-    /*  Constructors  */
-    /******************/
-    
-    Rating(int const& m, int const& u, int const& r, int const& d) {
-        DLOG(INFO) << "Rating " << m << " " << u << " " << r << " " << d;
-        _rating = BasicRating((ushort)m, (uint)u, (uchar)r, (ushort)d);
-    }
-    
-    Rating(int const& m, int const& u, int const& r, std::string const& d)
-    {
-        Rating(m, u, r, QDate::fromString(QString::fromStdString(d), QString("yyyy-MM-dd")));
-    }
-    
-    Rating(int const& m, int const& u, int const& r, QDate const& d)
-    {
-        Rating(m, u, r, d.toJulianDay() - (int)RATING__DATE_OFFSET);
-    }
+    Rating();
+    Rating(ushort const&, uint const&, uchar const&, ushort const&);
+    Rating(int const&, int const&, int const&, std::string const&);
+    Rating(char* const&);
     
     //virtual ~Rating();
-    
 
     /*************/
     /*  Getters  */
     /*************/
 
-    int movie_id() const { return _rating.movie_id(); }
+    ushort movie_id() const;
+    //int movie_id() const;
+    uint user_id() const;
+    uchar rate() const;
+    ushort raw_date() const;
+    std::string date() const;
+    std::string toStdString();
 
-    int user_id() const { return (int)_rating.user_id(); }
-
-    int rate() const { return (int)_rating.rate(); }
-
-    int date() const
-    {
-        return (int)_rating.date() + (int)RATING__DATE_OFFSET;
-    }
-
-    /*QDate date() const
-    {
-        return QDate::fromJulianDay(date());
-    }*/
+//protected:
     
-    /*std::string date() const
-    {
-        return ((QDate::fromJulianDay(date())).toString("yyyy-MM-dd").toStdString();
-    }*/
-    
-    std::string toStdString()
-    {
-        char ret[40];
-        sprintf(ret, "%5d %10d %1d %10s",
-            movie_id(),
-            user_id(), rate(),
-            QDate::fromJulianDay(date()).toString("yyyy-MM-dd").toStdString().c_str());
-        return (std::string)ret;
-        
-    }
+    //char const* getData() const;
 
-    
     /*************/
     /*  Setters  */
     /*************/
 
-    /*
-    void set_movie_id(int const& movie_id)
-    {
-        _rating.set_movie_id((ushort)movie_id);
-    }
-
-    void set_user_id(int const& u_id)
-    {
-        _rating.set_user_id((uint)u_id);
-    }
-
-    void set_rate(int const& r)
-    {
-        _rating.set_rate((uchar)r);
-    }
-
-    void set_date(int const& d)
-    {
-        _rating.set_date((ushort)d);
-    }
+public:
     
-    void set_date(QDate const& d)
-    {
-        set_date(d.toJulianDay() - (int)RATING__DATE_OFFSET);
-    }
-    
-    void set_date(std::string const& d)
-    {
-        set_date(QDate::fromString(QString::fromStdString(d), "yyyy-MM-dd"));
-    }
-    */
+    void set_movie_id(ushort const&);
+    void set_user_id(uint const&);
+    void set_rate(uchar const&);
+    void set_date(ushort const&);
+
 };
 
-}
+} // NFP
 
-#endif // __RATING_H__
+#endif // __NFP__BASICRATING_H__

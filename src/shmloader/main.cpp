@@ -20,7 +20,7 @@
 //#include <list>
 
 // Custom
-#include "BasicRating.h"
+#include "Rating.h"
 
 #include <sys/shm.h>
 
@@ -29,19 +29,19 @@ typedef unsigned char uchar;
 //typedef std::list<std::string>::iterator stringListIterator;
 
 /*
-void pushRatingToShm(key_t const& key, NFP::BasicRating* rating)
+void pushRatingToShm(key_t const& key, NFP::Rating* rating)
 {
     int shmid;
-    NFP::BasicRating* shmPtr;
+    NFP::Rating* shmPtr;
     
     DLOG(INFO) << "Key = " << (long)key;
-    if ((shmid = shmget(key, sizeof(NFP::BasicRating), 0600 | IPC_CREAT)) < 0) {
+    if ((shmid = shmget(key, sizeof(NFP::Rating), 0600 | IPC_CREAT)) < 0) {
         LOG(ERROR) << "shmget";
         perror("shmget");
     };
     
     DLOG(INFO) << "shmid = " << shmid;
-    if ((shmPtr = (NFP::BasicRating*)shmat(shmid, (void *)0, 0)) == (void*)-1) {
+    if ((shmPtr = (NFP::Rating*)shmat(shmid, (void *)0, 0)) == (void*)-1) {
         LOG(ERROR) << "shmat";
         perror("shmat");
         exit(1);
@@ -62,7 +62,7 @@ int main (int argc, char** argv)
     google::InitGoogleLogging(argv[0]);
     google::InstallFailureSignalHandler();
     
-    LOG(INFO) << "sizeof(NFP::BasicRating) = " << sizeof(NFP::BasicRating);
+    LOG(INFO) << "sizeof(NFP::Rating) = " << sizeof(NFP::Rating);
     //LOG(INFO) << "sizeof(NFP::Rating) = " << sizeof(NFP::Rating);
     
     
@@ -124,7 +124,7 @@ int main (int argc, char** argv)
 	}
 	
     QStringList files = training_set_dir.entryList();
-    //QList<NFP::Rating*> ratings;
+    QList<NFP::Rating*> ratings;
 
     QString movie_id_QS;
     int movie_id = 0;
@@ -160,23 +160,14 @@ int main (int argc, char** argv)
                 user_id = mvFileLineRegExp.cap(1).toInt();
                 rate = mvFileLineRegExp.cap(2).toInt();
                 date = mvFileLineRegExp.cap(3).toStdString();
-                LOG(INFO) << "Data read: "
+                DLOG(INFO) << "Data read: "
                     << movie_id << ", "
                     << user_id << ", "
                     << rate << ", "
                     << date;
-                //NFP::Rating* r = new NFP::Rating(movie_id, user_id, rate, date);
-                
-                NFP::BasicRating* br = new NFP::BasicRating(movie_id, user_id, rate, date);
-                
-                //ratings.push_back(r);
-                /*DLOG(INFO) << "Created Rating: "
-                    << r->movie_id() << ", "
-                    << r->user_id() << ", "
-                    << r->rate() << ", "
-                    << QDate::fromJulianDay(r->date()).toString("yyyy-MM-dd").toStdString();*/
-                //LOG(INFO) << " R " << r->toStdString();
-                LOG(INFO) << "BR " << br->toStdString() ;
+                NFP::Rating* r = new NFP::Rating(movie_id, user_id, rate, date);
+                ratings.push_back(r);
+                DLOG(INFO) << "R " << r->toStdString() ;
                 
             }
         } while (!line.isNull());
@@ -194,7 +185,7 @@ int main (int argc, char** argv)
     QMap<ushort, uint> nbRatingsByMovie;
     QMap<ushort, double> meanRateByMovie;
     
-    for (QList<NFP::BasicRating*>::iterator it = ratings.begin(); it != ratings.end(); ++it) {
+    for (QList<NFP::Rating*>::iterator it = ratings.begin(); it != ratings.end(); ++it) {
             
             if (!ratingsSummedByMovie.contains(movie_id))
                 ratingsSummedByMovie[movie_id] = 0;
@@ -224,18 +215,18 @@ int main (int argc, char** argv)
     {
     key_t key;
     int shmid;
-    NFP::BasicRating* shmPtrRating;
+    NFP::Rating* shmPtrRating;
 
     key = ftok("/Users/nico/projects/dev/nfp/data/shm/training_set.shmkey", 'R');
     
     
     LOG(INFO) << "Key = " << (long)key;
-    if ((shmid = shmget(key, sizeof(NFP::BasicRating), 0600 | IPC_CREAT)) < 0) {
+    if ((shmid = shmget(key, sizeof(NFP::Rating), 0600 | IPC_CREAT)) < 0) {
         LOG(ERROR) << "shmget";
         perror("shmget");
     };
     LOG(INFO) << "shmid = " << shmid;
-    if ((shmPtrRating = (NFP::BasicRating*)shmat(shmid, (void *)0, 0)) == (void*)-1) {
+    if ((shmPtrRating = (NFP::Rating*)shmat(shmid, (void *)0, 0)) == (void*)-1) {
         LOG(ERROR) << "shmat";
         perror("shmat");
     }
@@ -246,7 +237,7 @@ int main (int argc, char** argv)
         << (int)shmPtrRating->rate() << " ";
     
     LOG(INFO) << "Shm assignation";
-    for (QList<NFP::BasicRating*>::iterator it = ratings.begin(); it != ratings.end(); ++it) {
+    for (QList<NFP::Rating*>::iterator it = ratings.begin(); it != ratings.end(); ++it) {
         //memcpy(shmPtrRating, (*it), sizeof(Rating));
         *shmPtrRating = *(*it);
         LOG(INFO) << "Wrote: " << (int)shmPtrRating->movie_id() << " "
@@ -268,7 +259,7 @@ int main (int argc, char** argv)
     //Working shm part. needed memcopy
     key_t key = ftok("/Users/nico/projects/dev/nfp/data/shm/1", 'R');
     QSharedMemory shm(QString::number(key));
-    if (shm.create(sizeof(NFP::BasicRating), QSharedMemory::ReadWrite)) {
+    if (shm.create(sizeof(NFP::Rating), QSharedMemory::ReadWrite)) {
         LOG(INFO) << "Shm segment created, size = " << shm.size();
     } else {
         LOG(ERROR) << "Shm segment creation failed: " << shm.errorString().toStdString();
@@ -281,15 +272,15 @@ int main (int argc, char** argv)
     }
     LOG(INFO) << "Shm key = " << shm.key().toStdString();
     
-    NFP::BasicRating* shmRating = (NFP::BasicRating*)shm.data();
+    NFP::Rating* shmRating = (NFP::Rating*)shm.data();
     
     LOG(INFO) << "Read: " << (int)shmRating->movie_id() << " "
         << (int)shmRating->user_id() << " "
         << (int)shmRating->rate() << " ";
     
-    for (QList<NFP::BasicRating*>::iterator it = ratings.begin(); it != ratings.end(); ++it) {
+    for (QList<NFP::Rating*>::iterator it = ratings.begin(); it != ratings.end(); ++it) {
         shm.lock();
-        memcpy(shmRating, (*it), sizeof(NFP::BasicRating));
+        memcpy(shmRating, (*it), sizeof(NFP::Rating));
         //LOG(INFO) << "shm written";
         LOG(INFO) << "Wrote: " << (int)shmRating->movie_id() << " "
             << (int)shmRating->user_id() << " "
@@ -305,29 +296,29 @@ int main (int argc, char** argv)
     
     /*
     int shmid;
-    NFP::BasicRating* shmPtr;
+    NFP::Rating* shmPtr;
     
     DLOG(INFO) << "Key = " << (long)key;
-    if ((shmid = shmget(key, ratings.size() * sizeof(NFP::BasicRating), 0600 | IPC_CREAT)) < 0) {
+    if ((shmid = shmget(key, ratings.size() * sizeof(NFP::Rating), 0600 | IPC_CREAT)) < 0) {
         LOG(ERROR) << "shmget";
         perror("shmget");
     };
     
     DLOG(INFO) << "shmid = " << shmid;
-    if ((shmPtr = (NFP::BasicRating*)shmat(shmid, (void *)0, 0)) == (void*)-1) {
+    if ((shmPtr = (NFP::Rating*)shmat(shmid, (void *)0, 0)) == (void*)-1) {
         LOG(ERROR) << "shmat";
         perror("shmat");
         exit(1);
     }
     
     int i = 0;
-    for (QList<NFP::BasicRating*>::iterator it = ratings.begin(); it != ratings.end(); ++it) {
+    for (QList<NFP::Rating*>::iterator it = ratings.begin(); it != ratings.end(); ++it) {
         // *(shmPtr + i) = *(*it);
         //DLOG(INFO) << "(*it) " << (int)(*it)->movie_id() << " "
         //    << (int)(*it)->user_id() << " "
         //    << (int)(*it)->rate();
             
-        memcpy(shmPtr+i, *it, sizeof(NFP::BasicRating));
+        memcpy(shmPtr+i, *it, sizeof(NFP::Rating));
         
         //DLOG(INFO) << (int)(shmPtr + i)->movie_id() << " "
         //    << (int)(shmPtr + i)->user_id() << " "
@@ -358,11 +349,11 @@ int main (int argc, char** argv)
     
     // Clean-up
     LOG(INFO) << "Cleaning up ... ";
-    for (QList<NFP::BasicRating*>::iterator it = ratings.begin(); it != ratings.end(); ++it)
+    for (QList<NFP::Rating*>::iterator it = ratings.begin(); it != ratings.end(); ++it)
             delete (*it);
             
     #endif
-    //ratings.clear();
+    ratings.clear();
     
     LOG(INFO) << "Bye-bye!";
     
