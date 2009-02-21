@@ -105,8 +105,9 @@ int main (int argc, char** argv)
     
     
     
-    std::ofstream allOutFile;
-    allOutFile.open("./out/all.dat", std::ios::out | std::ios::app | std::ios::binary);
+    //std::ofstream allOutFile;
+    //allOutFile.open("./out/all.dat", std::ios::out | std::ios::app | std::ios::binary);
+    //allOutFile.fill(0);
     
     /*if (!allOutFile.open(QIODevice::WriteOnly)) {
         LOG(ERROR) << "Unable to open " << allOutFile.fileName().toStdString()
@@ -131,7 +132,8 @@ int main (int argc, char** argv)
         outFileName  = "./out/";
         outFileName += (*it).replace(".txt", "").toStdString();
         outFileName += ".dat";
-        outFile.open(outFileName.c_str(), std::ios::out | std::ios::app | std::ios::binary);
+        outFile.open(outFileName.c_str(), std::ios::out | std::ios::binary);
+        outFile.fill(0);
         
         /*if (!outFile.open(QIODevice::WriteOnly)) {
             LOG(ERROR) << "Unable to open " << outFile.fileName().toStdString()
@@ -157,28 +159,49 @@ int main (int argc, char** argv)
                 date = mvFileLineRegExp.cap(3).toStdString();
                 NFP::Rating* r = new NFP::Rating(movie_id, user_id, rate, date);
                 ratings.push_back(r);
-                DLOG(INFO) << "Created Rating [" << r << "]: " << r->to_string();
+                //DLOG(INFO) << "Created Rating [" << r << "]: " << r->to_string();
             }
         } while (!line.isNull());
         
         //QDataStream outStream(&outFile);
-        
+        /* Almost working shit
         for (QList<NFP::Rating*>::iterator it = ratings.begin(); it != ratings.end(); ++it) {
-            QByteArray data = QByteArray((*it)->data(), sizeof(NFP::Rating));
-            std::string hash = QString(QCryptographicHash::hash(data,
-                QCryptographicHash::Sha1).toHex()).toStdString();
-            DLOG(INFO) << (*it)->to_string() << " " << hash;
-            outFile << (*it)->data();
-            allOutFile << (*it)->data();
+            char data[RATING_DATA_SIZE];
+            memset(data, 0, RATING_DATA_SIZE);
+            (*it)->data(data);
+            std::string hex = QString(QByteArray(data, sizeof(NFP::Rating)).toHex()).toStdString();
+            std::string hash = QString(
+                QCryptographicHash::hash(
+                    QByteArray(data, sizeof(NFP::Rating)),
+                    QCryptographicHash::Sha1).toHex()).toStdString();
+            DLOG(INFO) << (*it)->to_string() << " " << hex << " " << hash;
+            outFile.write(data, RATING_DATA_SIZE);
+            //allOutFile.write(data, RATING_DATA_SIZE);
+            //outFile << data;
+            //allOutFile << data;
+            outFile.flush();
         }
-            
+        */
+        
+        int ratings_size = ratings.size();
+        char data[ratings_size * RATING_DATA_SIZE];
+        memset(data, 0, ratings_size * RATING_DATA_SIZE);
+        for (int i = 0; i < ratings_size; i++) {
+            memcpy(&data[i * RATING_DATA_SIZE], ratings.at(i), RATING_DATA_SIZE);
+            char* d = new char[RATING_DATA_SIZE];
+            ratings.at(i)->data(d);
+            DLOG(INFO) << ratings.at(i)->to_string() << " "
+                << QString(QByteArray(d, RATING_DATA_SIZE).toHex()).toStdString();
+        }
+        outFile.write(data, ratings_size * RATING_DATA_SIZE);
+        outFile.close();
+        LOG(INFO) << "Wrote " << ratings.size() << " Ratings.";
+        
         ratings.clear();
         inFile.close();
-        outFile.close();
     }
     
-    allOutFile.close();
-    
+    //allOutFile.close();
     LOG(INFO) << "Bye-bye!";
     
     return EXIT_SUCCESS;

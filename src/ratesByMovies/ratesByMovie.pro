@@ -1,6 +1,6 @@
 QT -= gui
 
-CONFIG += debug
+CONFIG += release
 
 CONFIG(release, debug|release):message(Release build!)
 CONFIG(debug, debug|release):message(Debug build!)
@@ -10,23 +10,21 @@ CONFIG(release, debug|release) {
 
 TEMPLATE = app
 
-CONFIG += qt
 CONFIG += stl
 CONFIG += x86
 CONFIG -= app_bundle
 
-LIBS += /usr/local/lib/libglog.dylib
-#LIBS += /usr/local/lib/libboost_date_time-xgcc40-mt.dylib
+LIBS += /usr/local/lib/libglog.a
+LIBS += /Users/nico/projects/dev/nfp/src/libnfp/libnfp.a
 
-INCLUDEPATH += /Users/nico/projects/dev/nfp/src/model/
-
-
-HEADERS += ../Rating.h
-HEADERS += ../Rating.h
+INCLUDEPATH += /Users/nico/projects/dev/nfp/src/libnfp/
 
 SOURCES += main.cpp
 
-TARGET = model_test
+target.path += $(NFP_BIN_DIR)
+INSTALLS += target
+
+TARGET = ratesByMovie
 
 
 

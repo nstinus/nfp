@@ -4,15 +4,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <iostream>
-#include <fstream>
-
 // Qt
 #include <QDir>
 #include <QString>
 #include <QFile>
 #include <QTextStream>
-#include <QDataStream>
+#include <QRegExp>
 #include <QMap>
 #include <QList>
 #include <QCryptographicHash>
@@ -42,7 +39,9 @@ int main (int argc, char** argv)
         defPath = "";
     TCLAP::ValueArg<std::string> pathArg("i",
         "input_data",
-	    std::string("Path where the data files are located. ")
+	    std::string("Path where the data files are located.")
+            + std::string("These files should have the same")
+            + std::string("format as the original training_set. ")
             + std::string("Will try to read the environment variable NFP_TRAINING_SET_DIR <")
             + defPath
             + std::string("> if unspecified."),
@@ -51,9 +50,9 @@ int main (int argc, char** argv)
         "string");
     TCLAP::ValueArg<std::string> filterArg("f",
         "filter",
-        "Filename filter. Default is `mv_*.dat'",
+        "Filename filter. Default is `mv_*.txt'",
         false,
-        "mv_*.dat",
+        "mv_*.txt",
         "string");
     TCLAP::ValueArg<int> movieIdArg("m",
         "movie_id",
@@ -72,7 +71,7 @@ int main (int argc, char** argv)
     std::string filter;
 	if (movieIdArg.getValue() > -1) {
         char f[12];
-        sprintf(f, "mv_%07d.dat", movieIdArg.getValue());
+        sprintf(f, "mv_%07d.txt", movieIdArg.getValue());
         filter = f;
 	}
 	else if (!filterArg.getValue().empty()) {
@@ -89,71 +88,38 @@ int main (int argc, char** argv)
 	}
 	
     QStringList files = training_set_dir.entryList();
+    QList<NFP::Rating*> ratings;
+
+    QString movie_id_QS;
+    ushort movie_id = 0;
+    uint user_id = 0;
+    uchar rate = 0;
+    
+    QRegExp mvFileLineRegExp("^(\\d+),([1-5]),([12]\\d{3})-(0[1-9]|1[0-2])-(\\d{2})$");
+    
+    QMap<uint, uint> ratesByMovie;
+    
+    
+    
     
     for (QList<QString>::iterator it = files.begin(); it != files.end(); ++it)
     {
         LOG(INFO) << "Processing file " << (*it).toStdString();
         QString filePath = training_set_dir.absolutePath() + QString("/") + (*it);
-        std::ifstream inFile;
-        inFile.open(filePath.toStdString().c_str(),
-            std::ios::in | std::ios::binary | std::ios::ate);
-        int size = inFile.tellg();
-        if ((size % 8) != 0)
-            LOG(ERROR) << "Data file seems corrupted! " << filePath.toStdString();
-        inFile.seekg(0, std::ios::beg);
-        
-        /*if (!inFile.open(QIODevice::ReadOnly)) {
+        QFile inFile(filePath);
+        if (!inFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
             LOG(ERROR) << "Unable to open " << inFile.fileName().toStdString()
                 << " for reading. Skipping.";
             continue;
-        }*/
-        
-        //Actually doing the work: file 2 Rating
-        /*int i = 0;
-        char data[RATING_DATA_SIZE];
-        std::string hash;
-        while(!inFile.eof() and inFile.good()) {
-            if (!inFile.good())
-                LOG(ERROR) << "Input stream is corrupted " << filePath.toStdString();
-            memset(data, 0, RATING_DATA_SIZE);
-            inFile >> data;
-            NFP::Rating* r = new NFP::Rating(data);
-            std::string hex = QString(QByteArray(data, sizeof(NFP::Rating)).toHex()).toStdString();
-            hash = QString(QCryptographicHash::hash(data,
-                QCryptographicHash::Sha1).toHex()).toStdString();
-            DLOG(INFO) << "Read " << r->to_string() << " " << hex << " " << hash;
-            delete r;
-            ++i;
         }
-        LOG(INFO) << "Read " << i << " ratings from file";
-        */
+        QTextStream stream(&inFile);
+        movie_id_QS = stream.readLine();
+        movie_id_QS.chop(1);
+        movie_id = movie_id_QS.toUShort();
+        //LOG(INFO) << "Movie_id: <" << (int)movie_id << ">";
         
-        char* data = new char[size];
-        memset(data, 0xFF, size);
-        inFile.read(data, size);
-        
-        QByteArray hex = QByteArray(data, size);
-        //std::cout << QString(hex.toHex()).toStdString() << std::endl;
-        LOG(INFO) << hex.size() << " bytes read";
-        
-        for (int i = 0; i < size/RATING_DATA_SIZE; i++) {
-            QByteArray tmp("");
-            for (int j = 0; j < RATING_DATA_SIZE; j++) {
-                tmp += hex.at(i+j);
-                i++;
-            }
-            NFP::Rating rat(tmp);
-            char* ratdata = new char[RATING_DATA_SIZE];
-            rat.data(ratdata);
-            DLOG(INFO) << tmp.size() << " "
-                       << QString(tmp.toHex()).toStdString() << " "
-                       << rat.to_string();
-        }
-        
-        /*
-        QList<NFP::Rating*> ratings;
-
         QString line;
+        NFP::Rating rating;
         
         do {
             line = stream.readLine();
@@ -162,22 +128,35 @@ int main (int argc, char** argv)
                 rate = (uchar)mvFileLineRegExp.cap(2).toUShort();
                 NFP::Rating* r = new NFP::Rating(movie_id, user_id, rate, 0);
                 ratings.push_back(r);
-                DLOG(INFO) << "Created Rating [" << r << "]: " << r->to_string();
+                DLOG(INFO) << "Created Rating in shm [" << r << "]: "
+                    << (int)r->movie_id() << ", "
+                    << (int)r->user_id() << ", "
+                    << (int)r->rate() << "---";
             }
         } while (!line.isNull());
         
-        QDataStream outStream(&outFile);
-        
-        for (QList<NFP::Rating*>::iterator it = ratings.begin(); it != ratings.end(); ++it) {
-            QByteArray data = QByteArray((*it)->getData(), sizeof(NFP::Rating));
-            outStream << data;
-            allOutStream << data;
-        }
-            
+        //LOG(INFO) << "Movie " << movie_id << " has " << ratings.size() << " records";
+        ratesByMovie[movie_id] = (uint)ratings.size();
         ratings.clear();
-        */
         inFile.close();
     }
+    
+    QMapIterator<uint, uint> rBmIt(ratesByMovie);
+    QByteArray ratesByMovieAsByteArray;
+    while(rBmIt.hasNext()) {
+        rBmIt.next();
+        ratesByMovieAsByteArray.append(QString::number(rBmIt.key())
+            + QString::number(rBmIt.value()));
+        LOG(INFO) << "Movie " << rBmIt.key() << " has " << rBmIt.value() << " records";
+    }
+    
+    QByteArray mapHash = QCryptographicHash::hash(ratesByMovieAsByteArray,
+        QCryptographicHash::Sha1).toHex();
+        
+    LOG(INFO) << "mapHash.size() = " << mapHash.size();        
+    LOG(INFO) << "mapHash = " << QString(mapHash).toStdString();
+    
+    //LOG(INFO) "Writing output file ";
     
     LOG(INFO) << "Bye-bye!";
     

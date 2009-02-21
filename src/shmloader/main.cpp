@@ -170,14 +170,16 @@ int main (int argc, char** argv)
                 DLOG(INFO) << "R " << r->to_string() ;
                 
                 // Test for data()
+                #ifndef NDEBUG
+                LOG(INFO) << "Testing data()";
                 char data[RATING_DATA_SIZE];
-                memcpy(data, r->data(), RATING_DATA_SIZE);
-                if(*r->data() != *data)
-                    LOG(ERROR) << "memcpy failed! " << (int)(*data) << " vs " << (int)(*r->data());
+                char data2[RATING_DATA_SIZE];
+                r->data(data);
                 NFP::Rating* r2 = new NFP::Rating(data);
-                if(*r2->data() != *data)
-                    LOG(ERROR) << "data() failed! " << (int)(*data) << " vs " << (int)(*r2->data());
-                
+                r2->data(data2);
+                if(*data2 != *data)
+                    LOG(ERROR) << "data() failed! " << (int)(*data) << " vs " << (int)(*data2);
+                #endif
                 
             }
         } while (!line.isNull());
