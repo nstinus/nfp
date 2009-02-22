@@ -15,7 +15,13 @@ CONFIG += x86
 CONFIG -= app_bundle
 
 LIBS += /usr/local/lib/libglog.a
-LIBS += /Users/nico/projects/dev/nfp/src/libnfp/libnfp.a
+
+CONFIG(release, debug|release) {
+	LIBS += /Users/nico/projects/dev/nfp/src/libnfp/libnfp.a
+}
+CONFIG(debug, debug|release) {
+	LIBS += /Users/nico/projects/dev/nfp/src/libnfp/libnfpd.a
+}
 
 INCLUDEPATH += /Users/nico/projects/dev/nfp/src/libnfp/
 

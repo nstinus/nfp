@@ -19,9 +19,11 @@ LIBS += /usr/local/lib/libglog.a
 
 HEADERS += Rating.h
 HEADERS += ShmSegment.h
+HEADERS += RatingsSS.h
 
 SOURCES += Rating.cpp
 SOURCES += ShmSegment.cpp
+SOURCES += RatingsSS.cpp
 
 CONFIG(release, debug|release) {
 	TARGET = nfp
