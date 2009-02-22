@@ -11,9 +11,9 @@
 #include "RatingsSS.h"
 #include "Rating.h"
 
-NFP::RatingsSS::RatingsSS(std::string keyFile){
+NFP::RatingsSS::RatingsSS(std::string keyFile) {
     struct stat stFileInfo;
-    if (stat(keyFile.c_str(), &stFileInfo))
+    if (stat(keyFile.c_str(), &stFileInfo) == 0)
         keyFile_ = keyFile;
     else
         LOG(ERROR) << "File " << keyFile << " does not exist."; 
@@ -25,6 +25,7 @@ void NFP::RatingsSS::load()
     
     if (in.is_open())
     {
+        LOG(INFO) << "Parsing file " << keyFile_;
         std::string line;
         QRegExp mvFileLineRegExp("^(\\d+),([1-5]),(\\d{4}-\\d{2}-\\d{2})$");
         int movie_id = -1;
@@ -36,8 +37,11 @@ void NFP::RatingsSS::load()
         while (!in.eof()) {
             getline(in, line);
             DLOG(INFO) << "Read line: \"" << line << "\"";
-            if (movie_id == -1)
-                movie_id = atoi(line.c_str());
+            if (movie_id == -1) {
+                QString l = QString::fromStdString(line);
+                l.chop(1);
+                movie_id = atoi(l.toStdString().c_str());
+            }
             else {
                 if (mvFileLineRegExp.indexIn(QString::fromStdString(line)) > -1) {
                     user_id = mvFileLineRegExp.cap(1).toInt();
@@ -50,11 +54,15 @@ void NFP::RatingsSS::load()
         }
         
         in.close();
+        
+        LOG(INFO) << "File read for movie " << movie_id << ", "
+            << ratings.size() << " ratings found.";
 
-        size(ratings.size() * RATING_DATA_SIZE);        
+        size(ratings.size() * RATING_DATA_SIZE);  
         create();
         attach();
         
+        LOG(INFO) << "Loading ShmSegment (size " << size() << ")...";
         int i = 0;
         std::list<NFP::Rating*>::const_iterator it;
         char* data = new char[RATING_DATA_SIZE];
@@ -63,7 +71,17 @@ void NFP::RatingsSS::load()
             memcpy((NFP::Rating*)(ptr()) + i, data, RATING_DATA_SIZE);
             i++;
         }
+        LOG(INFO) << "...done";
     }
     else
         LOG(ERROR) << "Unable to open file \"" << keyFile_ << "\" for reading.";    
+}
+
+NFP::Rating* NFP::RatingsSS::ptr()
+{
+    if (ptr_) {
+        return (NFP::Rating*)ptr_;
+    } else {
+        LOG(ERROR) << "ptr_ is null. " << info();
+    }
 }

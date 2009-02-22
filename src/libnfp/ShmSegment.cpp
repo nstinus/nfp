@@ -2,8 +2,18 @@
 
 #include <string>
 #include <sys/shm.h>
+//#include <sys/ipc.h>
+#include <errno.h>
 
 #include "ShmSegment.h"
+
+NFP::ShmSegment::ShmSegment() :
+    keyFile_(""),
+    key_(-1),
+    shmid_(-1),
+    size_(0),
+    ptr_(NULL)
+{}
 
 NFP::ShmSegment::ShmSegment(std::string keyFile, size_t size):
     keyFile_(keyFile),
@@ -26,21 +36,24 @@ void NFP::ShmSegment::create()
             << "Size: " << size_ << " "
             << "Key: " << key_;
     } else {
-        shmid_ = shmget(key_, size_, 0644 | IPC_CREAT);
-        DLOG(INFO) << "ShmSegment created.";
+        shmid_ = shmget(key_, size_, 0600 | IPC_CREAT);
+        if (shmid_ == -1) {
+            LOG(ERROR) << "Segment creation failed - "
+                << strerror(errno) << " [" << errno << "]";
+            LOG(ERROR) << info();
+        }
+        else
+            DLOG(INFO) << "ShmSegment created.";
     }
 }
 
 void NFP::ShmSegment::attach()
 {
-    if (shmid_ == -1) {
+    if (shmid_ != -1) {
         ptr_ = shmat(shmid_, (void *)0, 0);
         if ((char*)(ptr_) == (char*)(-1))
             LOG(ERROR) << "Shm attach failed for "
-                << keyFile_ << " "
-                << "Size: " << size_ << " "
-                << "Key: " << key_ << " "
-                << "Shmid: " << shmid_ << " ";
+                << info();
         DLOG(INFO) << "ShmSegment attached: " << ptr_;
     } else
         LOG(ERROR) << "Attach failed. Perhaps the segment has not been created.";
@@ -49,27 +62,45 @@ void NFP::ShmSegment::attach()
 void NFP::ShmSegment::detach()
 {
     if(ptr_) {
-        if (shmdt(ptr_))
+        if (shmdt(ptr_)) {
             LOG(ERROR) << "Shm detach failed.";
+            LOG(ERROR) << info();
+        }
         else {
             ptr_ = NULL;
             DLOG(INFO) << "ShmSegment detached.";
         }
-    } else {
+    }/* else {
         LOG(ERROR) << "Cannot detach: ptr_ == NULL.";
-    }
+        LOG(ERROR) << info();
+    }*/
 }
 
 int NFP::ShmSegment::remove()
 {
     detach();
     int ret = shmctl(shmid_, IPC_RMID, NULL);
-    if (ret) {
+    if (ret == 0) {
         size_ = 0;
         shmid_ = -1;
             DLOG(INFO) << "ShmSegment removed.";
-    } else
-        LOG(ERROR) << "Failed to remove ShmSegment.";
+    } else {
+        LOG(ERROR) << "Failed to remove ShmSegment. " << ret << " - "
+            << strerror(errno) << " [" << errno << "]";
+        LOG(ERROR) << info();
+    }
     return ret;
+}
+
+std::string NFP::ShmSegment::info()
+{
+    char* msg = new char[255];
+    sprintf(msg, "%s Size: %d Key: %d ShmId: %d",
+        keyFile_.c_str(),
+        (int)size_,
+        (int)key_,
+        (int)shmid_);
+    return std::string(msg);
+    //delete[] msg;
 }
 

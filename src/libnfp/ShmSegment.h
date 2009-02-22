@@ -8,7 +8,7 @@ class ShmSegment
 {
 
 public:
-    ShmSegment() {ShmSegment::ShmSegment("", 0);}
+    ShmSegment();
     ShmSegment(std::string, size_t);
     virtual ~ShmSegment();
 
@@ -30,6 +30,8 @@ public:
     
     int size() {return size_;}
     void size(int size) {if (size_ == 0) size_ = size;}
+    
+    std::string info();
     
 protected:
     std::string keyFile_;
