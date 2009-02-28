@@ -8,15 +8,15 @@
 #include "ShmSegment.h"
 
 NFP::ShmSegment::ShmSegment() :
-    keyFile_(""),
+    keyFileName_(""),
     key_(-1),
     shmid_(-1),
     size_(0),
     ptr_(NULL)
 {}
 
-NFP::ShmSegment::ShmSegment(std::string keyFile, size_t size):
-    keyFile_(keyFile),
+NFP::ShmSegment::ShmSegment(std::string keyFileName, size_t size):
+    keyFileName_(keyFileName),
     key_(-1),
     shmid_(-1),
     size_(size),
@@ -30,11 +30,12 @@ NFP::ShmSegment::~ShmSegment()
 
 void NFP::ShmSegment::create()
 {
-    key_ = ftok(keyFile_.c_str(), 'R');
+    key_ = ftok(keyFileName_.c_str(), 'R');
     if (size_ == 0 || key_ == -1) {
         LOG(ERROR) << "Cannot create ShmSegment with "
             << "Size: " << size_ << " "
-            << "Key: " << key_;
+            << "Key: " << key_
+            << ". Are you sure the shmkey file exists?";
     } else {
         shmid_ = shmget(key_, size_, 0600 | IPC_CREAT);
         if (shmid_ == -1) {
@@ -96,7 +97,7 @@ std::string NFP::ShmSegment::info()
 {
     char* msg = new char[255];
     sprintf(msg, "%s Size: %d Key: %d ShmId: %d",
-        keyFile_.c_str(),
+        keyFileName_.c_str(),
         (int)size_,
         (int)key_,
         (int)shmid_);

@@ -5,27 +5,43 @@
 #include <string>
 #include <list>
 #include <sys/stat.h>
+#include <stdlib.h>
 
 #include <QRegExp>
 
 #include "RatingsSS.h"
 #include "Rating.h"
 
-NFP::RatingsSS::RatingsSS(std::string keyFile) {
+NFP::RatingsSS::RatingsSS(std::string dataFileName, std::string keyFileName) {
     struct stat stFileInfo;
-    if (stat(keyFile.c_str(), &stFileInfo) == 0)
-        keyFile_ = keyFile;
+    if (stat(dataFileName.c_str(), &stFileInfo) == 0) {
+        dataFileName_ = dataFileName;
+            keyFileName_ = keyFileName;
+            if (stat(keyFileName.c_str(), &stFileInfo) == 0) {
+            std::ifstream in(keyFileName_.c_str());
+            std::string line;
+            getline(in, line);
+            int s = atoi(line.c_str());
+            if (s > 0) {
+                size(s * RATING_DATA_SIZE);
+                LOG(INFO) << "Found a shmkey file. size = " << s;
+            }
+        }
+        else {
+            load();
+        }
+    }
     else
-        LOG(ERROR) << "File " << keyFile << " does not exist."; 
+        LOG(ERROR) << "Data file " << dataFileName << " does not exist."; 
 }
 
 void NFP::RatingsSS::load()
 {
-    std::ifstream in(keyFile_.c_str());
+    std::ifstream in(dataFileName_.c_str());
     
     if (in.is_open())
     {
-        LOG(INFO) << "Parsing file " << keyFile_;
+        LOG(INFO) << "Parsing file " << dataFileName_;
         std::string line;
         QRegExp mvFileLineRegExp("^(\\d+),([1-5]),(\\d{4}-\\d{2}-\\d{2})$");
         int movie_id = -1;
@@ -58,7 +74,12 @@ void NFP::RatingsSS::load()
         LOG(INFO) << "File read for movie " << movie_id << ", "
             << ratings.size() << " ratings found.";
 
-        size(ratings.size() * RATING_DATA_SIZE);  
+        std::ofstream out(keyFileName_.c_str());
+        out << ratings.size() << std::endl;
+        out.close();
+
+        size(ratings.size() * RATING_DATA_SIZE);
+        
         create();
         attach();
         
@@ -74,7 +95,7 @@ void NFP::RatingsSS::load()
         LOG(INFO) << "...done";
     }
     else
-        LOG(ERROR) << "Unable to open file \"" << keyFile_ << "\" for reading.";    
+        LOG(ERROR) << "Unable to open file \"" << keyFileName_ << "\" for reading.";    
 }
 
 NFP::Rating* NFP::RatingsSS::ptr()
@@ -84,4 +105,10 @@ NFP::Rating* NFP::RatingsSS::ptr()
     } else {
         LOG(ERROR) << "ptr_ is null. " << info();
     }
+}
+
+int NFP::RatingsSS::remove()
+{
+    //Should remove shm keyfile
+    NFP::ShmSegment::remove();
 }

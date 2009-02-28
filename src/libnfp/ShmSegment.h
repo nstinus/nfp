@@ -17,8 +17,8 @@ public:
     virtual void detach();
     virtual int remove();
     
-    std::string keyFile() {return keyFile_;}
-    void keyFile(std::string keyFile) {if (keyFile == "") keyFile_ = keyFile;}
+    std::string keyFileName() {return keyFileName_;}
+    void keyFileName(std::string keyFileName) {if (keyFileName == "") keyFileName_ = keyFileName;}
     
     key_t key() {return key_;}
     void key(key_t key) {if (key_ == -1) key_ = key;}
@@ -34,7 +34,7 @@ public:
     std::string info();
     
 protected:
-    std::string keyFile_;
+    std::string keyFileName_;
     key_t key_;
     int shmid_;
     size_t size_;

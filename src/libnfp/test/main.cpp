@@ -71,13 +71,19 @@ int main (int argc, char const *argv[])
     }
     #endif
     
-    std::string fileName = std::string(getenv("NFP_TRAINING_SET_DIR"))
-        + std::string("/mv_0013755.txt");
-    NFP::RatingsSS ratings_1(fileName);
-    ratings_1.load();
+    std::string fileName = std::string(getenv("NFP_TRAINING_SET_DIR")) + "/"
+        + std::string(argv[1]);
+    std::string keyFileName = std::string(getenv("NFP_SHM_FILES")) + "/"
+        + std::string(argv[1]) + std::string(".shmkey");
+    NFP::RatingsSS ratings_1(fileName, keyFileName);
+    //ratings_1.load();
+    ratings_1.create();
+    ratings_1.attach();
     
+    int rates = 0;
     for (int i=0; i < ratings_1.nb_ratings(); i++)
-        LOG(INFO) << ratings_1.ptr()[i].to_string();
+        rates += ratings_1.ptr()[i].rate();
+    LOG(INFO) << "Average rate " << float(rates) / ratings_1.nb_ratings();
     
     // NFP::RatingsSS ratings_1p(fileName);
     //     ratings_1.attach();
@@ -86,7 +92,7 @@ int main (int argc, char const *argv[])
     //         LOG(INFO) << ratings_1p.ptr()[i].to_string();
     
     
-    ratings_1.remove();
+    //ratings_1.remove();
     
     return 0;
 }
