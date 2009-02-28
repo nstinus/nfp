@@ -1,30 +1,29 @@
 QT -= gui
 
-CONFIG += debug
-
-CONFIG(release, debug|release):message(Release build!)
-CONFIG(debug, debug|release):message(Debug build!)
-CONFIG(release, debug|release) {
-	DEFINES += NDEBUG
-}
+CONFIG += debug_and_release
 
 TEMPLATE = app
 
+CONFIG += qt
 CONFIG += stl
 CONFIG += x86
 CONFIG -= app_bundle
 
 LIBS += /usr/local/lib/libglog.dylib
 
-INCLUDEPATH += /Users/nico/projects/dev/nfp/src/model/
+CONFIG(release, debug|release) {
+	message(Release build!)
+	LIBS += /Users/nico/projects/dev/nfp/src/libnfp/libnfp.a
+	TARGET = shmloader
+}
 
-SOURCES += ../model/Rating.cpp
+CONFIG(debug, debug|release) {
+	message(Debug build!)
+	DEFINES += NDEBUG
+	LIBS += /Users/nico/projects/dev/nfp/src/libnfp/libnfpd.a
+	TARGET = shmloader.debug
+}
+
+INCLUDEPATH += /Users/nico/projects/dev/nfp/src/libnfp/
+
 SOURCES += main.cpp
-
-target.path += $(NFP_BIN_DIR)
-INSTALLS += target
-
-TARGET = shmloader
-
-
-

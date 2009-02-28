@@ -12,9 +12,9 @@ public:
     ShmSegment(std::string, size_t);
     virtual ~ShmSegment();
 
-    virtual void create();
-    virtual void attach();
-    virtual void detach();
+    virtual int create();
+    virtual int attach();
+    virtual int detach();
     virtual int remove();
     
     std::string keyFileName() {return keyFileName_;}

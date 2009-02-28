@@ -19,10 +19,9 @@
 #include <string>
 //#include <list>
 
-// Custom
+// NFP
 #include "Rating.h"
-
-#include <sys/shm.h>
+#include "RatingsSS.h"
 
 typedef unsigned char uchar;
 //typedef std::list<std::string> stringList;
@@ -114,8 +113,9 @@ int main (int argc, char** argv)
 	    filter = filterArg.getValue();
 	}
 	
-	LOG(INFO) << "path = " << path;
-	LOG(INFO) << "filter = " << filter;
+	LOG(INFO) << "Data files path   = " << path;
+	LOG(INFO) << "Data files filter = " << filter;
+    LOG(INFO) << "ShmKey files dir  = " << getenv("NFP_SHM_FILES");
     
 	QDir training_set_dir(QString::fromStdString(path), QString::fromStdString(filter));
 	if (!training_set_dir.exists()) {
@@ -139,8 +139,19 @@ int main (int argc, char** argv)
     for (QList<QString>::iterator it = files.begin(); it != files.end(); ++it)
     {
         LOG(INFO) << "Processing file " << (*it).toStdString();
-        QString filePath = training_set_dir.absolutePath() + QString("/") + (*it);
-        QFile file(filePath);
+        std::string filePath = QString(training_set_dir.absolutePath()
+                                        + QString("/")
+                                        + (*it)).toStdString();
+        std::string shmKeyFilePath = std::string(getenv("NFP_SHM_FILES"))
+            + std::string("/") + (*it).toStdString() + std::string(".shmkey");
+        
+        NFP::RatingsSS mySR(filePath, shmKeyFilePath);
+        if (mySR.create()) {
+            LOG(ERROR) << "Pfiout!";
+            exit(1);
+        }
+        
+        /*QFile file(filePath);
         if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             LOG(ERROR) << "Unable to open " << file.fileName().toStdString()
                 << " for reading. Skipping.";
@@ -184,11 +195,12 @@ int main (int argc, char** argv)
             }
         } while (!line.isNull());
         
-        file.close();
+        file.close();*/
     }
     
     //LOG(INFO) << ratings.size() << " ratings found";
     
+    #if 0
     //Means calculations
     LOG(INFO) << ratings.size() << " ratings found";
     
@@ -222,7 +234,6 @@ int main (int argc, char** argv)
     }
     LOG(INFO) << "Mean = " << rateMeansSum / (float)meanRateByMovie.size();
     
-    #if 0
     {
     key_t key;
     int shmid;
@@ -359,14 +370,14 @@ int main (int argc, char** argv)
     LOG(INFO) << "Deleting shm segment";
     }
     */
-    
+    /*
     // Clean-up
     LOG(INFO) << "Cleaning up ... ";
     for (QList<NFP::Rating*>::iterator it = ratings.begin(); it != ratings.end(); ++it)
             delete (*it);
             
     ratings.clear();
-    
+    */
     LOG(INFO) << "Bye-bye!";
     
     return EXIT_SUCCESS;

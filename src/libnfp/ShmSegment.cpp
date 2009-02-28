@@ -28,44 +28,52 @@ NFP::ShmSegment::~ShmSegment()
     detach();
 }
 
-void NFP::ShmSegment::create()
+int NFP::ShmSegment::create()
 {
+    int ret = 0;
     key_ = ftok(keyFileName_.c_str(), 'R');
     if (size_ == 0 || key_ == -1) {
         LOG(ERROR) << "Cannot create ShmSegment with "
             << "Size: " << size_ << " "
             << "Key: " << key_
             << ". Are you sure the shmkey file exists?";
+        ret++;
     } else {
         shmid_ = shmget(key_, size_, 0600 | IPC_CREAT);
         if (shmid_ == -1) {
             LOG(ERROR) << "Segment creation failed - "
                 << strerror(errno) << " [" << errno << "]";
             LOG(ERROR) << info();
+            ret++;
         }
         else
             DLOG(INFO) << "ShmSegment created.";
     }
+    return ret;
 }
 
-void NFP::ShmSegment::attach()
+int NFP::ShmSegment::attach()
 {
+    int ret = 0;
     if (shmid_ != -1) {
         ptr_ = shmat(shmid_, (void *)0, 0);
-        if ((char*)(ptr_) == (char*)(-1))
-            LOG(ERROR) << "Shm attach failed for "
-                << info();
+        if ((char*)(ptr_) == (char*)(-1)) {
+            LOG(ERROR) << "Shm attach failed for " << info();
+            ret++;
+        }
         DLOG(INFO) << "ShmSegment attached: " << ptr_;
     } else
         LOG(ERROR) << "Attach failed. Perhaps the segment has not been created.";
+    return ret;
 }
 
-void NFP::ShmSegment::detach()
+int NFP::ShmSegment::detach()
 {
+    int ret = 0;
     if(ptr_) {
         if (shmdt(ptr_)) {
-            LOG(ERROR) << "Shm detach failed.";
-            LOG(ERROR) << info();
+            LOG(ERROR) << "Shm detach failed." << info();
+            ret++;
         }
         else {
             ptr_ = NULL;
@@ -75,6 +83,7 @@ void NFP::ShmSegment::detach()
         LOG(ERROR) << "Cannot detach: ptr_ == NULL.";
         LOG(ERROR) << info();
     }*/
+    return ret;
 }
 
 int NFP::ShmSegment::remove()

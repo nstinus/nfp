@@ -80,19 +80,29 @@ void NFP::RatingsSS::load()
 
         size(ratings.size() * RATING_DATA_SIZE);
         
-        create();
-        attach();
+        int err = 0;
         
-        LOG(INFO) << "Loading ShmSegment (size " << size() << ")...";
-        int i = 0;
-        std::list<NFP::Rating*>::const_iterator it;
-        char* data = new char[RATING_DATA_SIZE];
-        for (it = ratings.begin(); it != ratings.end(); it++) {
-            (*it)->data(data);
-            memcpy((NFP::Rating*)(ptr()) + i, data, RATING_DATA_SIZE);
-            i++;
+        if (create()) {
+            LOG(ERROR) << "An error occured while creating shm segment";
+            err++;
         }
-        LOG(INFO) << "...done";
+        if (attach()) {
+            LOG(ERROR) << "An error occured while attaching shm segment";
+            err++;
+        }
+        
+        if (err == 0) {
+            LOG(INFO) << "Loading ShmSegment (size " << size() << ")...";
+            int i = 0;
+            std::list<NFP::Rating*>::const_iterator it;
+            char* data = new char[RATING_DATA_SIZE];
+            for (it = ratings.begin(); it != ratings.end(); it++) {
+                (*it)->data(data);
+                memcpy((NFP::Rating*)(ptr()) + i, data, RATING_DATA_SIZE);
+                i++;
+            }
+            LOG(INFO) << "...done";
+        }
     }
     else
         LOG(ERROR) << "Unable to open file \"" << keyFileName_ << "\" for reading.";    
@@ -109,6 +119,12 @@ NFP::Rating* NFP::RatingsSS::ptr()
 
 int NFP::RatingsSS::remove()
 {
-    //Should remove shm keyfile
-    NFP::ShmSegment::remove();
+    int ret = NFP::ShmSegment::remove();
+    if (ret == 0) {
+        LOG(INFO) << "Removing " << keyFileName_;
+        std::remove(keyFileName_.c_str());
+    } else {
+        LOG(ERROR) << "remove failed";
+    }
+    
 }
