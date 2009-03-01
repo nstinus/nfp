@@ -22,6 +22,10 @@ CONFIG(debug, debug|release) {
 	DEFINES += NDEBUG
 	LIBS += /Users/nico/projects/dev/nfp/src/libnfp/libnfpd.a
 	TARGET = nfpshm.debug
+	# Profiling
+	QMAKE_CFLAGS+=-pg
+	QMAKE_CXXFLAGS+=-pg
+	QMAKE_LFLAGS+=-pg
 }
 
 INCLUDEPATH += /Users/nico/projects/dev/nfp/src/libnfp/

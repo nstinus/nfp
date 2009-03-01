@@ -23,8 +23,13 @@ CONFIG(release, debug|release) {
 	message(Release build!)
 	DEFINES += NDEBUG
 	TARGET = nfp
+	# profiling
+	QMAKE_CFLAGS+=-pg
+	QMAKE_CXXFLAGS+=-pg
+	QMAKE_LFLAGS+=-pg
 }
 CONFIG(debug, debug|release) {
 	message(Debug build!)
 	TARGET = nfpd
 }
+
