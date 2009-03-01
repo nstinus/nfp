@@ -91,11 +91,6 @@ void NFP::Rating::data(char dest[RATING_DATA_SIZE]) const
 std::string NFP::Rating::to_string()
 {
     char ret[40];
-    //std::string hex = QString(QByteArray(*_data, sizeof(NFP::Rating)).toHex()).toStdString();
-    //std::string hash = QString(
-    //    QCryptographicHash::hash(
-    //        QByteArray(_data, sizeof(NFP::Rating)),
-    //        QCryptographicHash::Sha1).toHex()).toStdString();
     sprintf(ret, "%05d  %08d  %1d  %10s",
         movie_id(),
         user_id(), rate(),

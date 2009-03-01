@@ -63,7 +63,17 @@ void NFP::RatingsSS::load()
                     user_id = mvFileLineRegExp.cap(1).toInt();
                     rate = mvFileLineRegExp.cap(2).toInt();
                     date = mvFileLineRegExp.cap(3).toStdString();
+                    #ifndef NDEBUG
+                    char* msg = new char[50];
+                    sprintf(msg, "%05d  %08d  %1d  %10s", movie_id, user_id, rate, date.c_str(
+                    ));
+                    LOG(INFO) << "Read:   " << msg;
+                    delete[] msg;
+                    #endif
                     NFP::Rating* r = new NFP::Rating(movie_id, user_id, rate, date);
+                    #ifndef NDEBUG
+                    LOG(INFO) << "Stored: " << r->to_string();
+                    #endif
                     ratings.push_back(r);
                 }    
             }
