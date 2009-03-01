@@ -88,45 +88,38 @@ int rm(std::string movie_id = "")
 }
 
 
-int load(std::string movie_id = "")
+int load(std::string arg_movie_id = "")
 {
-    QDir training_set_dir(QString::fromStdString(NFP_TRAINING_SET_DIR), "mv_*.txt");
-    if (!training_set_dir.exists()) {
-        LOG(ERROR) << NFP_TRAINING_SET_DIR << " does not exist.";
-        return 1;	    
-	}
-	
-    QStringList files = training_set_dir.entryList();
+    int ret = 0;
     
-    QString movie_id_QS;
-    
-    QRegExp mvFileLineRegExp("^(\\d+),([1-5]),(\\d{4}-\\d{2}-\\d{2})$");
-    
-    for (QList<QString>::iterator it = files.begin(); it != files.end(); ++it)
-    {
-        LOG(INFO) << "Processing file " << (*it).toStdString();
-        std::string dataFilePath = QString(training_set_dir.absolutePath()
-                                        + QString("/")
-                                        + (*it)).toStdString();
-        std::string shmKeyFilePath = NFP_SHM_FILES;
-        shmKeyFilePath += "/";
-        shmKeyFilePath += (*it).toStdString();
-        shmKeyFilePath += ".shmkey";
-        
-        if ((int)shmKeyFilePath.find(".shmkey") == -1 ||
-                (movie_id != "" && (int)shmKeyFilePath.find(movie_id) == -1))
-            continue;
-        
-        NFP::RatingsSS mySR(dataFilePath, shmKeyFilePath);
-        if (mySR.create()) {
-            LOG(ERROR) << "Pfiout!";
-            exit(1);
-        }
-        
-        std::cout << dataFilePath << " loaded as " << mySR.key() << std::endl;
+    LOG(INFO) << "NFP_TRAINING_SET_DIR = " << NFP_TRAINING_SET_DIR;
+
+    DIR *dp;
+    struct dirent *dirp;
+    if((dp  = opendir(NFP_TRAINING_SET_DIR.c_str())) == NULL) {
+        LOG(ERROR) << "Error(" << errno << ") opening " << NFP_TRAINING_SET_DIR;
+        return errno;
     }
-    
-    return 0;
+
+    while ((dirp = readdir(dp)) != NULL) {
+        std::string dataFileName, keyFileName;
+        dataFileName = keyFileName = dirp->d_name;
+
+        if (arg_movie_id != "" && (int)dataFileName.find(arg_movie_id) == -1
+                || dataFileName == "."
+                || dataFileName == "..")
+            continue;
+
+        dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
+        keyFileName  = NFP_SHM_FILES + std::string("/") + keyFileName + std::string(".shmkey");
+
+        NFP::RatingsSS mySSR(dataFileName, keyFileName);
+        ret = mySSR.create();
+         
+        std::cout << dataFileName << " loaded as " << mySSR.key() << std::endl;
+    }
+    closedir(dp);
+    return ret;
 }
 
 
@@ -207,7 +200,7 @@ int infos(std::string movie_id = "")
     
     sprintf(msg, "%7s  %9d  %9d",
         "#   All", total_ratings, total_ratings * RATING_DATA_SIZE);
-    std::cout << std::endl << msg << std::endl;
+    std::cout << msg << std::endl;
     
     delete[] msg;
     
@@ -218,8 +211,7 @@ int infos(std::string movie_id = "")
 int ratings(std::string arg_movie_id = "", int arg_user_id = -1)
 {
     LOG(INFO) << "NFP_SHM_FILES = " << NFP_SHM_FILES;
-    LOG(INFO) << "arg_movie_id = " << arg_movie_id << " arg_user_id = " << arg_user_id;
-
+    
     DIR *dp;
     struct dirent *dirp;
     if((dp  = opendir(NFP_SHM_FILES.c_str())) == NULL) {
