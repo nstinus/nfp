@@ -123,7 +123,7 @@ int load(std::string movie_id = "")
             exit(1);
         }
         
-        std::cout << dataFilePath << " loaded" << std::endl;
+        std::cout << dataFilePath << " loaded as " << mySR.key() << std::endl;
     }
     
     return 0;
@@ -151,7 +151,7 @@ int infos(std::string movie_id = "")
         "R ArM",
         "Year",
         "Name");
-    std::cout << msg << std::endl << std::endl;
+    std::cout << msg << std::endl;
     
     while ((dirp = readdir(dp)) != NULL) {
         std::string keyFileName = dirp->d_name;
@@ -175,6 +175,8 @@ int infos(std::string movie_id = "")
             LOG(ERROR)<< "An error occured attaching to shm segment. ";
             continue;
         }
+        
+        // Here is the shit that changes...
         
         int m_id = mySSR.ptr()->movie_id();
         int nb_ratings = mySSR.nb_ratings();
@@ -253,12 +255,17 @@ int ratings(std::string arg_movie_id = "", int arg_user_id = -1)
         
         NFP::Rating* myRating = NULL;
         
+        char* msg = new char[50];
+        sprintf(msg, "%5s  %8s  %1s  %10s", "#m_id", "user_id", "R", "Date");
+        std::cout << msg << std::endl;
+        delete[] msg;
+        
         for (int i = 0; i < nb_ratings; i++) {
             myRating = (NFP::Rating*)(mySSR.ptr() + i);
-            LOG(INFO) << "(" << arg_user_id << "!= -1) = " << (arg_user_id != -1);
-            LOG(INFO) << "(" << arg_user_id
-                      << " != " << (int)myRating->user_id()
-                      << " = " << (arg_user_id != (int)myRating->user_id());
+            // LOG(INFO) << "(" << arg_user_id << "!= -1) = " << (arg_user_id != -1);
+            //             LOG(INFO) << "(" << arg_user_id
+            //                       << " != " << (int)myRating->user_id()
+            //                       << " = " << (arg_user_id != (int)myRating->user_id());
             if (arg_user_id == -1 || arg_user_id == (int)myRating->user_id())
                 std::cout << myRating->to_string() << std::endl;
         }

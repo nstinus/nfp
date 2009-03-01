@@ -96,7 +96,7 @@ std::string NFP::Rating::to_string()
     //    QCryptographicHash::hash(
     //        QByteArray(_data, sizeof(NFP::Rating)),
     //        QCryptographicHash::Sha1).toHex()).toStdString();
-    sprintf(ret, "%05d %08d %1d %10s",
+    sprintf(ret, "%05d  %08d  %1d  %10s",
         movie_id(),
         user_id(), rate(),
         date().c_str());
