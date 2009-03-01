@@ -9,10 +9,10 @@
 #include <iostream>
 #include <fstream>
 
-#include <QDir>
+// #include <QDir>
 #include <QString>
 #include <QRegExp>
-#include <QList>
+// #include <QList>
 
 #include "RatingsSS.h"
 
@@ -25,7 +25,7 @@ int rm(std::string);
 int load(std::string);
 int infos(std::string);
 void usage();
-int ratings(std::string, int);
+int ratings(const std::string, const std::string);
 
 int movieYear(int);
 std::string movieName(int);
@@ -47,7 +47,7 @@ int main (int argc, char* argv[])
     else if (argc > 1 && strcmp(argv[1], "infos") == 0)
         infos((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "ratings") == 0)
-        ratings((argc > 2) ? argv[2] : "", (argc > 3) ? atoi(argv[3]) : -1);
+        ratings((argc > 2) ? argv[2] : "", (argc > 3) ? argv[3] : "");
     else
         usage();
     
@@ -80,6 +80,7 @@ int rm(std::string movie_id = "")
         
         NFP::RatingsSS mySSR(dataFileName, keyFileName);
         mySSR.create();
+        
         mySSR.remove();
         std::cout << "Removed " << mySSR.keyFileName() << std::endl;
    }
@@ -208,7 +209,7 @@ int infos(std::string movie_id = "")
 }
 
 
-int ratings(std::string arg_movie_id = "", int arg_user_id = -1)
+int ratings(const std::string arg_movie_id = "", const std::string arg_user_id = "")
 {
     LOG(INFO) << "NFP_SHM_FILES = " << NFP_SHM_FILES;
     
@@ -252,15 +253,17 @@ int ratings(std::string arg_movie_id = "", int arg_user_id = -1)
         std::cout << msg << std::endl;
         delete[] msg;
         
+        char* myRuId_s = new char[10];
+        std::string myRuIdS("");
+        
         for (int i = 0; i < nb_ratings; i++) {
             myRating = (NFP::Rating*)(mySSR.ptr() + i);
-            // LOG(INFO) << "(" << arg_user_id << "!= -1) = " << (arg_user_id != -1);
-            //             LOG(INFO) << "(" << arg_user_id
-            //                       << " != " << (int)myRating->user_id()
-            //                       << " = " << (arg_user_id != (int)myRating->user_id());
-            if (arg_user_id == -1 || arg_user_id == (int)myRating->user_id())
+            sprintf(myRuId_s, "%d", myRating->user_id());
+            myRuIdS = myRuId_s;
+            if (arg_user_id == "" || (int)myRuIdS.find(arg_user_id) != -1)
                 std::cout << myRating->to_string() << std::endl;
         }
+        delete[] myRuId_s;
         
         mySSR.detach();
     }
@@ -299,10 +302,6 @@ void fillMoviesMaps()
     LOG(INFO) << "movieYears and/or movieNames maps are empty. Filling up ...";
     
     std::string movie_titlesFilePath = getenv("NFP_MOVIE_TITLES_FILE");
-    // if (strcmp(movie_titlesFilePath.c_str(), "") == 0) {
-    //         LOG(ERROR) << "env. var. NFP_MOVIE_TITLES_FILE not set.";
-    //         return;
-    //     }
     
     std::ifstream in(movie_titlesFilePath.c_str());
     
