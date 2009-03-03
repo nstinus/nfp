@@ -138,13 +138,13 @@ int infos(std::string movie_id = "")
 
     char* msg = new char[256];
     int total_ratings = 0;
+    double allR_mean = 0;
     
-    sprintf(msg, "%7s  %9s  %9s  %5s  %5s  %4s  %s",
+    sprintf(msg, "%7s  %9s  %9s  %5s  %4s  %s",
         "#    id",
         "Nb. Rat.",
         "Mem.",
         "R ArM",
-        "Rank",
         "Year",
         "Name");
     std::cout << msg << std::endl;
@@ -172,8 +172,6 @@ int infos(std::string movie_id = "")
             continue;
         }
         
-        // Here is the shit that changes...
-        
         int m_id = mySSR.ptr()->movie_id();
         int nb_ratings = mySSR.nb_ratings();
         
@@ -183,30 +181,31 @@ int infos(std::string movie_id = "")
             myRate = ((NFP::Rating*)(mySSR.ptr() + i))->rate();
             armean_rate += (double)myRate;
         }
-        armean_rate /= nb_ratings;
-        //double rank = sqrt(nb_ratings) * pow(armean_rate, 2);
-        double rank = 1;
-        
         mySSR.detach();
         
-        total_ratings += nb_ratings;
-        sprintf(msg, "%07d  %9d  %9d  %5.3f  %5.0f  %4d  %s",
+        armean_rate /= nb_ratings;
+        
+        sprintf(msg, "%07d  %9d  %9d  %5.3f  %4d  %s",
             m_id,
             nb_ratings,
             nb_ratings * RATING_DATA_SIZE,
             armean_rate,
-            rank,
             movieYear(m_id),
             movieName(m_id).c_str());
         std::cout << msg << std::endl;
+
+        allR_mean = (allR_mean*total_ratings + armean_rate*nb_ratings);
+        total_ratings += nb_ratings;
+        allR_mean /= (double)(total_ratings);
+        
         LOG(INFO) << msg;  
            
     }
     closedir(dp);
     
-    sprintf(msg, "%7s  %9d  %9d",
-        "#   All", total_ratings, total_ratings * RATING_DATA_SIZE);
-    std::cout << msg << std::endl;
+    sprintf(msg, "%7s  %9d  %9d  %7.5f",
+        "#   All", total_ratings, total_ratings * RATING_DATA_SIZE, allR_mean);
+    std::cout << std::endl << msg << std::endl;
     
     delete[] msg;
     
