@@ -7,6 +7,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include <iostream>
 #include <fstream>
 
@@ -31,6 +32,7 @@ int ratings(const std::string, const std::string);
 int movieYear(int);
 std::string movieName(int);
 void fillMoviesMaps();
+std::string hr_size(int);
 
 std::map<int, int> movieYears;
 std::map<int, std::string> movieNames;
@@ -146,6 +148,7 @@ int infos(std::string movie_id = "")
     char* msg = new char[256];
     int total_ratings = 0;
     double allR_mean = 0;
+    int nb_movies = 0;
     
     sprintf(msg, "%7s  %9s  %9s  %5s  %4s  %s",
         "#    id",
@@ -204,14 +207,18 @@ int infos(std::string movie_id = "")
         allR_mean = (allR_mean*total_ratings + armean_rate*nb_ratings);
         total_ratings += nb_ratings;
         allR_mean /= (double)(total_ratings);
+        nb_movies++;
         
-        LOG(INFO) << msg;  
-           
+        LOG(INFO) << msg;
     }
     closedir(dp);
     
-    sprintf(msg, "%7s  %9d  %9d  %7.5f",
-        "#   All", total_ratings, total_ratings * RATING_DATA_SIZE, allR_mean);
+    sprintf(msg, "NB%5d  %9d  %9d  %11.9f  %s",
+        nb_movies,
+        total_ratings,
+        total_ratings * RATING_DATA_SIZE,
+        allR_mean,
+        hr_size(total_ratings * RATING_DATA_SIZE * 4 / 8).c_str());
     std::cout << std::endl << msg << std::endl;
     
     delete[] msg;
@@ -345,4 +352,22 @@ void fillMoviesMaps()
 void usage()
 {
     std::cout << "Usage..." << std::endl;
+}
+
+std::string hr_size(int bsize)
+{
+    std::vector<std::string> units;
+    units.push_back("o");
+    units.push_back("ko");
+    units.push_back("Mo");
+    
+    int iter = 0;
+    while (iter < 3 && bsize > 1024) {
+        bsize /= 1024;
+        iter++;
+    }
+    
+    char* msg = new char[10];
+    sprintf(msg, "%d%-2s", bsize, units[iter].c_str());
+    return std::string(msg);
 }
