@@ -41,18 +41,20 @@ int main (int argc, char* argv[])
     google::InitGoogleLogging(argv[0]);
     google::InstallFailureSignalHandler();
     
+    int ret = 0;
+    
     if (argc > 1 && strcmp(argv[1], "remove") == 0)
-        rm((argc > 2) ? argv[2] : "");
+        ret += rm((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "load") == 0)
-        load((argc > 2) ? argv[2] : "");
+        ret += load((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "infos") == 0)
-        infos((argc > 2) ? argv[2] : "");
+        ret += infos((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "ratings") == 0)
-        ratings((argc > 2) ? argv[2] : "", (argc > 3) ? argv[3] : "");
+        ret += ratings((argc > 2) ? argv[2] : "", (argc > 3) ? argv[3] : "");
     else
         usage();
     
-    return 0;
+    return ret;
 }
 
 
@@ -104,6 +106,7 @@ int load(std::string arg_movie_id = "")
     }
 
     while ((dirp = readdir(dp)) != NULL) {
+        int local_err = 0;
         std::string dataFileName, keyFileName;
         dataFileName = keyFileName = dirp->d_name;
 
@@ -116,9 +119,13 @@ int load(std::string arg_movie_id = "")
         keyFileName  = NFP_SHM_FILES + std::string("/") + keyFileName + std::string(".shmkey");
 
         NFP::RatingsSS mySSR(dataFileName, keyFileName);
-        ret = mySSR.create();
-         
-        std::cout << dataFileName << " loaded as " << mySSR.key() << std::endl;
+        local_err = mySSR.create();
+        
+        if (local_err == 0) 
+            std::cout << dataFileName << " loaded as " << mySSR.key() << std::endl;
+        else
+            std::cout << "Unable to load " << dataFileName << std::endl;
+        ret += local_err;
     }
     closedir(dp);
     return ret;
