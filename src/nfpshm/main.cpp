@@ -85,9 +85,9 @@ int rm(std::string movie_id = "")
         
         NFP::RatingsSS mySSR(dataFileName, keyFileName);
         mySSR.create();
-        
+        std::string info(mySSR.info());
         mySSR.remove();
-        std::cout << "Removed " << mySSR.keyFileName() << std::endl;
+        std::cout << "Removed " << info << std::endl;
    }
    closedir(dp);
    return 0;
@@ -124,7 +124,7 @@ int load(std::string arg_movie_id = "")
         local_err = mySSR.create();
         
         if (local_err == 0) 
-            std::cout << dataFileName << " loaded as " << mySSR.key() << std::endl;
+            std::cout << "Loaded  " << mySSR.info() << std::endl;
         else
             std::cout << "Unable to load " << dataFileName << std::endl;
         ret += local_err;
