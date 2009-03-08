@@ -93,7 +93,8 @@ std::string NFP::Rating::to_string()
     char ret[40];
     sprintf(ret, "%05d  %08d  %1d  %10s",
         movie_id(),
-        user_id(), rate(),
+        user_id(),
+        rate(),
         date().c_str());
     return (std::string)ret;
 }
@@ -108,8 +109,8 @@ void NFP::Rating::set_user_id(uint const& u_id)
 {
     *(uint*)&_data[BASICRATING__USER_ID_POS] =
         *(uint*)&_data[BASICRATING__USER_ID_POS] &
-            (uint)0xFFFFFFFF - (uint)BASICRATING__USER_ID_MASK;
-    *(uint*)&_data[BASICRATING__USER_ID_POS] |= u_id & (uint)BASICRATING__USER_ID_MASK;
+            ((uint)0xFFFFFFFF - (uint)BASICRATING__USER_ID_MASK);
+    *(uint*)&_data[BASICRATING__USER_ID_POS] |= (u_id & (uint)BASICRATING__USER_ID_MASK);
 }
 
 void NFP::Rating::set_rate(uchar const& r)

@@ -8,7 +8,7 @@
 /*  Abstract:                                                                                    */
 /*    Low-level representation for a rating from the training_set.                               */
 /*    The fields are: movie_id [0, 17770],   card = 17770  < 2**15 -> 15 bits                    */
-/*                    user_id  [6, 2649429], card = 480189 < 2**19 -> 19 bits                    */
+/*                    user_id  [6, 2649429], card = 480189 < 2**24 -> 24 bits                    */
 /*                    rate     [1, 5],       card = 5      < 2**3  ->  3 bits                    */
 /*                    date     [0, 2182],    card = 2182   < 2**12 -> 12 bits                    */
 /*                                                                                               */
@@ -16,9 +16,9 @@
 /*                                                                                               */
 /*      Bytes :      |       |       |       |       |       |       |       |       |           */
 /*      char[i]:     -       7       6       5       4       3       2       1       0           */
-/*      Fields:      |X--------------X    X------------------X    X--X   X-----------X           */
+/*      Fields:      |X--------------X-----------------------X    X--X   X-----------X           */
 /*      Name:        |    Movie_id   |        User_id        |  Rate |      Date     |           */
-/*      Size:        |       15      |           19          |    3  |       12      |           */
+/*      Size:        |       15      |           24          |    3  |       12      |           */
 /*                                                                                               */
 /*  General considerations:                                                                      */
 /*                                                                                               */
@@ -43,7 +43,7 @@ const uint BASICRATING__MOVIE_ID_POS  = 6;
 
 const uint BASICRATING__DATE_MASK     = 0x0FFF;
 const uint BASICRATING__RATE_MASK     = 0x0007;
-const uint BASICRATING__USER_ID_MASK  = 0x0007FFFF;
+const uint BASICRATING__USER_ID_MASK  = 0x00FFFFFF;
 const uint BASICRATING__MOVIE_ID_MASK = 0x7FFF;
 
 const uint RATING_DATA_SIZE = 8;
