@@ -1,7 +1,8 @@
 #include <glog/logging.h>
 
 #include "Rating.h"
-#include "RatingsSS.h"
+#include "RatingsShmSegment.h"
+#include "Ratings.h"
 
 //#include <list>
 #include <string>
@@ -14,6 +15,8 @@ int main (int argc, char const *argv[])
 {
     google::InitGoogleLogging(argv[0]);
     google::InstallFailureSignalHandler();
+    
+    LOG(INFO) << "Starting tests. Hello!"; 
     
     #if 0
     {
@@ -71,11 +74,12 @@ int main (int argc, char const *argv[])
     }
     #endif
     
+    #if 0
     std::string fileName = std::string(getenv("NFP_TRAINING_SET_DIR")) + "/"
         + std::string(argv[1]);
     std::string keyFileName = std::string(getenv("NFP_SHM_FILES")) + "/"
         + std::string(argv[1]) + std::string(".shmkey");
-    NFP::RatingsSS ratings_1(fileName, keyFileName);
+    NFP::RatingsShmSegment ratings_1(fileName, keyFileName);
     //ratings_1.load();
     ratings_1.create();
     ratings_1.attach();
@@ -85,7 +89,7 @@ int main (int argc, char const *argv[])
         rates += ratings_1.ptr()[i].rate();
     LOG(INFO) << "Average rate " << float(rates) / ratings_1.nb_ratings();
     
-    // NFP::RatingsSS ratings_1p(fileName);
+    // NFP::RatingsShmSegment ratings_1p(fileName);
     //     ratings_1.attach();
     //     
     //     for (int i=0; i < ratings_1p.nb_ratings(); i++)
@@ -93,6 +97,12 @@ int main (int argc, char const *argv[])
     
     
     //ratings_1.remove();
+    #endif
     
+    NFP::Ratings* R = new NFP::Ratings();
+    R->load("");
+    delete R;
+    
+    LOG(INFO) << "Finished testing. Bye! Bye!";
     return 0;
 }

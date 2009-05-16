@@ -1,5 +1,5 @@
-#ifndef __NFP__RATINGS_H__
-#define __NFP__RATINGS_H__
+#ifndef __NFP__RATINGSSHMSEGMENT_H__
+#define __NFP__RATINGSSHMSEGMENT_H__
 
 #include <string>
 
@@ -10,11 +10,11 @@
 namespace NFP
 {
 
-class RatingsSS : public ShmSegment
+class RatingsShmSegment : public ShmSegment
 {
 public:
-    RatingsSS(std::string, std::string);
-    ~RatingsSS() {}
+    RatingsShmSegment(std::string, std::string);
+    ~RatingsShmSegment() {}
     
     void load();
     NFP::Rating* ptr();
@@ -27,4 +27,4 @@ private:
 
 }
 
-#endif
+#endif // __NFP__RATINGSSHMSEGMENT_H__

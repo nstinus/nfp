@@ -9,10 +9,10 @@
 
 #include <QRegExp>
 
-#include "RatingsSS.h"
+#include "RatingsShmSegment.h"
 #include "Rating.h"
 
-NFP::RatingsSS::RatingsSS(std::string dataFileName, std::string keyFileName) {
+NFP::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::string keyFileName) {
     struct stat stFileInfo;
     if (stat(dataFileName.c_str(), &stFileInfo) == 0) {
         dataFileName_ = dataFileName;
@@ -35,7 +35,7 @@ NFP::RatingsSS::RatingsSS(std::string dataFileName, std::string keyFileName) {
         LOG(ERROR) << "Data file " << dataFileName << " does not exist."; 
 }
 
-void NFP::RatingsSS::load()
+void NFP::RatingsShmSegment::load()
 {
     std::ifstream in(dataFileName_.c_str());
     
@@ -102,7 +102,7 @@ void NFP::RatingsSS::load()
         }
         
         if (err == 0) {
-            LOG(INFO) << "Loading ShmSegment (size " << size() << ")...";
+            LOG(INFO) << "Loading ShmSegment (size " << size() << ") ...";
             int i = 0;
             std::list<NFP::Rating*>::const_iterator it;
             char* data = new char[RATING_DATA_SIZE];
@@ -111,23 +111,24 @@ void NFP::RatingsSS::load()
                 memcpy((NFP::Rating*)(ptr()) + i, data, RATING_DATA_SIZE);
                 i++;
             }
-            LOG(INFO) << "...done";
+            LOG(INFO) << "... done";
         }
     }
     else
         LOG(ERROR) << "Unable to open file \"" << keyFileName_ << "\" for reading.";    
 }
 
-NFP::Rating* NFP::RatingsSS::ptr()
+NFP::Rating* NFP::RatingsShmSegment::ptr()
 {
     if (ptr_) {
         return (NFP::Rating*)ptr_;
     } else {
         LOG(ERROR) << "ptr_ is null. " << info();
     }
+    return NULL;
 }
 
-int NFP::RatingsSS::remove()
+int NFP::RatingsShmSegment::remove()
 {
     int ret = NFP::ShmSegment::remove();
     if (ret == 0) {
@@ -136,5 +137,5 @@ int NFP::RatingsSS::remove()
     } else {
         LOG(ERROR) << "remove failed";
     }
-    
+    return ret;
 }

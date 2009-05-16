@@ -13,11 +13,15 @@ LIBS += /usr/local/lib/libglog.a
 
 HEADERS += Rating.h
 HEADERS += ShmSegment.h
-HEADERS += RatingsSS.h
+HEADERS += RatingsShmSegment.h
+HEADERS += User.h
+HEADERS += Ratings.h
 
 SOURCES += Rating.cpp
 SOURCES += ShmSegment.cpp
-SOURCES += RatingsSS.cpp
+SOURCES += RatingsShmSegment.cpp
+SOURCES += User.cpp
+SOURCES += Ratings.cpp
 
 CONFIG(release, debug|release) {
 	message(Release build!)

@@ -1,5 +1,5 @@
-#ifndef __NFP__BASICRATING_H__
-#define __NFP__BASICRATING_H__
+#ifndef __NFP__RATING_H__
+#define __NFP__RATING_H__
 
 /*************************************************************************************************/
 /*                                          Rating                                               */
@@ -59,7 +59,7 @@ ushort DateS2US(std::string const&);
 class Rating
 {
 private:
-    char _data[RATING_DATA_SIZE];
+    char data_[RATING_DATA_SIZE];
 
 public:
     /*****************/
@@ -102,4 +102,4 @@ public:
 
 } // NFP
 
-#endif // __NFP__BASICRATING_H__
+#endif // __NFP__RATING_H__

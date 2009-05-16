@@ -18,7 +18,7 @@ ushort NFP::DateS2US(std::string const& d){
 
 NFP::Rating::Rating()
 {
-    memset(_data, 0, RATING_DATA_SIZE);
+    memset(data_, 0, RATING_DATA_SIZE);
 }
 
 NFP::Rating::Rating(ushort const& m, uint const& u, uchar const& r, ushort const& d)
@@ -43,13 +43,13 @@ NFP::Rating::Rating(char const* data)
     //DLOG(INFO) << "\" "
     //    << QString(QByteArray(data, RATING_DATA_SIZE).toHex()).toStdString()
     //    << " \"";
-    memcpy(_data, data, RATING_DATA_SIZE);
-    //if (memcmp(data, _data, RATING_DATA_SIZE)) LOG(ERROR) << "Ouch!";
+    memcpy(data_, data, RATING_DATA_SIZE);
+    //if (memcmp(data, data_, RATING_DATA_SIZE)) LOG(ERROR) << "Ouch!";
 }
 
 ushort NFP::Rating::movie_id() const
 {
-    return *(ushort*)&_data[BASICRATING__MOVIE_ID_POS];
+    return *(ushort*)&data_[BASICRATING__MOVIE_ID_POS];
 }
 
 /*int NFP::Rating::movie_id() const
@@ -60,22 +60,22 @@ ushort NFP::Rating::movie_id() const
 
 uint NFP::Rating::user_id() const 
 { 
-    return *((uint*)&_data[BASICRATING__USER_ID_POS]) & (uint)BASICRATING__USER_ID_MASK;
+    return *((uint*)&data_[BASICRATING__USER_ID_POS]) & (uint)BASICRATING__USER_ID_MASK;
 }
 
 uchar NFP::Rating::raw_rate() const
 {
-    return _data[BASICRATING__RATE_POS];
+    return data_[BASICRATING__RATE_POS];
 }
 
 ushort NFP::Rating::rate() const
 {
-    return (ushort)_data[BASICRATING__RATE_POS];
+    return (ushort)data_[BASICRATING__RATE_POS];
 }
 
 ushort NFP::Rating::raw_date() const
 {
-    return *(ushort*)&_data[BASICRATING__DATE_POS];
+    return *(ushort*)&data_[BASICRATING__DATE_POS];
 }
 
 std::string NFP::Rating::date() const
@@ -85,7 +85,7 @@ std::string NFP::Rating::date() const
 
 void NFP::Rating::data(char dest[RATING_DATA_SIZE]) const
 {
-    memcpy(dest, _data, RATING_DATA_SIZE);
+    memcpy(dest, data_, RATING_DATA_SIZE);
 }
 
 std::string NFP::Rating::to_string()
@@ -101,24 +101,24 @@ std::string NFP::Rating::to_string()
 
 void NFP::Rating::set_movie_id(ushort const& movie_id)
 {
-    *(ushort*)&_data[BASICRATING__MOVIE_ID_POS] =
+    *(ushort*)&data_[BASICRATING__MOVIE_ID_POS] =
         (movie_id & (ushort)BASICRATING__MOVIE_ID_MASK);
 }
 
 void NFP::Rating::set_user_id(uint const& u_id)
 {
-    *(uint*)&_data[BASICRATING__USER_ID_POS] =
-        *(uint*)&_data[BASICRATING__USER_ID_POS] &
+    *(uint*)&data_[BASICRATING__USER_ID_POS] =
+        *(uint*)&data_[BASICRATING__USER_ID_POS] &
             ((uint)0xFFFFFFFF - (uint)BASICRATING__USER_ID_MASK);
-    *(uint*)&_data[BASICRATING__USER_ID_POS] |= (u_id & (uint)BASICRATING__USER_ID_MASK);
+    *(uint*)&data_[BASICRATING__USER_ID_POS] |= (u_id & (uint)BASICRATING__USER_ID_MASK);
 }
 
 void NFP::Rating::set_rate(uchar const& r)
 {
-    _data[BASICRATING__RATE_POS] = (char)(r & (uchar)BASICRATING__RATE_MASK);
+    data_[BASICRATING__RATE_POS] = (char)(r & (uchar)BASICRATING__RATE_MASK);
 }
 
 void NFP::Rating::set_date(ushort const& d)
 {
-    *(ushort*)&_data[BASICRATING__DATE_POS] = (d & (ushort)BASICRATING__DATE_MASK);
+    *(ushort*)&data_[BASICRATING__DATE_POS] = (d & (ushort)BASICRATING__DATE_MASK);
 }

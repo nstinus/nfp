@@ -16,7 +16,7 @@
 #include <QRegExp>
 // #include <QList>
 
-#include "RatingsSS.h"
+#include "RatingsShmSegment.h"
 
 
 const std::string NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
@@ -26,6 +26,7 @@ const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
 int rm(std::string);
 int load(std::string);
 int infos(std::string);
+int users();
 void usage();
 int ratings(const std::string, const std::string);
 
@@ -53,6 +54,8 @@ int main (int argc, char* argv[])
         ret += infos((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "ratings") == 0)
         ret += ratings((argc > 2) ? argv[2] : "", (argc > 3) ? argv[3] : "");
+    else if (argc > 1 && strcmp(argv[1], "users") == 0)
+        ret += users();
     else
         usage();
     
@@ -83,7 +86,7 @@ int rm(std::string movie_id = "")
         dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
         keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
         
-        NFP::RatingsSS mySSR(dataFileName, keyFileName);
+        NFP::RatingsShmSegment mySSR(dataFileName, keyFileName);
         mySSR.create();
         std::string info(mySSR.info());
         mySSR.remove();
@@ -120,7 +123,7 @@ int load(std::string arg_movie_id = "")
         dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
         keyFileName  = NFP_SHM_FILES + std::string("/") + keyFileName + std::string(".shmkey");
 
-        NFP::RatingsSS mySSR(dataFileName, keyFileName);
+        NFP::RatingsShmSegment mySSR(dataFileName, keyFileName);
         local_err = mySSR.create();
         
         if (local_err == 0) 
@@ -171,7 +174,7 @@ int infos(std::string movie_id = "")
         dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
         keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
 
-        NFP::RatingsSS mySSR(dataFileName, keyFileName);
+        NFP::RatingsShmSegment mySSR(dataFileName, keyFileName);
         
         if (mySSR.create()) {
             LOG(ERROR) << "An error occured creating shm segment. ";
@@ -250,7 +253,7 @@ int ratings(const std::string arg_movie_id = "", const std::string arg_user_id =
         dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
         keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
 
-        NFP::RatingsSS mySSR(dataFileName, keyFileName);
+        NFP::RatingsShmSegment mySSR(dataFileName, keyFileName);
         
         if (mySSR.create()) {
             LOG(ERROR) << "An error occured creating shm segment. ";
@@ -351,7 +354,9 @@ void fillMoviesMaps()
 
 void usage()
 {
-    std::cout << "Usage..." << std::endl;
+    std::string desc;
+    desc  = "nfpshm <load|remove|infos|users> [movie]\n";
+    std::cout << desc << std::endl;
 }
 
 std::string hr_size(int bsize)
@@ -370,4 +375,69 @@ std::string hr_size(int bsize)
     char* msg = new char[10];
     sprintf(msg, "%d%-2s", bsize, units[iter].c_str());
     return std::string(msg);
+}
+
+int users()
+{
+    // LOG(INFO) << "NFP_SHM_FILES = " << NFP_SHM_FILES;
+    // 
+    // DIR *dp;
+    // struct dirent *dirp;
+    // if((dp  = opendir(NFP_SHM_FILES.c_str())) == NULL) {
+    //     LOG(ERROR) << "Error(" << errno << ") opening " << NFP_SHM_FILES;
+    //     return errno;
+    // }
+    // 
+    // std::map<uint, NFP::User*> users;
+    // 
+    // while ((dirp = readdir(dp)) != NULL) {
+    //     std::string keyFileName = dirp->d_name;
+    // 
+    //     if ((int)keyFileName.find(".shmkey") == -1)
+    //         continue;
+    // 
+    //     std::string dataFileName = keyFileName;
+    //     dataFileName.erase(dataFileName.end()-7, dataFileName.end());
+    //     dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
+    //     keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
+    // 
+    //     NFP::RatingsShmSegment mySSR(dataFileName, keyFileName);
+    //     
+    //     if (mySSR.create()) {
+    //         LOG(ERROR) << "An error occured creating shm segment. ";
+    //         continue;
+    //     }
+    //     if (mySSR.attach()) {
+    //         LOG(ERROR)<< "An error occured attaching to shm segment. ";
+    //         continue;
+    //     }
+    //     
+    //     int nb_ratings = mySSR.nb_ratings();
+    //     LOG(INFO) << "Found " << nb_ratings;
+    //     
+    //     NFP::Rating* myRating = NULL;
+    //     
+    //     char* msg = new char[50];
+    //     sprintf(msg, "%5s  %8s  %1s  %10s", "#m_id", "user_id", "R", "Date");
+    //     std::cout << msg << std::endl;
+    //     delete[] msg;
+    //     
+    //     char* myRuId_s = new char[10];
+    //     std::string myRuIdS("");
+    //     
+    //     for (int i = 0; i < nb_ratings; i++) {
+    //         myRating = (NFP::Rating*)(mySSR.ptr() + i);
+    //         if not users.has_key(myRating->user_id())
+    //         sprintf(myRuId_s, "%d", myRating->user_id());
+    //         myRuIdS = myRuId_s;
+    //         if (arg_user_id == "" || (int)myRuIdS.find(arg_user_id) != -1)
+    //             std::cout << myRating->to_string() << std::endl;
+    //     }
+    //     delete[] myRuId_s;
+    //     
+    //     mySSR.detach();
+    // }
+    // closedir(dp);
+    // 
+    return 0;    
 }
