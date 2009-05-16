@@ -10,14 +10,17 @@
 namespace NFP
 {
 
-class RatingsShmSegment : public ShmSegment
+namespace shm
+{
+
+class RatingsShmSegment : public base::ShmSegment
 {
 public:
     RatingsShmSegment(std::string, std::string);
     ~RatingsShmSegment() {}
     
     void load();
-    NFP::Rating* ptr();
+    NFP::model::Rating* ptr();
     int nb_ratings() {return size_ / RATING_DATA_SIZE;}
     int remove();
     
@@ -25,6 +28,7 @@ private:
     std::string dataFileName_;
 };
 
+}
 }
 
 #endif // __NFP__RATINGSSHMSEGMENT_H__

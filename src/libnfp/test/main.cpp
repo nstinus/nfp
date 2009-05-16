@@ -2,7 +2,7 @@
 
 #include "Rating.h"
 #include "RatingsShmSegment.h"
-#include "Ratings.h"
+#include "RatingsManager.h"
 
 //#include <list>
 #include <string>
@@ -79,7 +79,7 @@ int main (int argc, char const *argv[])
         + std::string(argv[1]);
     std::string keyFileName = std::string(getenv("NFP_SHM_FILES")) + "/"
         + std::string(argv[1]) + std::string(".shmkey");
-    NFP::RatingsShmSegment ratings_1(fileName, keyFileName);
+    NFP::model::RatingsShmSegment ratings_1(fileName, keyFileName);
     //ratings_1.load();
     ratings_1.create();
     ratings_1.attach();
@@ -89,7 +89,7 @@ int main (int argc, char const *argv[])
         rates += ratings_1.ptr()[i].rate();
     LOG(INFO) << "Average rate " << float(rates) / ratings_1.nb_ratings();
     
-    // NFP::RatingsShmSegment ratings_1p(fileName);
+    // NFP::model::RatingsShmSegment ratings_1p(fileName);
     //     ratings_1.attach();
     //     
     //     for (int i=0; i < ratings_1p.nb_ratings(); i++)
@@ -99,9 +99,15 @@ int main (int argc, char const *argv[])
     //ratings_1.remove();
     #endif
     
-    NFP::Ratings* R = new NFP::Ratings();
-    R->load("");
-    delete R;
+    NFP::shm::RatingsManager* R1 = NFP::shm::RatingsManager::instance();
+    LOG(INFO) << "R1 = " << R1;
+    //R1->load("");
+    //delete R1;
+    
+    NFP::shm::RatingsManager* R2 = NFP::shm::RatingsManager::instance();
+    LOG(INFO) << "R2 = " << R2;
+    //R1->load("");
+    //delete R2;
     
     LOG(INFO) << "Finished testing. Bye! Bye!";
     return 0;

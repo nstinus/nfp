@@ -53,8 +53,13 @@ const uint BASICRATING__DATE_OFFSET = 2451494;
 namespace NFP
 {
 
+namespace utils {
 std::string DateUS2S(ushort const&);
 ushort DateS2US(std::string const&);
+}    
+
+namespace model
+{
 
 class Rating
 {
@@ -100,6 +105,7 @@ public:
 
 };
 
+}
 } // NFP
 
 #endif // __NFP__RATING_H__

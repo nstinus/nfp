@@ -3,6 +3,9 @@
 
 namespace NFP
 {
+    
+namespace base
+{
 
 class ShmSegment
 {
@@ -41,6 +44,7 @@ protected:
     void* ptr_;
 };
 
+}
 }
 
 #endif

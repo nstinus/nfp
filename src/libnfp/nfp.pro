@@ -15,13 +15,16 @@ HEADERS += Rating.h
 HEADERS += ShmSegment.h
 HEADERS += RatingsShmSegment.h
 HEADERS += User.h
-HEADERS += Ratings.h
+HEADERS += RatingsManager.h
+HEADERS += Singleton.hxx
 
 SOURCES += Rating.cpp
 SOURCES += ShmSegment.cpp
 SOURCES += RatingsShmSegment.cpp
 SOURCES += User.cpp
-SOURCES += Ratings.cpp
+SOURCES += RatingsManager.cpp
+
+# SOURCES += libnfp.cpp
 
 CONFIG(release, debug|release) {
 	message(Release build!)

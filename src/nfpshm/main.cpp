@@ -17,7 +17,7 @@
 // #include <QList>
 
 #include "RatingsShmSegment.h"
-
+#include "RatingsManager.h"
 
 const std::string NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
 const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
@@ -63,76 +63,20 @@ int main (int argc, char* argv[])
 }
 
 
-int rm(std::string movie_id = "")
+int rm(std::string arg_movie_id = "")
 {
-    LOG(INFO) << "NFP_SHM_FILES = " << NFP_SHM_FILES;
-    
-    DIR *dp;
-    struct dirent *dirp;
-    if((dp  = opendir(NFP_SHM_FILES.c_str())) == NULL) {
-        LOG(ERROR) << "Error(" << errno << ") opening " << NFP_SHM_FILES;
-        return errno;
-    }
-
-    while ((dirp = readdir(dp)) != NULL) {
-        std::string keyFileName = dirp->d_name;
-        
-        if ((int)keyFileName.find(".shmkey") == -1 ||
-                (movie_id != "" && (int)keyFileName.find(movie_id) == -1))
-            continue;
-            
-        std::string dataFileName = keyFileName;
-        dataFileName.erase(dataFileName.end()-7, dataFileName.end());
-        dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
-        keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
-        
-        NFP::RatingsShmSegment mySSR(dataFileName, keyFileName);
-        mySSR.create();
-        std::string info(mySSR.info());
-        mySSR.remove();
-        std::cout << "Removed " << info << std::endl;
-   }
-   closedir(dp);
-   return 0;
+    int ret = 0;
+    NFP::shm::RatingsManager* RM = NFP::shm::RatingsManager::instance();
+    ret = RM->remove(arg_movie_id, true);
+    return ret;
 }
 
 
 int load(std::string arg_movie_id = "")
 {
     int ret = 0;
-    
-    LOG(INFO) << "NFP_TRAINING_SET_DIR = " << NFP_TRAINING_SET_DIR;
-
-    DIR *dp;
-    struct dirent *dirp;
-    if((dp  = opendir(NFP_TRAINING_SET_DIR.c_str())) == NULL) {
-        LOG(ERROR) << "Error(" << errno << ") opening " << NFP_TRAINING_SET_DIR;
-        return errno;
-    }
-
-    while ((dirp = readdir(dp)) != NULL) {
-        int local_err = 0;
-        std::string dataFileName, keyFileName;
-        dataFileName = keyFileName = dirp->d_name;
-
-        if (arg_movie_id != "" && (int)dataFileName.find(arg_movie_id) == -1
-                || dataFileName == "."
-                || dataFileName == "..")
-            continue;
-
-        dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
-        keyFileName  = NFP_SHM_FILES + std::string("/") + keyFileName + std::string(".shmkey");
-
-        NFP::RatingsShmSegment mySSR(dataFileName, keyFileName);
-        local_err = mySSR.create();
-        
-        if (local_err == 0) 
-            std::cout << "Loaded  " << mySSR.info() << std::endl;
-        else
-            std::cout << "Unable to load " << dataFileName << std::endl;
-        ret += local_err;
-    }
-    closedir(dp);
+    NFP::shm::RatingsManager* RM = NFP::shm::RatingsManager::instance();
+    ret = RM->load(arg_movie_id, true);
     return ret;
 }
 
@@ -174,7 +118,7 @@ int infos(std::string movie_id = "")
         dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
         keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
 
-        NFP::RatingsShmSegment mySSR(dataFileName, keyFileName);
+        NFP::shm::RatingsShmSegment mySSR(dataFileName, keyFileName);
         
         if (mySSR.create()) {
             LOG(ERROR) << "An error occured creating shm segment. ";
@@ -191,7 +135,7 @@ int infos(std::string movie_id = "")
         double armean_rate = 0;
         int myRate = 0;
         for (int i = 0; i < nb_ratings; i++) {
-            myRate = ((NFP::Rating*)(mySSR.ptr() + i))->rate();
+            myRate = ((NFP::model::Rating*)(mySSR.ptr() + i))->rate();
             armean_rate += (double)myRate;
         }
         mySSR.detach();
@@ -253,7 +197,7 @@ int ratings(const std::string arg_movie_id = "", const std::string arg_user_id =
         dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
         keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
 
-        NFP::RatingsShmSegment mySSR(dataFileName, keyFileName);
+        NFP::shm::RatingsShmSegment mySSR(dataFileName, keyFileName);
         
         if (mySSR.create()) {
             LOG(ERROR) << "An error occured creating shm segment. ";
@@ -267,7 +211,7 @@ int ratings(const std::string arg_movie_id = "", const std::string arg_user_id =
         int nb_ratings = mySSR.nb_ratings();
         LOG(INFO) << "Found " << nb_ratings;
         
-        NFP::Rating* myRating = NULL;
+        NFP::model::Rating* myRating = NULL;
         
         char* msg = new char[50];
         sprintf(msg, "%5s  %8s  %1s  %10s", "#m_id", "user_id", "R", "Date");
@@ -278,7 +222,7 @@ int ratings(const std::string arg_movie_id = "", const std::string arg_user_id =
         std::string myRuIdS("");
         
         for (int i = 0; i < nb_ratings; i++) {
-            myRating = (NFP::Rating*)(mySSR.ptr() + i);
+            myRating = (NFP::model::Rating*)(mySSR.ptr() + i);
             sprintf(myRuId_s, "%d", myRating->user_id());
             myRuIdS = myRuId_s;
             if (arg_user_id == "" || (int)myRuIdS.find(arg_user_id) != -1)
@@ -401,7 +345,7 @@ int users()
     //     dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
     //     keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
     // 
-    //     NFP::RatingsShmSegment mySSR(dataFileName, keyFileName);
+    //     NFP::shm::RatingsShmSegment mySSR(dataFileName, keyFileName);
     //     
     //     if (mySSR.create()) {
     //         LOG(ERROR) << "An error occured creating shm segment. ";
@@ -415,7 +359,7 @@ int users()
     //     int nb_ratings = mySSR.nb_ratings();
     //     LOG(INFO) << "Found " << nb_ratings;
     //     
-    //     NFP::Rating* myRating = NULL;
+    //     NFP::model::Rating* myRating = NULL;
     //     
     //     char* msg = new char[50];
     //     sprintf(msg, "%5s  %8s  %1s  %10s", "#m_id", "user_id", "R", "Date");
@@ -426,7 +370,7 @@ int users()
     //     std::string myRuIdS("");
     //     
     //     for (int i = 0; i < nb_ratings; i++) {
-    //         myRating = (NFP::Rating*)(mySSR.ptr() + i);
+    //         myRating = (NFP::model::Rating*)(mySSR.ptr() + i);
     //         if not users.has_key(myRating->user_id())
     //         sprintf(myRuId_s, "%d", myRating->user_id());
     //         myRuIdS = myRuId_s;

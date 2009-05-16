@@ -12,7 +12,7 @@
 #include "RatingsShmSegment.h"
 #include "Rating.h"
 
-NFP::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::string keyFileName) {
+NFP::shm::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::string keyFileName) {
     struct stat stFileInfo;
     if (stat(dataFileName.c_str(), &stFileInfo) == 0) {
         dataFileName_ = dataFileName;
@@ -35,7 +35,7 @@ NFP::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::string 
         LOG(ERROR) << "Data file " << dataFileName << " does not exist."; 
 }
 
-void NFP::RatingsShmSegment::load()
+void NFP::shm::RatingsShmSegment::load()
 {
     std::ifstream in(dataFileName_.c_str());
     
@@ -48,7 +48,7 @@ void NFP::RatingsShmSegment::load()
         int user_id = -1;
         int rate = -1;
         std::string date = "";
-        std::list<NFP::Rating*> ratings;
+        std::list<NFP::model::Rating*> ratings;
 
         while (!in.eof()) {
             getline(in, line);
@@ -70,7 +70,7 @@ void NFP::RatingsShmSegment::load()
                     LOG(INFO) << "Read:   " << msg;
                     delete[] msg;
                     #endif
-                    NFP::Rating* r = new NFP::Rating(movie_id, user_id, rate, date);
+                    NFP::model::Rating* r = new NFP::model::Rating(movie_id, user_id, rate, date);
                     #ifndef NDEBUG
                     LOG(INFO) << "Stored: " << r->to_string();
                     #endif
@@ -104,11 +104,11 @@ void NFP::RatingsShmSegment::load()
         if (err == 0) {
             LOG(INFO) << "Loading ShmSegment (size " << size() << ") ...";
             int i = 0;
-            std::list<NFP::Rating*>::const_iterator it;
+            std::list<NFP::model::Rating*>::const_iterator it;
             char* data = new char[RATING_DATA_SIZE];
             for (it = ratings.begin(); it != ratings.end(); it++) {
                 (*it)->data(data);
-                memcpy((NFP::Rating*)(ptr()) + i, data, RATING_DATA_SIZE);
+                memcpy((NFP::model::Rating*)(ptr()) + i, data, RATING_DATA_SIZE);
                 i++;
             }
             LOG(INFO) << "... done";
@@ -118,19 +118,19 @@ void NFP::RatingsShmSegment::load()
         LOG(ERROR) << "Unable to open file \"" << keyFileName_ << "\" for reading.";    
 }
 
-NFP::Rating* NFP::RatingsShmSegment::ptr()
+NFP::model::Rating* NFP::shm::RatingsShmSegment::ptr()
 {
     if (ptr_) {
-        return (NFP::Rating*)ptr_;
+        return (NFP::model::Rating*)ptr_;
     } else {
         LOG(ERROR) << "ptr_ is null. " << info();
     }
     return NULL;
 }
 
-int NFP::RatingsShmSegment::remove()
+int NFP::shm::RatingsShmSegment::remove()
 {
-    int ret = NFP::ShmSegment::remove();
+    int ret = NFP::base::ShmSegment::remove();
     if (ret == 0) {
         LOG(INFO) << "Removing " << keyFileName_;
         std::remove(keyFileName_.c_str());

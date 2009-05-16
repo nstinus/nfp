@@ -7,7 +7,7 @@
 
 #include "ShmSegment.h"
 
-NFP::ShmSegment::ShmSegment() :
+NFP::base::ShmSegment::ShmSegment() :
     keyFileName_(""),
     key_(-1),
     shmid_(-1),
@@ -15,7 +15,7 @@ NFP::ShmSegment::ShmSegment() :
     ptr_(NULL)
 {}
 
-NFP::ShmSegment::ShmSegment(std::string keyFileName, size_t size):
+NFP::base::ShmSegment::ShmSegment(std::string keyFileName, size_t size):
     keyFileName_(keyFileName),
     key_(-1),
     shmid_(-1),
@@ -23,12 +23,12 @@ NFP::ShmSegment::ShmSegment(std::string keyFileName, size_t size):
     ptr_(NULL)
 {}
 
-NFP::ShmSegment::~ShmSegment()
+NFP::base::ShmSegment::~ShmSegment()
 {
     detach();
 }
 
-int NFP::ShmSegment::create()
+int NFP::base::ShmSegment::create()
 {
     int ret = 0;
     key_ = ftok(keyFileName_.c_str(), 'R');
@@ -52,7 +52,7 @@ int NFP::ShmSegment::create()
     return ret;
 }
 
-int NFP::ShmSegment::attach()
+int NFP::base::ShmSegment::attach()
 {
     int ret = 0;
     if (shmid_ != -1) {
@@ -67,7 +67,7 @@ int NFP::ShmSegment::attach()
     return ret;
 }
 
-int NFP::ShmSegment::detach()
+int NFP::base::ShmSegment::detach()
 {
     int ret = 0;
     if(ptr_) {
@@ -86,7 +86,7 @@ int NFP::ShmSegment::detach()
     return ret;
 }
 
-int NFP::ShmSegment::remove()
+int NFP::base::ShmSegment::remove()
 {
     detach();
     int ret = shmctl(shmid_, IPC_RMID, NULL);
@@ -102,7 +102,7 @@ int NFP::ShmSegment::remove()
     return ret;
 }
 
-std::string NFP::ShmSegment::info()
+std::string NFP::base::ShmSegment::info()
 {
     char* msg = new char[255];
     sprintf(msg, "%s shmid: %8d shmkey: 0x%x size: %8d",

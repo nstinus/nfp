@@ -7,25 +7,28 @@
 
 namespace NFP
 {
+namespace base
+{
     
-//long sum_Rating_rates(NFP::Rating*, NFP::Rating*);
+//long sum_Rating_rates(NFP::model::Rating*, NFP::model::Rating*);
 
 class User
 {
     private:
         uint _user_id;
-        std::list<NFP::Rating*> _ratings;
+        std::list<NFP::model::Rating*> _ratings;
         
         float _avg_rating;
         
     public:
         User(uint);
         uint nb_ratings();
-        void add_rating(NFP::Rating*);
+        void add_rating(NFP::model::Rating*);
         float avg_rating();
-        std::list<NFP::Rating*>* ratings() {return &_ratings;};
+        std::list<NFP::model::Rating*>* ratings() {return &_ratings;};
 };
-    
+
+}   
 }
 
 #endif
