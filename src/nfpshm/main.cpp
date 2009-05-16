@@ -65,19 +65,13 @@ int main (int argc, char* argv[])
 
 int rm(std::string arg_movie_id = "")
 {
-    int ret = 0;
-    NFP::shm::RatingsManager* RM = NFP::shm::RatingsManager::instance();
-    ret = RM->remove(arg_movie_id, true);
-    return ret;
+    return NFP::shm::RatingsManager::instance()->remove(true);
 }
 
 
 int load(std::string arg_movie_id = "")
 {
-    int ret = 0;
-    NFP::shm::RatingsManager* RM = NFP::shm::RatingsManager::instance();
-    ret = RM->load(arg_movie_id, true);
-    return ret;
+    return NFP::shm::RatingsManager::instance()->load(arg_movie_id, true);
 }
 
 

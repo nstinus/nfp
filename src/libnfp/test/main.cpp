@@ -101,11 +101,15 @@ int main (int argc, char const *argv[])
     
     NFP::shm::RatingsManager* R1 = NFP::shm::RatingsManager::instance();
     LOG(INFO) << "R1 = " << R1;
-    //R1->load("");
+    LOG(INFO) << R1->nbSegments() << " segments loaded";
+    if (R1->nbSegments() < 17700) {
+        R1->load("", true);
+    }
+    //R1->remove();
     //delete R1;
     
-    NFP::shm::RatingsManager* R2 = NFP::shm::RatingsManager::instance();
-    LOG(INFO) << "R2 = " << R2;
+    //NFP::shm::RatingsManager* R2 = NFP::shm::RatingsManager::instance();
+    //LOG(INFO) << "R2 = " << R2;
     //R1->load("");
     //delete R2;
     

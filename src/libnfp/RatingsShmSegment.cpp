@@ -67,12 +67,12 @@ void NFP::shm::RatingsShmSegment::load()
                     char* msg = new char[50];
                     sprintf(msg, "%05d  %08d  %1d  %10s", movie_id, user_id, rate, date.c_str(
                     ));
-                    LOG(INFO) << "Read:   " << msg;
+                    DLOG(INFO) << "Read:   " << msg;
                     delete[] msg;
                     #endif
                     NFP::model::Rating* r = new NFP::model::Rating(movie_id, user_id, rate, date);
                     #ifndef NDEBUG
-                    LOG(INFO) << "Stored: " << r->to_string();
+                    DLOG(INFO) << "Stored: " << r->to_string();
                     #endif
                     ratings.push_back(r);
                 }    

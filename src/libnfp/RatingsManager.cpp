@@ -28,7 +28,7 @@ NFP::shm::RatingsManager::RatingsManager()
         LOG(INFO) << "NFP_SHM_FILES = " << NFP_SHM_FILES;
     }
     
-    //init();
+    init("", true);
 }
 
 NFP::shm::RatingsManager::~RatingsManager()
@@ -60,55 +60,46 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
     
         NFP::shm::RatingsShmSegment* mySSR;
         mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
-        local_err = mySSR->create();
         
-        //segments.push_back(mySSR);
+        //FIXME Does not work, this shit still tries to load the segment even though
+        // it is already in segments_
         
-        if (local_err == 0) {
-            std::string msg("Loaded  " + mySSR->info());
-            LOG(INFO) << msg;
-            if (feedback) { std::cout << msg << std::endl; }
-        } else { LOG(WARNING) << "Unable to load " << dataFileName; }
-        ret += local_err;
+        NFP::shm::RatingsSegments::iterator it
+            = std::find(segments_.begin(), segments_.end(), mySSR);
+        
+        if (it == segments_.end()) {
+            local_err = mySSR->create();
+            segments_.push_back(mySSR);
+            if (local_err == 0) {
+                std::string msg("Loaded " + mySSR->info());
+                LOG(INFO) << msg;
+                if (feedback) { std::cout << msg << std::endl; }
+            } else { LOG(WARNING) << "Unable to load " << dataFileName; }
+            ret += local_err;            
+        } else {
+            LOG(INFO) << "I already got this one... " << mySSR->info();
+        }
+        
+        DLOG(INFO) << "NB segments " << nbSegments();
     }
     closedir(dp);
     
     return ret;
 }
 
-int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
+int NFP::shm::RatingsManager::remove(bool feedback)
 {
-    DIR *dp;
-    struct dirent *dirp;
-    if((dp  = opendir(NFP_SHM_FILES.c_str())) == NULL) {
-     LOG(ERROR) << "Error(" << errno << ") opening " << NFP_SHM_FILES;
-     return errno;
+    std::vector<RatingsShmSegment*>::iterator it = segments_.begin();
+    for (it = segments_.begin(); it != segments_.end(); it++) {
+        std::string msg("Removed " + (*it)->info());
+        (*it)->remove();
+        LOG(INFO) << msg;
+        if (feedback) { std::cout << msg << std::endl; }
     }
-
-    while ((dirp = readdir(dp)) != NULL) {
-     std::string keyFileName = dirp->d_name;
- 
-     if ((int)keyFileName.find(".shmkey") == -1 ||
-             (arg_movie_id != "" && (int)keyFileName.find(arg_movie_id) == -1))
-         continue;
-     
-     std::string dataFileName = keyFileName;
-     dataFileName.erase(dataFileName.end()-7, dataFileName.end());
-     dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
-     keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
- 
-     NFP::shm::RatingsShmSegment mySSR(dataFileName, keyFileName);
-     mySSR.create();
-     std::string msg("Removed " + mySSR.info());
-     mySSR.remove();
-     LOG(INFO) << msg;
-     if (feedback) { std::cout << msg << std::endl; }
-    }
-    closedir(dp);
     return 0;
 }
 
-/*int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
+int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
 {
     DIR *dp;
     struct dirent *dirp;
@@ -129,14 +120,15 @@ int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
      dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
      keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
  
-     NFP::shm::RatingsShmSegment mySSR(dataFileName, keyFileName);
-     mySSR.create();
-     std::string msg("Found already loaded segment " + mySSR.info());
+     NFP::shm::RatingsShmSegment* mySSR;
+     mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
+     mySSR->create();
+     std::string msg("Found  " + mySSR->info());
      segments_.push_back(mySSR);
      LOG(INFO) << msg;
      if (feedback) { std::cout << msg << std::endl; }
     }
     closedir(dp);
     return 0;
-}*/
+}
 
