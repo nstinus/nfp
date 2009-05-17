@@ -6,6 +6,7 @@
 #include "Singleton.hxx"
 
 #include <vector>
+#include <list>
 
 
 namespace NFP
@@ -23,7 +24,7 @@ class RatingsManager : public base::Singleton<RatingsManager>
 public:   
     ~RatingsManager();
     int load(std::string arg_movie_id = "", bool feedback = false);
-    int remove(bool feedback = false);
+    int remove(std::string arg_movie_id = "", bool feedback = false);
     int nbSegments() { return segments_.size(); }
     
 private:

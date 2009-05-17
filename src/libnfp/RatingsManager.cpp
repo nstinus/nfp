@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 #include <dirent.h>
+#include <list>
+//#include <algorithm>
 
 #include "RatingsManager.h"
 
@@ -28,7 +30,8 @@ NFP::shm::RatingsManager::RatingsManager()
         LOG(INFO) << "NFP_SHM_FILES = " << NFP_SHM_FILES;
     }
     
-    init("");
+    segments_.reserve(17700); // Max segments in the original dataset.
+    init("", true);
 }
 
 NFP::shm::RatingsManager::~RatingsManager()
@@ -75,7 +78,7 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
             local_err = mySSR->create();
             segments_.push_back(mySSR);
             if (local_err == 0) {
-                std::string msg("Loaded " + mySSR->info());
+                std::string msg("Loaded  " + mySSR->info());
                 LOG(INFO) << msg;
                 if (feedback) { std::cout << msg << std::endl; }
             } else { LOG(WARNING) << "Unable to load " << dataFileName; }
@@ -91,15 +94,23 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
     return ret;
 }
 
-int NFP::shm::RatingsManager::remove(bool feedback)
+int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
 {
-    std::vector<RatingsShmSegment*>::iterator it = segments_.begin();
+    std::list<RatingsSegments::iterator> erasionList;
+    
+    RatingsSegments::iterator it = segments_.begin();
     for (it = segments_.begin(); it != segments_.end(); it++) {
-        std::string msg("Removed " + (*it)->info());
-        (*it)->remove();
-        LOG(INFO) << msg;
-        if (feedback) { std::cout << msg << std::endl; }
+        if ((int)(*it)->keyFileName().find(arg_movie_id) != -1) {
+            std::string msg("Removed " + (*it)->info());
+            (*it)->remove();
+            erasionList.push_back(it);
+            LOG(INFO) << msg;
+            if (feedback) { std::cout << msg << std::endl; }
+        }
     }
+    std::list<RatingsSegments::iterator>::iterator it2;
+    for (it2 = erasionList.begin(); it2 != erasionList.end(); it2++)
+        segments_.erase(*it2);
     return 0;
 }
 
@@ -111,7 +122,7 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
      LOG(ERROR) << "Error(" << errno << ") opening " << NFP_SHM_FILES;
      return errno;
     }
-
+    
     while ((dirp = readdir(dp)) != NULL) {
      std::string keyFileName = dirp->d_name;
  
@@ -127,7 +138,7 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
      NFP::shm::RatingsShmSegment* mySSR;
      mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
      mySSR->create();
-     std::string msg("Found  " + mySSR->info());
+     std::string msg("Found   " + mySSR->info());
      segments_.push_back(mySSR);
      LOG(INFO) << msg;
      if (feedback) { std::cout << msg << std::endl; }
