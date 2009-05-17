@@ -4,14 +4,9 @@
 #include <string>
 #include <dirent.h>
 #include <list>
-//#include <algorithm>
 
 #include "RatingsManager.h"
 
-/**
- * General accessor designed to setup the Ratings in shm (load), or remove them (remove).
- * Provides iterator on the loaded data aswell.
- */
 NFP::shm::RatingsManager::RatingsManager()
 {
     if (getenv("NFP_TRAINING_SET_DIR") == NULL) {
@@ -61,20 +56,10 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
     
         dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
         keyFileName  = NFP_SHM_FILES + std::string("/") + keyFileName + std::string(".shmkey");
-    
-        NFP::shm::RatingsShmSegment* mySSR;
-        mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
         
-        bool alreadyPresent = false;
-        NFP::shm::RatingsSegments::iterator it = segments_.begin();
-        for (it = segments_.begin(); it != segments_.end(); it++) {
-            if ((*it)->keyFileName() == mySSR->keyFileName()) {
-                alreadyPresent = true;
-                LOG(WARNING) << mySSR->keyFileName() << " already exists.";
-            }
-        }
-        
-        if (!alreadyPresent) {
+        if (loadedSegments_.find(keyFileName) == loadedSegments_.end()) {
+            NFP::shm::RatingsShmSegment* mySSR;
+            mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
             local_err = mySSR->create();
             segments_.push_back(mySSR);
             if (local_err == 0) {
@@ -83,14 +68,14 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
                 if (feedback) { std::cout << msg << std::endl; }
             } else { LOG(WARNING) << "Unable to load " << dataFileName; }
             ret += local_err;            
-        } else {
-            LOG(INFO) << "I already got this one... " << mySSR->info();
         }
         
         DLOG(INFO) << "NB segments " << nbSegments();
     }
     closedir(dp);
-    
+
+    LOG(INFO) << "Loading done.";
+
     return ret;
 }
 
@@ -109,11 +94,33 @@ int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
         }
     }
     std::list<RatingsSegments::iterator>::iterator it2;
-    for (it2 = erasionList.begin(); it2 != erasionList.end(); it2++)
+    for (it2 = erasionList.begin(); it2 != erasionList.end(); it2++) {
         segments_.erase(*it2);
+    }
+    rebuildLoadedSegments();
     return 0;
 }
 
+void NFP::shm::RatingsManager::rebuildLoadedSegments()
+{
+    loadedSegments_.clear();
+    RatingsSegments::iterator it = segments_.begin();
+    for (it = segments_.begin(); it != segments_.end(); it++) {
+        loadedSegments_.insert((*it)->keyFileName());
+    }
+    LOG(INFO) << "Fund " << loadedSegments_.size() << " segments.";
+}
+
+void NFP::shm::RatingsManager::addSegment(RatingsShmSegment* rss)
+{
+    segments_.push_back(rss);
+    loadedSegments_.insert(rss->keyFileName());
+}
+
+// Should only find what's already loaded and what's not.
+// This way we won't mess around with the filesystem when not necessary.
+// This fonctionnality should go in a dedicated function, and called in the contructor.
+// This function would thus be useless. How sad...
 int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
 {
     DIR *dp;
@@ -139,14 +146,14 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
      mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
      mySSR->create();
      std::string msg("Found   " + mySSR->info());
-     segments_.push_back(mySSR);
+     addSegment(mySSR);
      LOG(INFO) << msg;
      if (feedback) { std::cout << msg << std::endl; }
     }
     closedir(dp);
     
+    rebuildLoadedSegments();
     LOG(INFO) << "Init done";
-    
     return 0;
 }
 

@@ -7,7 +7,7 @@
 
 namespace NFP
 {
-namespace base
+namespace model
 {
     
 //long sum_Rating_rates(NFP::model::Rating*, NFP::model::Rating*);

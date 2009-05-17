@@ -7,6 +7,7 @@
 
 #include <vector>
 #include <list>
+#include <set>
 
 
 namespace NFP
@@ -30,11 +31,14 @@ public:
 private:
     RatingsManager();
     int init(std::string arg_movie_id = "", bool feedback = false);
+    void rebuildLoadedSegments();
+    void addSegment(RatingsShmSegment*);
     
     std::string NFP_TRAINING_SET_DIR;
     std::string NFP_SHM_FILES;
     
     std::vector<RatingsShmSegment*> segments_;
+    std::set<std::string> loadedSegments_;
     
 };
 
