@@ -28,11 +28,12 @@ NFP::shm::RatingsManager::RatingsManager()
         LOG(INFO) << "NFP_SHM_FILES = " << NFP_SHM_FILES;
     }
     
-    init("", true);
+    init("");
 }
 
 NFP::shm::RatingsManager::~RatingsManager()
 {}
+
 
 int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
 {
@@ -61,13 +62,16 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
         NFP::shm::RatingsShmSegment* mySSR;
         mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
         
-        //FIXME Does not work, this shit still tries to load the segment even though
-        // it is already in segments_
+        bool alreadyPresent = false;
+        NFP::shm::RatingsSegments::iterator it = segments_.begin();
+        for (it = segments_.begin(); it != segments_.end(); it++) {
+            if ((*it)->keyFileName() == mySSR->keyFileName()) {
+                alreadyPresent = true;
+                LOG(WARNING) << mySSR->keyFileName() << " already exists.";
+            }
+        }
         
-        NFP::shm::RatingsSegments::iterator it
-            = std::find(segments_.begin(), segments_.end(), mySSR);
-        
-        if (it == segments_.end()) {
+        if (!alreadyPresent) {
             local_err = mySSR->create();
             segments_.push_back(mySSR);
             if (local_err == 0) {
@@ -129,6 +133,9 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
      if (feedback) { std::cout << msg << std::endl; }
     }
     closedir(dp);
+    
+    LOG(INFO) << "Init done";
+    
     return 0;
 }
 
