@@ -13,14 +13,14 @@ LIBS += /usr/local/lib/libglog.dylib
 
 CONFIG(release, debug|release) {
 	message(Release build!)
-	LIBS += /Users/nico/projects/dev/nfp/src/libnfp/libnfp.a
+	LIBS += /Users/nico/projects/dev/nfp/bin/libnfp.a
 	TARGET = nfpshm
 }
 
 CONFIG(debug, debug|release) {
 	message(Debug build!)
 	DEFINES += NDEBUG
-	LIBS += /Users/nico/projects/dev/nfp/src/libnfp/libnfpd.a
+	LIBS += /Users/nico/projects/dev/nfp/bin/libnfpd.a
 	TARGET = nfpshm.debug
 	# Profiling
 	QMAKE_CFLAGS+=-pg

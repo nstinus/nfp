@@ -11,13 +11,12 @@
 #include <iostream>
 #include <fstream>
 
-// #include <QDir>
 #include <QString>
 #include <QRegExp>
-// #include <QList>
 
 #include "RatingsShmSegment.h"
 #include "RatingsManager.h"
+#include <User.h>
 
 const std::string NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
 const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
@@ -25,6 +24,7 @@ const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
 
 int rm(std::string);
 int load(std::string);
+int reload(std::string);
 int infos(std::string);
 int users();
 void usage();
@@ -50,6 +50,8 @@ int main (int argc, char* argv[])
         ret += rm((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "load") == 0)
         ret += load((argc > 2) ? argv[2] : "");
+    else if (argc > 1 && strcmp(argv[1], "reload") == 0)
+        ret += reload((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "infos") == 0)
         ret += infos((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "ratings") == 0)
@@ -65,7 +67,7 @@ int main (int argc, char* argv[])
 
 int rm(std::string arg_movie_id = "")
 {
-    return NFP::shm::RatingsManager::instance()->remove(true);
+    return NFP::shm::RatingsManager::instance()->remove(arg_movie_id, true);
 }
 
 
@@ -74,6 +76,10 @@ int load(std::string arg_movie_id = "")
     return NFP::shm::RatingsManager::instance()->load(arg_movie_id, true);
 }
 
+int reload(std::string arg_movie_id = "")
+{
+    return rm(arg_movie_id) + load(arg_movie_id);
+}
 
 int infos(std::string movie_id = "")
 {
@@ -267,7 +273,7 @@ void fillMoviesMaps()
     if (in.is_open())
     {
         std::string line;
-        QRegExp mvFileLineRegExp("^(\\d+),(\\d+),(.*)$");
+        QRegExp mvFileLineRegExp("^(\\d+),(\\d+|NULL),(.*)$");
         
         int movie_id = -1;
         int year = -1;
@@ -275,10 +281,11 @@ void fillMoviesMaps()
         
         while (!in.eof()) {
             getline(in, line);
-            //DLOG(INFO) << "Read line: \"" << line << "\"";
+            DLOG(INFO) << "Read line: \"" << line << "\"";
             if (mvFileLineRegExp.indexIn(QString::fromStdString(line)) > -1) {
                 movie_id = mvFileLineRegExp.cap(1).toInt();
                 year = mvFileLineRegExp.cap(2).toInt();
+                year = year > 0 ? year : -1;
                 name = mvFileLineRegExp.cap(3).toStdString();
                 movieYears[movie_id] = year;
                 movieNames[movie_id] = name;
@@ -326,7 +333,7 @@ int users()
     //     return errno;
     // }
     // 
-    // std::map<uint, NFP::User*> users;
+    // std::map<uint, NFP::model::User*> users;
     // 
     // while ((dirp = readdir(dp)) != NULL) {
     //     std::string keyFileName = dirp->d_name;
@@ -365,8 +372,8 @@ int users()
     //     
     //     for (int i = 0; i < nb_ratings; i++) {
     //         myRating = (NFP::model::Rating*)(mySSR.ptr() + i);
-    //         if not users.has_key(myRating->user_id())
-    //         sprintf(myRuId_s, "%d", myRating->user_id());
+    //         if (not users.has_key(myRating->user_id())
+    //             sprintf(myRuId_s, "%d", myRating->user_id());
     //         myRuIdS = myRuId_s;
     //         if (arg_user_id == "" || (int)myRuIdS.find(arg_user_id) != -1)
     //             std::cout << myRating->to_string() << std::endl;

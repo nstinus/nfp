@@ -9,7 +9,7 @@ CONFIG += x86
 CONFIG += staticlib
 CONFIG -= app_bundle
 
-LIBS += /usr/local/lib/libglog.a
+LIBS += /usr/local/lib/libglog.dylib
 
 HEADERS += Rating.h
 HEADERS += ShmSegment.h

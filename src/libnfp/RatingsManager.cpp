@@ -108,7 +108,7 @@ void NFP::shm::RatingsManager::rebuildLoadedSegments()
     for (it = segments_.begin(); it != segments_.end(); it++) {
         loadedSegments_.insert((*it)->keyFileName());
     }
-    LOG(INFO) << "Fund " << loadedSegments_.size() << " segments.";
+    //LOG(INFO) << "Found " << loadedSegments_.size() << " segments.";
 }
 
 void NFP::shm::RatingsManager::addSegment(RatingsShmSegment* rss)
