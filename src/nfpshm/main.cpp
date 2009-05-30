@@ -73,7 +73,8 @@ int rm(std::string arg_movie_id = "")
 
 int load(std::string arg_movie_id = "")
 {
-    return NFP::shm::RatingsManager::instance()->load(arg_movie_id, true);
+    int ret = NFP::shm::RatingsManager::instance()->load(arg_movie_id, true);
+    return ret;
 }
 
 int reload(std::string arg_movie_id = "")
@@ -125,7 +126,7 @@ int infos(std::string movie_id = "")
             continue;
         }
         if (mySSR.attach()) {
-            LOG(ERROR)<< "An error occured attaching to shm segment. ";
+            LOG(ERROR) << "An error occured attaching to shm segment. ";
             continue;
         }
         
@@ -134,6 +135,7 @@ int infos(std::string movie_id = "")
         
         double armean_rate = 0;
         int myRate = 0;
+        
         for (int i = 0; i < nb_ratings; i++) {
             myRate = ((NFP::model::Rating*)(mySSR.ptr() + i))->rate();
             armean_rate += (double)myRate;
