@@ -26,7 +26,10 @@ public:
     ~RatingsManager();
     int load(std::string arg_movie_id = "", bool feedback = false);
     int remove(std::string arg_movie_id = "", bool feedback = false);
-    int nbSegments() { return segments_.size(); }
+    int nbSegments() {return segments_.size();};
+    void refreshRatingsList();
+    std::list<NFP::model::Rating*> ratings() {return ratings_;};
+    
     
 private:
     RatingsManager();
@@ -40,6 +43,7 @@ private:
     std::vector<RatingsShmSegment*> segments_;
     std::set<std::string> loadedSegments_;
     
+    std::list<NFP::model::Rating*> ratings_;
 };
 
 }

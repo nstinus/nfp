@@ -123,7 +123,7 @@ NFP::model::Rating* NFP::shm::RatingsShmSegment::ptr()
     if (ptr_) {
         return (NFP::model::Rating*)ptr_;
     } else {
-        LOG(ERROR) << "ptr_ is null. " << info();
+        DLOG(ERROR) << "ptr_ is null. " << info();
     }
     return NULL;
 }

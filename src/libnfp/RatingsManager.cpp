@@ -75,6 +75,8 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
     closedir(dp);
 
     LOG(INFO) << "Loading done.";
+    
+    refreshRatingsList();
 
     return ret;
 }
@@ -98,6 +100,7 @@ int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
         segments_.erase(*it2);
     }
     rebuildLoadedSegments();
+    refreshRatingsList();
     return 0;
 }
 
@@ -153,7 +156,23 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
     closedir(dp);
     
     rebuildLoadedSegments();
+    refreshRatingsList();
+    
     LOG(INFO) << "Init done";
     return 0;
+}
+
+void NFP::shm::RatingsManager::refreshRatingsList() {
+    LOG(INFO) << "Refreshing ratings list...";
+    ratings_.clear();
+    
+    std::vector<RatingsShmSegment*>::iterator it;
+    for (it = segments_.begin(); it != segments_.end(); it++) {
+        for (int i = 0; i < (*it)->nb_ratings(); i++) {
+            ratings_.push_back((*it)->ptr() + i);
+        }
+    }
+    
+    LOG(INFO) << "Done refreshing ratings list.";
 }
 
