@@ -25,6 +25,8 @@ NFP::shm::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::st
             if (s > 0) {
                 size(s * RATING_DATA_SIZE);
                 LOG(INFO) << "Found a shmkey file. size = " << s;
+                create();
+                attach();
             }
         }
         else {
