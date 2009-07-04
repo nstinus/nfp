@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <dirent.h>
+#include <stdlib.h>
 #include <list>
 
 #include "RatingsManager.h"
@@ -73,11 +74,8 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
         DLOG(INFO) << "NB segments " << nbSegments();
     }
     closedir(dp);
-
     LOG(INFO) << "Loading done.";
-    
     refreshRatingsList();
-
     return ret;
 }
 
@@ -169,7 +167,14 @@ void NFP::shm::RatingsManager::refreshRatingsList() {
     std::vector<RatingsShmSegment*>::iterator it;
     for (it = segments_.begin(); it != segments_.end(); it++) {
         for (int i = 0; i < (*it)->nb_ratings(); i++) {
-            ratings_.push_back((*it)->ptr() + i);
+            NFP::model::Rating* r = (NFP::model::Rating*)((*it)->ptr() + i);
+            if (r == NULL) {
+                LOG(ERROR) << "ptr==null";
+                continue;
+            }
+            else {
+                ratings_.push_back(r);
+            }
         }
     }
     

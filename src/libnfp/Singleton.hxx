@@ -1,3 +1,7 @@
+#ifndef __NFP__SINGLETON_H__
+#define __NFP__SINGLETON_H__
+
+
 namespace NFP
 {
 namespace base
@@ -32,3 +36,5 @@ T* Singleton<T>::_singleton = NULL;
 
 }
 }
+
+#endif  // __NFP__SINGLETON_H__

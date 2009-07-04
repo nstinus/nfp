@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <errno.h>
 #include <math.h>
+#include <stdlib.h>
 
 #include <string>
 #include <map>
@@ -16,7 +17,8 @@
 
 #include "RatingsShmSegment.h"
 #include "RatingsManager.h"
-#include <User.h>
+//#include "User.h"
+#include "MovieMeanAlgo.h"
 
 const std::string NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
 const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
@@ -26,9 +28,11 @@ int rm(std::string);
 int load(std::string);
 int reload(std::string);
 int infos(std::string);
+int infos2(std::string);
 int users();
 void usage();
 int ratings(const std::string, const std::string);
+int ratings2();
 
 int movieYear(int);
 std::string movieName(int);
@@ -54,8 +58,12 @@ int main (int argc, char* argv[])
         ret += reload((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "infos") == 0)
         ret += infos((argc > 2) ? argv[2] : "");
+    else if (argc > 1 && strcmp(argv[1], "infos2") == 0)
+        ret += infos2((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "ratings") == 0)
         ret += ratings((argc > 2) ? argv[2] : "", (argc > 3) ? argv[3] : "");
+    else if (argc > 1 && strcmp(argv[1], "ratings2") == 0)
+        ret += ratings2();
     else if (argc > 1 && strcmp(argv[1], "users") == 0)
         ret += users();
     else
@@ -388,3 +396,26 @@ int users()
     // 
     return 0;    
 }
+
+int infos2(std::string movie_id = "")
+{
+    NFP::algos::MovieMeanAlgo* mean_alg = new NFP::algos::MovieMeanAlgo();
+    int ret = mean_alg->run();
+    return ret;
+}
+
+int ratings2()
+{
+    std::list<NFP::model::Rating*>::iterator it, end;
+    DLOG(INFO) << "Getting start begin() on ratings...";
+    it = NFP::shm::RatingsManager::instance()->ratings().begin();
+    DLOG(INFO) << "Getting start end() on ratings...";
+    end = NFP::shm::RatingsManager::instance()->ratings().end();
+    DLOG(INFO) << "Let's loop...";
+    for (; it != end; it++)
+        //LOG(INFO) << *it << " " << NULL;
+        std::cout << (*it)->to_string() << std::endl;
+    return 0;
+}
+
+

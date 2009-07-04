@@ -1,6 +1,7 @@
 #include <glog/logging.h>
 
 #include <string>
+#include <stdio.h>
 #include <sys/shm.h>
 //#include <sys/ipc.h>
 #include <errno.h>

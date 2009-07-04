@@ -1,5 +1,6 @@
 #include "Rating.h"
 #include <glog/logging.h>
+#include <stdio.h>
 
 #include <QDate>
 #include <QString>
