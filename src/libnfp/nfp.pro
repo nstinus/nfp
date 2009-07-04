@@ -9,7 +9,13 @@ CONFIG += x86
 CONFIG += staticlib
 CONFIG -= app_bundle
 
-LIBS += /usr/local/lib/libglog.dylib
+macx {
+	LIBS += /usr/local/lib/libglog.dylib
+}
+
+linux-g++ {
+	LIBS += /usr/local/lib/libglog.so
+}
 
 HEADERS += Rating.h
 HEADERS += ShmSegment.h
