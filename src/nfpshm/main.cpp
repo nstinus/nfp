@@ -19,6 +19,7 @@
 #include "RatingsManager.h"
 //#include "User.h"
 #include "MovieMeanAlgo.h"
+#include "UserMeanAlgo.h"
 
 const std::string NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
 const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
@@ -30,6 +31,7 @@ int reload(std::string);
 int infos(std::string);
 int infos2(/*std::string*/);
 int users();
+int users2();
 void usage();
 int ratings(const std::string, const std::string);
 int ratings2();
@@ -66,6 +68,8 @@ int main (int argc, char* argv[])
         ret += ratings2();
     else if (argc > 1 && strcmp(argv[1], "users") == 0)
         ret += users();
+    else if (argc > 1 && strcmp(argv[1], "users2") == 0)
+        ret += users2();
     else
         usage();
     
@@ -399,8 +403,8 @@ int users()
 
 int infos2(/*std::string movie_id = ""*/)
 {
-    NFP::algos::MovieMeanAlgo* mean_alg = new NFP::algos::MovieMeanAlgo();
-    int ret = mean_alg->run();
+    NFP::algos::MovieMeanAlgo* m_mean_alg = new NFP::algos::MovieMeanAlgo();
+    int ret = m_mean_alg->run();
     
     char* msg = new char[256];
     
@@ -410,14 +414,40 @@ int infos2(/*std::string movie_id = ""*/)
         "Year",
         "Name");
     std::cout << msg << std::endl << std::endl;
+    uint skipped = 0, nb_segments = (uint)NFP::shm::RatingsManager::instance()->nbSegments();
+    for (uint m_id = 1; m_id <= nb_segments + (skipped == 0 ? 0 : skipped-1); m_id++) {
+        float res = m_mean_alg->get_predicted_rate(0, m_id, "");
+        if (res > 0) {
+            sprintf(msg, "%07d  %5.3f  %4d  %s",
+                m_id,
+                res,
+                movieYear(m_id),
+                movieName(m_id).c_str());
+            std::cout << msg << std::endl;
+        } else {
+             skipped++;
+        }
+    }
     
-    for (uint m_id = 1; m_id <= (uint)NFP::shm::RatingsManager::instance()->nbSegments(); m_id++) {
-        sprintf(msg, "%07d  %5.3f  %4d  %s",
-            m_id,
-            mean_alg->get_predicted_rate(0, m_id, ""),
-            movieYear(m_id),
-            movieName(m_id).c_str());
-        std::cout << msg << std::endl;
+    return ret;
+}
+
+
+int users2()
+{
+    NFP::algos::UserMeanAlgo* u_mean_alg = new NFP::algos::UserMeanAlgo();
+    int ret = u_mean_alg->run();
+    
+    char* msg = new char[256];
+    sprintf(msg, "%9s  %5s", "# user_id", "R ArM");
+    std::cout << msg << std::endl << std::endl;
+    std::vector<uint>::iterator u;
+    for (u = u_mean_alg->users_begin(); u != u_mean_alg->users_end(); u++) {
+        float res = u_mean_alg->get_predicted_rate(*u, 0, "");
+        if (res > 0) {
+            sprintf(msg, "%09d  %5.3f", *u, res);
+            std::cout << msg << std::endl;
+        }
     }
     
     return ret;

@@ -35,8 +35,10 @@ CONFIG(debug, debug|release) {
 
 HEADERS += BaseAlgo.h
 HEADERS += MovieMeanAlgo.h
+HEADERS += UserMeanAlgo.h
 
 SOURCES += MovieMeanAlgo.cpp
+SOURCES += UserMeanAlgo.cpp
 
 INCLUDEPATH += $(NFP_ROOT)/src/libnfp
 

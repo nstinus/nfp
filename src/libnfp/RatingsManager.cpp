@@ -62,8 +62,19 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
             NFP::shm::RatingsShmSegment* mySSR;
             mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
             local_err = mySSR->create();
-            segments_.push_back(mySSR);
             if (local_err == 0) {
+                segments_.push_back(mySSR);
+                LOG(INFO) << "Loading " << mySSR->nb_ratings() << " ratings...";
+                for (int i = 0; i < mySSR->nb_ratings(); i++) {
+                    NFP::model::Rating* r = (NFP::model::Rating*)(mySSR->ptr() + i);
+                    if (r == NULL) {
+                        LOG(ERROR) << "ptr==null";
+                        continue;
+                    }
+                    else {
+                        ratings_.push_back(r);
+                    }
+                }
                 std::string msg("Loaded  " + mySSR->info());
                 LOG(INFO) << msg;
                 if (feedback) { std::cout << msg << std::endl; }
@@ -75,7 +86,7 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
     }
     closedir(dp);
     LOG(INFO) << "Loading done.";
-    refreshRatingsList();
+    //refreshRatingsList();
     return ret;
 }
 
@@ -132,29 +143,39 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
     }
     
     while ((dirp = readdir(dp)) != NULL) {
-     std::string keyFileName = dirp->d_name;
+        std::string keyFileName = dirp->d_name;
  
-     if ((int)keyFileName.find(".shmkey") == -1 ||
-             (arg_movie_id != "" && (int)keyFileName.find(arg_movie_id) == -1))
-         continue;
+        if ((int)keyFileName.find(".shmkey") == -1 ||
+            (arg_movie_id != "" && (int)keyFileName.find(arg_movie_id) == -1))
+            continue;
      
-     std::string dataFileName = keyFileName;
-     dataFileName.erase(dataFileName.end()-7, dataFileName.end());
-     dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
-     keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
- 
-     NFP::shm::RatingsShmSegment* mySSR;
-     mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
-     //mySSR->create();
-     std::string msg("Found   " + mySSR->info());
-     addSegment(mySSR);
-     LOG(INFO) << msg;
-     if (feedback) { std::cout << msg << std::endl; }
+        std::string dataFileName = keyFileName;
+        dataFileName.erase(dataFileName.end()-7, dataFileName.end());
+        dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
+        keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
+
+        NFP::shm::RatingsShmSegment* mySSR;
+        mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
+        std::string msg("Found   " + mySSR->info());
+        addSegment(mySSR);
+        LOG(INFO) << msg;
+        if (feedback) { std::cout << msg << std::endl; }
+        LOG(INFO) << "Loading " << mySSR->nb_ratings() << " ratings...";
+        for (int i = 0; i < mySSR->nb_ratings(); i++) {
+            NFP::model::Rating* r = (NFP::model::Rating*)(mySSR->ptr() + i);
+            if (r == NULL) {
+                LOG(ERROR) << "ptr==null";
+                continue;
+            }
+            else {
+                ratings_.push_back(r);
+            }
+        }
     }
     closedir(dp);
     
     rebuildLoadedSegments();
-    refreshRatingsList();
+    //refreshRatingsList();
     
     LOG(INFO) << "Init done";
     return 0;

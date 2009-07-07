@@ -34,17 +34,20 @@ int NFP::algos::MovieMeanAlgo::run()
             nb_rates++;
         } else {
             mean_rates_[current_movie_id] = (float)sum_rates / (float)nb_rates;
-            LOG(INFO) << "Finished processing movie "
+            #ifndef NDEBUG
+            DLOG(INFO) << "Finished processing movie "
                        << current_movie_id << " mean_rate=" << mean_rates_[current_movie_id];
+            #endif
             sum_rates = (*it)->rate();
             nb_rates = 1;
             current_movie_id = movie_id;
         }
     }
     mean_rates_[current_movie_id] = (float)sum_rates / (float)nb_rates;
-    LOG(INFO) << "Finished processing movie "
+    #ifndef NDEBUG
+    DLOG(INFO) << "Finished processing movie "
                << current_movie_id << " mean_rate=" << mean_rates_[current_movie_id];
-    
+    #endif
     logEnd();
     return 0;
 }
