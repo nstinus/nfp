@@ -24,7 +24,7 @@ NFP::shm::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::st
             int s = atoi(line.c_str());
             if (s > 0) {
                 size(s * RATING_DATA_SIZE);
-                LOG(INFO) << "Found a shmkey file. size = " << s;
+                DLOG(INFO) << "Found a shmkey file. size = " << s;
                 create();
                 attach();
             }
@@ -54,7 +54,7 @@ void NFP::shm::RatingsShmSegment::load()
 
         while (!in.eof()) {
             getline(in, line);
-            DLOG(INFO) << "Read line: \"" << line << "\"";
+            //DLOG(INFO) << "Read line: \"" << line << "\"";
             if (movie_id == -1) {
                 QString l = QString::fromStdString(line);
                 l.chop(1);
@@ -65,17 +65,16 @@ void NFP::shm::RatingsShmSegment::load()
                     user_id = mvFileLineRegExp.cap(1).toInt();
                     rate = mvFileLineRegExp.cap(2).toInt();
                     date = mvFileLineRegExp.cap(3).toStdString();
-                    #ifndef NDEBUG
-                    char* msg = new char[50];
-                    sprintf(msg, "%05d  %08d  %1d  %10s", movie_id, user_id, rate, date.c_str(
-                    ));
-                    DLOG(INFO) << "Read:   " << msg;
-                    delete[] msg;
-                    #endif
+                    // #ifndef NDEBUG
+                    // char* msg = new char[50];
+                    // sprintf(msg, "%05d  %08d  %1d  %10s", movie_id, user_id, rate, date.c_str());
+                    // DLOG(INFO) << "Read:   " << msg;
+                    // delete[] msg;
+                    // #endif
                     NFP::model::Rating* r = new NFP::model::Rating(movie_id, user_id, rate, date);
-                    #ifndef NDEBUG
-                    DLOG(INFO) << "Stored: " << r->to_string();
-                    #endif
+                    // #ifndef NDEBUG
+                    // DLOG(INFO) << "Stored: " << r->to_string();
+                    // #endif
                     ratings.push_back(r);
                 }    
             }

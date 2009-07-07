@@ -28,7 +28,7 @@ int rm(std::string);
 int load(std::string);
 int reload(std::string);
 int infos(std::string);
-int infos2(std::string);
+int infos2(/*std::string*/);
 int users();
 void usage();
 int ratings(const std::string, const std::string);
@@ -59,7 +59,7 @@ int main (int argc, char* argv[])
     else if (argc > 1 && strcmp(argv[1], "infos") == 0)
         ret += infos((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "infos2") == 0)
-        ret += infos2((argc > 2) ? argv[2] : "");
+        ret += infos2(/*(argc > 2) ? argv[2] : ""*/);
     else if (argc > 1 && strcmp(argv[1], "ratings") == 0)
         ret += ratings((argc > 2) ? argv[2] : "", (argc > 3) ? argv[3] : "");
     else if (argc > 1 && strcmp(argv[1], "ratings2") == 0)
@@ -397,10 +397,29 @@ int users()
     return 0;    
 }
 
-int infos2(std::string movie_id = "")
+int infos2(/*std::string movie_id = ""*/)
 {
     NFP::algos::MovieMeanAlgo* mean_alg = new NFP::algos::MovieMeanAlgo();
     int ret = mean_alg->run();
+    
+    char* msg = new char[256];
+    
+    sprintf(msg, "%7s  %5s  %4s  %s",
+        "#    id",
+        "R ArM",
+        "Year",
+        "Name");
+    std::cout << msg << std::endl << std::endl;
+    
+    for (uint m_id = 1; m_id <= (uint)NFP::shm::RatingsManager::instance()->nbSegments(); m_id++) {
+        sprintf(msg, "%07d  %5.3f  %4d  %s",
+            m_id,
+            mean_alg->get_predicted_rate(0, m_id, ""),
+            movieYear(m_id),
+            movieName(m_id).c_str());
+        std::cout << msg << std::endl;
+    }
+    
     return ret;
 }
 
@@ -408,9 +427,9 @@ int ratings2()
 {
     std::list<NFP::model::Rating*>::iterator it, end;
     DLOG(INFO) << "Getting start begin() on ratings...";
-    it = NFP::shm::RatingsManager::instance()->ratings().begin();
+    it = NFP::shm::RatingsManager::instance()->ratings_begin();
     DLOG(INFO) << "Getting start end() on ratings...";
-    end = NFP::shm::RatingsManager::instance()->ratings().end();
+    end = NFP::shm::RatingsManager::instance()->ratings_end();
     DLOG(INFO) << "Let's loop...";
     for (; it != end; it++)
         //LOG(INFO) << *it << " " << NULL;

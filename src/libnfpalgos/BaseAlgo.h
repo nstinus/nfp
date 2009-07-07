@@ -2,7 +2,10 @@
 #define __NFP__BASEALGO_H__
 
 #include <glog/logging.h>
+#include <string>
 #include "Singleton.hxx"
+
+
 
 namespace NFP
 {
@@ -24,7 +27,8 @@ public:
     void logStart() { LOG(INFO) << "Starting " << name_ << " - " << version_; }
     void logEnd() { LOG(INFO) << "Done " << name_ << " - " << version_; }
     virtual void* get_results() = 0;
-    
+    virtual float get_predicted_rate(uint, ushort, std::string date) = 0;
+        
 private:
     std::string name_;
     std::string version_;

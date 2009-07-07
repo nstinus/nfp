@@ -2,8 +2,11 @@
 #define __NFP__MOVIEMEANALGO_H__
 
 #include <map>
+#include <list>
+#include <string>
 
 #include "BaseAlgo.h"
+#include "RatingsManager.h"
 
 namespace NFP
 {
@@ -19,9 +22,15 @@ public:
     virtual int run();
     std::map<ushort, float>* result() {return &mean_rates_;}
     void* get_results() {return &mean_rates_;}
+    virtual float get_predicted_rate(uint, ushort, std::string);
+    
     
 private:
     std::map<ushort, float> mean_rates_;
+    std::list<NFP::model::Rating*>::iterator ratings_begin;
+    std::list<NFP::model::Rating*>::iterator ratings_end;
+    
+    void init();
 };
 
     

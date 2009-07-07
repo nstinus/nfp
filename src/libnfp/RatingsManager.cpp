@@ -145,7 +145,7 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
  
      NFP::shm::RatingsShmSegment* mySSR;
      mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
-     mySSR->create();
+     //mySSR->create();
      std::string msg("Found   " + mySSR->info());
      addSegment(mySSR);
      LOG(INFO) << msg;

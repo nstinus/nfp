@@ -28,8 +28,9 @@ public:
     int remove(std::string arg_movie_id = "", bool feedback = false);
     int nbSegments() {return segments_.size();};
     void refreshRatingsList();
-    std::list<NFP::model::Rating*> ratings() {return ratings_;};
-    
+    //std::list<NFP::model::Rating*>::iterator ratings() {return ratings_.begin();};
+    std::list<NFP::model::Rating*>::iterator ratings_begin() {return ratings_.begin();};
+    std::list<NFP::model::Rating*>::iterator ratings_end() {return ratings_.end();};
     
 private:
     RatingsManager();
