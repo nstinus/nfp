@@ -1,6 +1,8 @@
 #include <glog/logging.h>
 
 #include <string>
+#include <iostream>
+#include <fstream>
 #include <stdio.h>
 #include <sys/shm.h>
 //#include <sys/ipc.h>
@@ -115,3 +117,12 @@ std::string NFP::base::ShmSegment::info()
     delete[] msg;
 }
 
+
+int NFP::base::ShmSegment::save(const char * filename)
+{
+    std::ofstream out(filename);
+    out.write((const char*)ptr(), size());
+    out.close();
+    LOG(INFO) << "Exported shmsegment id " << shmid() << " (size=" << size() << ") to " << filename;
+    return 0;
+}

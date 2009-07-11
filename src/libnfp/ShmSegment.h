@@ -34,6 +34,8 @@ public:
     int size() {return size_;}
     void size(int size) {if (size_ == 0) size_ = size;}
     
+    int save(const char* filename);
+    
     std::string info();
     
 protected:

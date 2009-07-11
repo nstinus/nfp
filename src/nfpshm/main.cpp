@@ -28,6 +28,7 @@ const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
 int rm(std::string);
 int load(std::string);
 int reload(std::string);
+int save(std::string);
 int infos(std::string);
 int infos2(/*std::string*/);
 int users();
@@ -58,6 +59,8 @@ int main (int argc, char* argv[])
         ret += load((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "reload") == 0)
         ret += reload((argc > 2) ? argv[2] : "");
+    else if (argc > 1 && strcmp(argv[1], "save") == 0)
+        ret += save((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "infos") == 0)
         ret += infos((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "infos2") == 0)
@@ -86,6 +89,12 @@ int rm(std::string arg_movie_id = "")
 int load(std::string arg_movie_id = "")
 {
     int ret = NFP::shm::RatingsManager::instance()->load(arg_movie_id, true);
+    return ret;
+}
+
+int save(std::string arg_movie_id = "")
+{
+    int ret = NFP::shm::RatingsManager::instance()->save(arg_movie_id, true);
     return ret;
 }
 

@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <list>
 
+#include <QString>
+
 #include "RatingsManager.h"
 
 NFP::shm::RatingsManager::RatingsManager()
@@ -200,5 +202,17 @@ void NFP::shm::RatingsManager::refreshRatingsList() {
     }
     
     LOG(INFO) << "Done refreshing ratings list.";
+}
+
+
+int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool feedback)
+{
+    int ret = 0;
+    RatingsSegments::const_iterator it = segments_.begin();
+    for (it = segments_.begin(); it != segments_.end(); it++) {
+        std::string filename = QString::fromStdString((*it)->keyFileName()).replace(".txt.shmkey", ".bin").toStdString();
+        ret += (*it)->save(filename.c_str());
+    }
+    return ret;
 }
 
