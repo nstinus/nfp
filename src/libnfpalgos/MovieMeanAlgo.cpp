@@ -21,7 +21,7 @@ int NFP::algos::MovieMeanAlgo::run()
     ushort current_movie_id = (*ratings_begin)->movie_id();
     
     LOG(INFO) << "Starting loop over all the ratings...";
-    for (std::list<NFP::model::Rating*>::iterator it = ratings_begin; it != ratings_end; it++) {
+    for (std::list<NFP::model::Rating*>::const_iterator it = ratings_begin; it != ratings_end; it++) {
         if (*it == NULL) {
             LOG(ERROR) << "ptr is null!";
             return -1;

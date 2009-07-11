@@ -441,7 +441,7 @@ int users2()
     char* msg = new char[256];
     sprintf(msg, "%9s  %5s", "# user_id", "R ArM");
     std::cout << msg << std::endl << std::endl;
-    std::vector<uint>::iterator u;
+    std::vector<uint>::const_iterator u;
     for (u = u_mean_alg->users_begin(); u != u_mean_alg->users_end(); u++) {
         float res = u_mean_alg->get_predicted_rate(*u, 0, "");
         if (res > 0) {
@@ -455,7 +455,7 @@ int users2()
 
 int ratings2()
 {
-    std::list<NFP::model::Rating*>::iterator it, end;
+    std::list<NFP::model::Rating*>::const_iterator it, end;
     DLOG(INFO) << "Getting start begin() on ratings...";
     it = NFP::shm::RatingsManager::instance()->ratings_begin();
     DLOG(INFO) << "Getting start end() on ratings...";

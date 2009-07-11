@@ -24,13 +24,13 @@ public:
     std::map<uint, float>* result() {return &user_mean_rates_;}
     void* get_results() {return &user_mean_rates_;}
     virtual float get_predicted_rate(uint, ushort, std::string);
-    std::vector<uint>::iterator users_begin() {return users.begin();}
-    std::vector<uint>::iterator users_end() {return users.end();}    
+    std::vector<uint>::const_iterator users_begin() {return users.begin();}
+    std::vector<uint>::const_iterator users_end() {return users.end();}
     
 private:
     std::map<uint, float> user_mean_rates_;
-    std::list<NFP::model::Rating*>::iterator ratings_begin;
-    std::list<NFP::model::Rating*>::iterator ratings_end;
+    std::list<NFP::model::Rating*>::const_iterator ratings_begin;
+    std::list<NFP::model::Rating*>::const_iterator ratings_end;
     std::vector<uint> users;
     
     void init();

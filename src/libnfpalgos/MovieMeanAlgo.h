@@ -27,8 +27,8 @@ public:
     
 private:
     std::map<ushort, float> mean_rates_;
-    std::list<NFP::model::Rating*>::iterator ratings_begin;
-    std::list<NFP::model::Rating*>::iterator ratings_end;
+    std::list<NFP::model::Rating*>::const_iterator ratings_begin;
+    std::list<NFP::model::Rating*>::const_iterator ratings_end;
     
     void init();
 };

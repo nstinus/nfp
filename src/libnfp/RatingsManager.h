@@ -29,8 +29,8 @@ public:
     int nbSegments() {return segments_.size();};
     void refreshRatingsList();
     //std::list<NFP::model::Rating*>::iterator ratings() {return ratings_.begin();};
-    std::list<NFP::model::Rating*>::iterator ratings_begin() {return ratings_.begin();};
-    std::list<NFP::model::Rating*>::iterator ratings_end() {return ratings_.end();};
+    std::list<NFP::model::Rating*>::const_iterator ratings_begin() {return ratings_.begin();};
+    std::list<NFP::model::Rating*>::const_iterator ratings_end() {return ratings_.end();};
     
 private:
     RatingsManager();
