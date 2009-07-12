@@ -37,7 +37,7 @@ NFP::shm::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::st
         LOG(ERROR) << "Data file " << dataFileName << " does not exist."; 
 }
 
-void NFP::shm::RatingsShmSegment::load()
+int NFP::shm::RatingsShmSegment::load()
 {
     std::ifstream in(dataFileName_.c_str());
     
@@ -54,7 +54,6 @@ void NFP::shm::RatingsShmSegment::load()
 
         while (!in.eof()) {
             getline(in, line);
-            //DLOG(INFO) << "Read line: \"" << line << "\"";
             if (movie_id == -1) {
                 QString l = QString::fromStdString(line);
                 l.chop(1);
@@ -65,16 +64,7 @@ void NFP::shm::RatingsShmSegment::load()
                     user_id = mvFileLineRegExp.cap(1).toInt();
                     rate = mvFileLineRegExp.cap(2).toInt();
                     date = mvFileLineRegExp.cap(3).toStdString();
-                    // #ifndef NDEBUG
-                    // char* msg = new char[50];
-                    // sprintf(msg, "%05d  %08d  %1d  %10s", movie_id, user_id, rate, date.c_str());
-                    // DLOG(INFO) << "Read:   " << msg;
-                    // delete[] msg;
-                    // #endif
                     NFP::model::Rating* r = new NFP::model::Rating(movie_id, user_id, rate, date);
-                    // #ifndef NDEBUG
-                    // DLOG(INFO) << "Stored: " << r->to_string();
-                    // #endif
                     ratings.push_back(r);
                 }    
             }
@@ -114,9 +104,12 @@ void NFP::shm::RatingsShmSegment::load()
             }
             LOG(INFO) << "... done";
         }
+        return 0;
     }
-    else
-        LOG(ERROR) << "Unable to open file \"" << keyFileName_ << "\" for reading.";    
+    else {
+        LOG(ERROR) << "Unable to open file \"" << keyFileName_ << "\" for reading.";
+        return -1;
+    }
 }
 
 NFP::model::Rating* NFP::shm::RatingsShmSegment::ptr()

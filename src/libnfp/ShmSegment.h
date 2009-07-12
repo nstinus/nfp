@@ -34,7 +34,8 @@ public:
     int size() {return size_;}
     void size(int size) {if (size_ == 0) size_ = size;}
     
-    int save(const char* filename);
+    virtual int save_raw(const char* filename);
+    virtual int load_raw(const char* filename);
     
     std::string info();
     

@@ -6,7 +6,9 @@
 #include <stdlib.h>
 #include <list>
 
+#include <QDir>
 #include <QString>
+#include <boost/progress.hpp>
 
 #include "RatingsManager.h"
 
@@ -29,7 +31,7 @@ NFP::shm::RatingsManager::RatingsManager()
     }
     
     segments_.reserve(17700); // Max segments in the original dataset.
-    init("", true);
+    init("", false);
 }
 
 NFP::shm::RatingsManager::~RatingsManager()
@@ -144,6 +146,13 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
      return errno;
     }
     
+    QDir* d = new QDir(QString::fromStdString(NFP_SHM_FILES));
+    QStringList filter;
+    filter << "mv_*.txt.shmkey";
+    std::cout << std::endl << "Loading existing segments...";
+    boost::progress_display show_progress(d->entryList(filter, QDir::Files, QDir::Name).size());
+    delete d;
+    
     while ((dirp = readdir(dp)) != NULL) {
         std::string keyFileName = dirp->d_name;
  
@@ -173,6 +182,7 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
                 ratings_.push_back(r);
             }
         }
+        ++show_progress;
     }
     closedir(dp);
     
@@ -208,12 +218,15 @@ void NFP::shm::RatingsManager::refreshRatingsList() {
 int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool /*feedback*/)
 {
     int ret = 0;
+    std::cout << std::endl << "Saving segments...";
+    boost::progress_display show_progress(segments_.size());
     RatingsSegments::const_iterator it = segments_.begin();
     for (it = segments_.begin(); it != segments_.end(); it++) {
         if ((*it)->keyFileName().find(arg_movie_id, 0) != std::string::npos) {
             std::string filename = QString::fromStdString((*it)->keyFileName()).replace(".txt.shmkey", ".bin").toStdString();
-            ret += (*it)->save(filename.c_str());
+            ret += (*it)->save_raw(filename.c_str());
         }
+        ++show_progress;
     }
     return ret;
 }

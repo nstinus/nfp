@@ -118,11 +118,16 @@ std::string NFP::base::ShmSegment::info()
 }
 
 
-int NFP::base::ShmSegment::save(const char * filename)
+int NFP::base::ShmSegment::save_raw(const char* filename)
 {
     std::ofstream out(filename);
     out.write((const char*)ptr(), size());
     out.close();
     LOG(INFO) << "Exported shmsegment id " << shmid() << " (size=" << size() << ") to " << filename;
+    return 0;
+}
+
+int NFP::base::ShmSegment::load_raw(const char* /*filename*/)
+{
     return 0;
 }

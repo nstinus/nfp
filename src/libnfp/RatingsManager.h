@@ -29,6 +29,7 @@ public:
     int save(std::string arg_movie_id = "", bool feedback = false);
     int nbSegments() {return segments_.size();};
     void refreshRatingsList();
+    uint nb_ratings() {return ratings_.size();};
     std::list<NFP::model::Rating*>::const_iterator ratings_begin() {return ratings_.begin();};
     std::list<NFP::model::Rating*>::const_iterator ratings_end() {return ratings_.end();};
     

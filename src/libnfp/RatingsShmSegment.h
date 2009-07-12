@@ -19,10 +19,10 @@ public:
     RatingsShmSegment(std::string, std::string);
     ~RatingsShmSegment() {}
     
-    void load();
     NFP::model::Rating* ptr();
     int nb_ratings() {return size_ / RATING_DATA_SIZE;}
     int remove();
+    int load();
     
 private:
     std::string dataFileName_;

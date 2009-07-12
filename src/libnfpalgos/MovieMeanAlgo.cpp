@@ -1,6 +1,7 @@
 #include "MovieMeanAlgo.h"
 #include "RatingsManager.h"
 #include "Rating.h"
+#include <boost/progress.hpp>
 
 void NFP::algos::MovieMeanAlgo::init(){
     LOG(INFO) << "Init...";
@@ -21,6 +22,8 @@ int NFP::algos::MovieMeanAlgo::run()
     ushort current_movie_id = (*ratings_begin)->movie_id();
     
     LOG(INFO) << "Starting loop over all the ratings...";
+    std::cout << std::endl << "Starting loop over all the ratings...";
+    boost::progress_display show_progress_ratings(NFP::shm::RatingsManager::instance()->nb_ratings());
     for (std::list<NFP::model::Rating*>::const_iterator it = ratings_begin; it != ratings_end; it++) {
         if (*it == NULL) {
             LOG(ERROR) << "ptr is null!";
@@ -42,6 +45,7 @@ int NFP::algos::MovieMeanAlgo::run()
             nb_rates = 1;
             current_movie_id = movie_id;
         }
+        ++show_progress_ratings;
     }
     mean_rates_[current_movie_id] = (float)sum_rates / (float)nb_rates;
     #ifndef NDEBUG
