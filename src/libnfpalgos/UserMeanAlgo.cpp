@@ -17,7 +17,7 @@ int NFP::algos::UserMeanAlgo::run()
     init();
     
     std::map<uint, unsigned long long> user_summed_rates_;
-    std::map<uint, uint> user_nb_rates_;
+    //std::map<uint, uint> user_nb_rates_;
     
     
     LOG(INFO) << "Starting loop over all the ratings...";
@@ -62,8 +62,12 @@ int NFP::algos::UserMeanAlgo::run()
     return 0;
 }
 
-float NFP::algos::UserMeanAlgo::get_predicted_rate(uint u_id, ushort /*m_id*/, std::string /*date = ""*/)
+float NFP::algos::UserMeanAlgo::get_mean_rate(uint u_id)
 {
-    //FIXME: warnings about u_id, date, unused.
     return user_mean_rates_.find(u_id) == user_mean_rates_.end() ? -1.0 : user_mean_rates_[u_id];
+}
+
+uint NFP::algos::UserMeanAlgo::get_nb_rates(uint u_id)
+{
+    return user_nb_rates_.find(u_id) == user_nb_rates_.end() ? -1.0 : user_nb_rates_[u_id];
 }

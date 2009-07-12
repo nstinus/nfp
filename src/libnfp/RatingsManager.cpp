@@ -133,10 +133,7 @@ void NFP::shm::RatingsManager::addSegment(RatingsShmSegment* rss)
     loadedSegments_.insert(rss->keyFileName());
 }
 
-// Should only find what's already loaded and what's not.
-// This way we won't mess around with the filesystem when not necessary.
-// This fonctionnality should go in a dedicated function, and called in the contructor.
-// This function would thus be useless. How sad...
+
 int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
 {
     DIR *dp;
@@ -195,8 +192,10 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
 
 void NFP::shm::RatingsManager::refreshRatingsList() {
     LOG(INFO) << "Refreshing ratings list...";
-    ratings_.clear();
+    std::cout << std::endl << "Refreshing ratings list...";
+    boost::progress_display display(segments_.size());
     
+    ratings_.clear();
     std::vector<RatingsShmSegment*>::iterator it;
     for (it = segments_.begin(); it != segments_.end(); it++) {
         for (int i = 0; i < (*it)->nb_ratings(); i++) {
@@ -209,6 +208,7 @@ void NFP::shm::RatingsManager::refreshRatingsList() {
                 ratings_.push_back(r);
             }
         }
+        ++display;
     }
     
     LOG(INFO) << "Done refreshing ratings list.";

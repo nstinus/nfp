@@ -452,9 +452,10 @@ int users2()
     std::cout << msg << std::endl << std::endl;
     std::vector<uint>::const_iterator u;
     for (u = u_mean_alg->users_begin(); u != u_mean_alg->users_end(); u++) {
-        float res = u_mean_alg->get_predicted_rate(*u, 0, "");
-        if (res > 0) {
-            sprintf(msg, "%09d  %5.3f", *u, res);
+        float mean = u_mean_alg->get_mean_rate(*u);
+        int nb = u_mean_alg->get_nb_rates(*u);
+        if (mean != -1 && nb != -1) {
+            sprintf(msg, "%09d  %6d  %5.3f", *u, nb, mean);
             std::cout << msg << std::endl;
         }
     }
