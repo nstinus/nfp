@@ -205,13 +205,15 @@ void NFP::shm::RatingsManager::refreshRatingsList() {
 }
 
 
-int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool feedback)
+int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool /*feedback*/)
 {
     int ret = 0;
     RatingsSegments::const_iterator it = segments_.begin();
     for (it = segments_.begin(); it != segments_.end(); it++) {
-        std::string filename = QString::fromStdString((*it)->keyFileName()).replace(".txt.shmkey", ".bin").toStdString();
-        ret += (*it)->save(filename.c_str());
+        if ((*it)->keyFileName().find(arg_movie_id, 0) != std::string::npos) {
+            std::string filename = QString::fromStdString((*it)->keyFileName()).replace(".txt.shmkey", ".bin").toStdString();
+            ret += (*it)->save(filename.c_str());
+        }
     }
     return ret;
 }

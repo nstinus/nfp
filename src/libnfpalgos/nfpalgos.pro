@@ -4,6 +4,7 @@ CONFIG += debug_and_release
 
 TEMPLATE = lib
 
+CONFIG -= qt
 CONFIG += stl
 CONFIG += x86
 CONFIG += staticlib

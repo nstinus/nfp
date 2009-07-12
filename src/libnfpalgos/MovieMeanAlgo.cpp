@@ -52,7 +52,7 @@ int NFP::algos::MovieMeanAlgo::run()
     return 0;
 }
 
-float NFP::algos::MovieMeanAlgo::get_predicted_rate(uint u_id, ushort m_id, std::string date = "")
+float NFP::algos::MovieMeanAlgo::get_predicted_rate(uint /*u_id*/, ushort m_id, std::string /*date = ""*/)
 {
     //FIXME: warnings about u_id, date, unused.
     return mean_rates_.find(m_id) == mean_rates_.end() ? -1.0 : mean_rates_[m_id];

@@ -55,7 +55,7 @@ int NFP::algos::UserMeanAlgo::run()
     return 0;
 }
 
-float NFP::algos::UserMeanAlgo::get_predicted_rate(uint u_id, ushort m_id, std::string date = "")
+float NFP::algos::UserMeanAlgo::get_predicted_rate(uint u_id, ushort /*m_id*/, std::string /*date = ""*/)
 {
     //FIXME: warnings about u_id, date, unused.
     return user_mean_rates_.find(u_id) == user_mean_rates_.end() ? -1.0 : user_mean_rates_[u_id];
