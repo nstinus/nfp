@@ -51,6 +51,8 @@ int main (int argc, char* argv[])
     google::InitGoogleLogging(argv[0]);
     google::InstallFailureSignalHandler();
     
+    LOG(INFO) << "Starting main()";
+
     int ret = 0;
     
     if (argc > 1 && strcmp(argv[1], "remove") == 0)
@@ -75,7 +77,9 @@ int main (int argc, char* argv[])
         ret += users2();
     else
         usage();
-    
+
+    LOG(INFO) << "Done with main(). Bye!";
+
     return ret;
 }
 
