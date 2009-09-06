@@ -26,6 +26,7 @@ public:
     ~RatingsManager();
     int load(std::string arg_movie_id = "", bool feedback = false);
     int remove(std::string arg_movie_id = "", bool feedback = false);
+    int removeAll();
     int save(std::string arg_movie_id = "", bool feedback = false);
     int nbSegments() {return segments_.size();};
     void refreshRatingsList();

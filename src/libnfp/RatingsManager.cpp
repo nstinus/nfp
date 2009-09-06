@@ -238,3 +238,19 @@ int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool /*feedback*/)
     return ret;
 }
 
+int NFP::shm::RatingsManager::removeAll()
+{
+    int ret = 0;
+    RatingsSegments::iterator it;
+    for (it = segments_.begin(); it != segments_.end(); ++it) {
+            std::string msg("Removed " + (*it)->info());
+            (*it)->remove();
+            LOG(INFO) << msg;
+    }
+    segments_.clear();
+    LOG(INFO) << "Segments list cleared.";
+    ratings_.clear();
+    LOG(INFO) << "Ratings list cleared.";
+    return ret;
+}
+

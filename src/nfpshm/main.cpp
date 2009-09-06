@@ -26,6 +26,7 @@ const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
 
 
 int rm(std::string);
+int rmAll();
 int load(std::string);
 int reload(std::string);
 int save(std::string);
@@ -57,6 +58,8 @@ int main (int argc, char* argv[])
     
     if (argc > 1 && strcmp(argv[1], "remove") == 0)
         ret += rm((argc > 2) ? argv[2] : "");
+    else if (argc > 1 && strcmp(argv[1], "remove-all") == 0)
+        ret += rmAll();
     else if (argc > 1 && strcmp(argv[1], "load") == 0)
         ret += load((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "reload") == 0)
@@ -89,6 +92,10 @@ int rm(std::string arg_movie_id = "")
     return NFP::shm::RatingsManager::instance()->remove(arg_movie_id, true);
 }
 
+int rmAll()
+{
+    return NFP::shm::RatingsManager::instance()->removeAll();
+}
 
 int load(std::string arg_movie_id = "")
 {
@@ -327,7 +334,7 @@ void fillMoviesMaps()
 void usage()
 {
     std::string desc;
-    desc  = "nfpshm <load|remove|infos|users> [movie]\n";
+    desc  = "nfpshm <load|remove[-all]|infos|users|save> [movie_id pattern]\n";
     std::cout << desc << std::endl;
 }
 
