@@ -99,7 +99,7 @@ int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
     std::list<RatingsSegments::iterator> erasionList;
     
     RatingsSegments::iterator it = segments_.begin();
-    for (it = segments_.begin(); it != segments_.end(); it++) {
+    for (it = segments_.begin(); true; ) {
         if ((int)(*it)->keyFileName().find(arg_movie_id) != -1) {
             std::string msg("Removed " + (*it)->info());
             (*it)->remove();
@@ -107,11 +107,18 @@ int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
             LOG(INFO) << msg;
             if (feedback) { std::cout << msg << std::endl; }
         }
+	it++;
+	if (it == segments_.end()) break;
     }
-    std::list<RatingsSegments::iterator>::iterator it2;
-    for (it2 = erasionList.begin(); it2 != erasionList.end(); it2++) {
-        segments_.erase(*it2);
-    }
+    //std::list<RatingsSegments::iterator>::iterator it2;
+    //for (it2 = erasionList.begin(); it2 != erasionList.end(); ++it2) {
+    //    try {
+    //        segments_.erase(*it2);
+    //    }
+    //    catch (...) {
+    //	    LOG(FATAL) << "Something fishy just happened!";
+    //    }
+    //}
     rebuildLoadedSegments();
     refreshRatingsList();
     return 0;
