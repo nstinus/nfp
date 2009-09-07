@@ -5,6 +5,7 @@
 
 void NFP::algos::MovieMeanAlgo::init(){
     LOG(INFO) << "Init...";
+    NFP::shm::RatingsManager::instance()->refreshRatingsList();
     ratings_begin = NFP::shm::RatingsManager::instance()->ratings_begin();
     ratings_end = NFP::shm::RatingsManager::instance()->ratings_end();
     LOG(INFO) << "...done";
@@ -21,8 +22,9 @@ int NFP::algos::MovieMeanAlgo::run()
     
     ushort current_movie_id = (*ratings_begin)->movie_id();
     
-    LOG(INFO) << "Starting loop over all the ratings...";
-    std::cout << std::endl << "Starting loop over all the ratings...";
+    std::string msg("Looping over all the ratings...");
+    LOG(INFO) << msg;
+    std::cout << std::endl << msg;
     boost::progress_display show_progress_ratings(NFP::shm::RatingsManager::instance()->nb_ratings());
     for (std::list<NFP::model::Rating*>::const_iterator it = ratings_begin; it != ratings_end; it++) {
         if (*it == NULL) {

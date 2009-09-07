@@ -5,6 +5,7 @@
 
 void NFP::algos::UserMeanAlgo::init(){
     LOG(INFO) << "Init...";
+    NFP::shm::RatingsManager::instance()->refreshRatingsList();
     ratings_begin = NFP::shm::RatingsManager::instance()->ratings_begin();
     ratings_end = NFP::shm::RatingsManager::instance()->ratings_end();
     LOG(INFO) << "...done";
@@ -19,9 +20,9 @@ int NFP::algos::UserMeanAlgo::run()
     std::map<uint, unsigned long long> user_summed_rates_;
     //std::map<uint, uint> user_nb_rates_;
     
-    
-    LOG(INFO) << "Starting loop over all the ratings...";
-    std::cout << std::endl << "Starting loop over all the ratings...";
+    std::string msg("Looping over all the ratings...");
+    LOG(INFO) << msg;
+    std::cout << std::endl << msg;
     int nb_processed_ratings = 0;
     boost::progress_display show_progress_ratings(NFP::shm::RatingsManager::instance()->nb_ratings());
     for (std::list<NFP::model::Rating*>::const_iterator it = ratings_begin; it != ratings_end; it++) {
@@ -46,8 +47,9 @@ int NFP::algos::UserMeanAlgo::run()
         ++show_progress_ratings;
     }
     
-    LOG(INFO) << "Calculating average rate per user...";
-    std::cout << std::endl << "Calculating average rate per user...";
+    msg = "Calculating average rate per user...";
+    LOG(INFO) << msg;
+    std::cout << std::endl << msg;
     boost::progress_display show_progress_users(users.size());
     for (std::vector<uint>::iterator u_id = users.begin(); u_id != users.end(); u_id++) {
         user_mean_rates_[*u_id] = (float)user_summed_rates_[*u_id] / (float)user_nb_rates_[*u_id];

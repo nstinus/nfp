@@ -36,7 +36,7 @@ public:
     
 private:
     RatingsManager();
-    int init(std::string arg_movie_id = "", bool feedback = false);
+    int init(std::string arg_movie_id = "", bool feedback = false, bool preloadSegments = false);
     void rebuildLoadedSegments();
     void addSegment(RatingsShmSegment*);
     

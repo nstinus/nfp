@@ -31,7 +31,7 @@ NFP::shm::RatingsManager::RatingsManager()
     }
     
     segments_.reserve(17700); // Max segments in the original dataset.
-    init("", false);
+    init("", false, false);
 }
 
 NFP::shm::RatingsManager::~RatingsManager()
@@ -110,17 +110,8 @@ int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
 	it++;
 	if (it == segments_.end()) break;
     }
-    //std::list<RatingsSegments::iterator>::iterator it2;
-    //for (it2 = erasionList.begin(); it2 != erasionList.end(); ++it2) {
-    //    try {
-    //        segments_.erase(*it2);
-    //    }
-    //    catch (...) {
-    //	    LOG(FATAL) << "Something fishy just happened!";
-    //    }
-    //}
     rebuildLoadedSegments();
-    refreshRatingsList();
+    //refreshRatingsList();
     return 0;
 }
 
@@ -131,7 +122,6 @@ void NFP::shm::RatingsManager::rebuildLoadedSegments()
     for (it = segments_.begin(); it != segments_.end(); it++) {
         loadedSegments_.insert((*it)->keyFileName());
     }
-    //LOG(INFO) << "Found " << loadedSegments_.size() << " segments.";
 }
 
 void NFP::shm::RatingsManager::addSegment(RatingsShmSegment* rss)
@@ -141,7 +131,7 @@ void NFP::shm::RatingsManager::addSegment(RatingsShmSegment* rss)
 }
 
 
-int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
+int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool preloadSegments)
 {
     DIR *dp;
     struct dirent *dirp;
@@ -175,23 +165,23 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
         addSegment(mySSR);
         LOG(INFO) << msg;
         if (feedback) { std::cout << msg << std::endl; }
-        LOG(INFO) << "Loading " << mySSR->nb_ratings() << " ratings...";
-        for (int i = 0; i < mySSR->nb_ratings(); i++) {
-            NFP::model::Rating* r = (NFP::model::Rating*)(mySSR->ptr() + i);
-            if (r == NULL) {
-                LOG(ERROR) << "ptr==null";
-                continue;
-            }
-            else {
-                ratings_.push_back(r);
-            }
-        }
+        //LOG(INFO) << "Loading " << mySSR->nb_ratings() << " ratings...";
+        //for (int i = 0; i < mySSR->nb_ratings(); i++) {
+        //    NFP::model::Rating* r = (NFP::model::Rating*)(mySSR->ptr() + i);
+        //    if (r == NULL) {
+        //        LOG(ERROR) << "ptr==null";
+        //        continue;
+        //    }
+        //    else {
+        //        ratings_.push_back(r);
+        //    }
+        //}
         ++show_progress;
     }
     closedir(dp);
     
     rebuildLoadedSegments();
-    //refreshRatingsList();
+    if (preloadSegments) refreshRatingsList();
     
     LOG(INFO) << "Init done";
     return 0;

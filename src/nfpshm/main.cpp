@@ -99,12 +99,14 @@ int rmAll()
 
 int load(std::string arg_movie_id = "")
 {
+    //NFP::shm::RatingsManager::instance()->refreshRatingsList();
     int ret = NFP::shm::RatingsManager::instance()->load(arg_movie_id, true);
     return ret;
 }
 
 int save(std::string arg_movie_id = "")
 {
+    NFP::shm::RatingsManager::instance()->refreshRatingsList();
     int ret = NFP::shm::RatingsManager::instance()->save(arg_movie_id, true);
     return ret;
 }
@@ -334,7 +336,7 @@ void fillMoviesMaps()
 void usage()
 {
     std::string desc;
-    desc  = "nfpshm <load|remove[-all]|infos|users|save> [movie_id pattern]\n";
+    desc  = "nfpshm <load|remove[-all]|infos[2]|users|save> [movie_id pattern]\n";
     std::cout << desc << std::endl;
 }
 
@@ -476,6 +478,7 @@ int users2()
 
 int ratings2()
 {
+  NFP::shm::RatingsManager::instance()->refreshRatingsList();
     std::list<NFP::model::Rating*>::const_iterator it, end;
     DLOG(INFO) << "Getting start begin() on ratings...";
     it = NFP::shm::RatingsManager::instance()->ratings_begin();
