@@ -165,17 +165,6 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool
         addSegment(mySSR);
         LOG(INFO) << msg;
         if (feedback) { std::cout << msg << std::endl; }
-        //LOG(INFO) << "Loading " << mySSR->nb_ratings() << " ratings...";
-        //for (int i = 0; i < mySSR->nb_ratings(); i++) {
-        //    NFP::model::Rating* r = (NFP::model::Rating*)(mySSR->ptr() + i);
-        //    if (r == NULL) {
-        //        LOG(ERROR) << "ptr==null";
-        //        continue;
-        //    }
-        //    else {
-        //        ratings_.push_back(r);
-        //    }
-        //}
         ++show_progress;
     }
     closedir(dp);
