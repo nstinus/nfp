@@ -106,7 +106,7 @@ int load(std::string arg_movie_id = "")
 
 int save(std::string arg_movie_id = "")
 {
-    NFP::shm::RatingsManager::instance()->refreshRatingsList();
+    //NFP::shm::RatingsManager::instance()->refreshRatingsList();
     int ret = NFP::shm::RatingsManager::instance()->save(arg_movie_id, true);
     return ret;
 }
