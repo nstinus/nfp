@@ -96,21 +96,31 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
 
 int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
 {
+    std::string msg;
     std::list<RatingsSegments::iterator> erasionList;
     
     RatingsSegments::iterator it = segments_.begin();
+    bool fundCandidates = false;
     for (it = segments_.begin(); true; ) {
         if ((int)(*it)->keyFileName().find(arg_movie_id) != -1) {
-            std::string msg("Removed " + (*it)->info());
+            msg = "Removed " + (*it)->info();
             (*it)->remove();
             erasionList.push_back(it);
             LOG(INFO) << msg;
             if (feedback) { std::cout << msg << std::endl; }
+            fundCandidates = true;
         }
 	it++;
 	if (it == segments_.end()) break;
     }
-    rebuildLoadedSegments();
+    if (fundCandidates) {
+        rebuildLoadedSegments();
+    } else {
+        msg = "No segments fund for deletion with pattern '" + arg_movie_id + "'.";
+        LOG(WARNING) << msg;
+        if (feedback)
+            std::cout << msg << std::endl;
+    }
     //refreshRatingsList();
     return 0;
 }
