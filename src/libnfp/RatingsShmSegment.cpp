@@ -6,8 +6,7 @@
 #include <list>
 #include <sys/stat.h>
 #include <stdlib.h>
-
-#include <QRegExp>
+#include <stdio.h>
 
 #include "RatingsShmSegment.h"
 #include "Rating.h"
@@ -45,28 +44,22 @@ int NFP::shm::RatingsShmSegment::load()
     {
         LOG(INFO) << "Parsing file " << dataFileName_;
         std::string line;
-        QRegExp mvFileLineRegExp("^(\\d+),([1-5]),(\\d{4}-\\d{2}-\\d{2})$");
         int movie_id = -1;
         int user_id = -1;
         int rate = -1;
-        std::string date = "";
+        char date[11];
         std::list<NFP::model::Rating*> ratings;
 
         while (!in.eof()) {
             getline(in, line);
             if (movie_id == -1) {
-                QString l = QString::fromStdString(line);
-                l.chop(1);
-                movie_id = atoi(l.toStdString().c_str());
+	        sscanf(line.c_str(), "%d", &movie_id);
             }
             else {
-                if (mvFileLineRegExp.indexIn(QString::fromStdString(line)) > -1) {
-                    user_id = mvFileLineRegExp.cap(1).toInt();
-                    rate = mvFileLineRegExp.cap(2).toInt();
-                    date = mvFileLineRegExp.cap(3).toStdString();
-                    NFP::model::Rating* r = new NFP::model::Rating(movie_id, user_id, rate, date);
+	        if (sscanf(line.c_str(), "%d,%d,%s", &user_id, &rate, &date) == 3) {
+                    NFP::model::Rating* r = new NFP::model::Rating(movie_id, user_id, rate, std::string(date));
                     ratings.push_back(r);
-                }    
+	        }
             }
         }
         
