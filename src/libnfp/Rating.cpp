@@ -10,7 +10,8 @@
  *  Converts a ushort value of a date stored in the a Rating
  *  to a formatted YYYY-MM-DD string.
  */
-std::string NFP::utils::DateUS2S(ushort const& d){
+std::string NFP::utils::DateUS2S(ushort const& d)
+{
     return QDate::fromJulianDay((int)d +
         (int)BASICRATING__DATE_OFFSET).toString("yyyy-MM-dd").toStdString();
 }
@@ -19,7 +20,8 @@ std::string NFP::utils::DateUS2S(ushort const& d){
  *  Converts a formatted YYYY-MM-DD string
  *  to an offsetted ushort used by a Rating.
  */
-ushort NFP::utils::DateS2US(std::string const& d){
+ushort NFP::utils::DateS2US(std::string const& d)
+{
    return (ushort)(QDate::fromString(QString::fromStdString(d),
        QString("yyyy-MM-dd")).toJulianDay() - (int)BASICRATING__DATE_OFFSET);
 }

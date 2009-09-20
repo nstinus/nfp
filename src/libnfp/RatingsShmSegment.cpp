@@ -56,7 +56,7 @@ int NFP::shm::RatingsShmSegment::load()
 	        sscanf(line.c_str(), "%d", &movie_id);
             }
             else {
-	        if (sscanf(line.c_str(), "%d,%d,%s", &user_id, &rate, &date) == 3) {
+	        if (sscanf(line.c_str(), "%d,%d,%s", &user_id, &rate, (char*)&date) == 3) {
                     NFP::model::Rating* r = new NFP::model::Rating(movie_id, user_id, rate, std::string(date));
                     ratings.push_back(r);
 	        }
