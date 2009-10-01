@@ -11,7 +11,8 @@
 #include "RatingsShmSegment.h"
 #include "Rating.h"
 
-NFP::shm::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::string keyFileName) {
+NFP::shm::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::string keyFileName)
+{
     struct stat stFileInfo;
     if (stat(dataFileName.c_str(), &stFileInfo) == 0) {
         dataFileName_ = dataFileName;
@@ -32,8 +33,9 @@ NFP::shm::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::st
             load();
         }
     }
-    else
-        LOG(ERROR) << "Data file " << dataFileName << " does not exist."; 
+    else {
+        LOG(ERROR) << "Data file " << dataFileName << " does not exist.";
+    }
 }
 
 int NFP::shm::RatingsShmSegment::load()
@@ -126,3 +128,4 @@ int NFP::shm::RatingsShmSegment::remove()
     }
     return ret;
 }
+
