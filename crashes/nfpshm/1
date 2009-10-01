@@ -1,0 +1,34 @@
+nfpshm(64922) malloc: *** mmap(size=2097152) failed (error code=12)
+*** error: can't allocate region
+*** set a breakpoint in malloc_error_break to debug
+  what():  St9bad_alloc
+*** Aborted at 1253651549 (unix time) try "date -d @1253651549" if you are using GNU date ***
+PC: @ 0x907f4e42 kill$UNIX2003
+*** SIGABRT (@0x907f4e42) received by PID 64922 (TID 0xa007e720) stack trace: ***
+    @ 0x907f32bb _sigtramp
+    @ 0xffffffff (unknown)
+    @ 0x9086723a raise
+    @ 0x90873679 abort
+    @ 0x90ab5005 __gnu_cxx::__verbose_terminate_handler()
+    @ 0x90ab310c __gxx_personality_v0
+    @ 0x90ab314b std::terminate()
+    @ 0x90ab3261 __cxa_throw
+    @ 0x90ab35d8 operator new()
+    @   0x263342 QDateTime::QDateTime()
+    @   0x26b7bb QDateTimeParser::parseSection()
+    @   0x26d003 QDateTimeParser::parse()
+    @   0x26db16 QDateTimeParser::fromString()
+    @   0x26e8a4 QDate::fromString()
+    @     0x9711 NFP::utils::DateS2US()
+    @     0x97b3 NFP::model::Rating::Rating()
+    @     0xa749 NFP::shm::RatingsShmSegment::load()
+    @     0xad71 NFP::shm::RatingsShmSegment::RatingsShmSegment()
+    @     0xd0db NFP::shm::RatingsManager::load()
+    @     0x4ea7 load()
+    @     0x735f main
+    @     0x4734 start
+    @     0x4661 start
+    @        0x2 (unknown)
+nfpshm(64922) malloc: *** mmap(size=2097152) failed (error code=12)
+*** error: can't allocate region
+*** set a breakpoint in malloc_error_break to debug
