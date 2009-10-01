@@ -1,0 +1,9 @@
+SetOption('implicit_cache', 1)
+
+Program("nfpshm","main.cpp", LIBS=('QtCore', 'glog', 'nfp', 'nfpalgos'),
+			     LIBPATH=("/Library/Frameworks/QtCore.framework/",
+			     	      "../libnfp",
+				      "../libnfpalgos"),
+			     CPPPATH=("/Library/Frameworks/QtCore.framework/Headers",
+			              "../libnfp",
+				      "../libnfpalgos"))
