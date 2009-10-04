@@ -20,6 +20,11 @@ int NFP::algos::MovieMeanAlgo::run()
     long sum_rates = 0;
     long nb_rates = 0;
     
+    if (NFP::shm::RatingsManager::instance()->nb_ratings() == 0) {
+        LOG(WARNING) << "Maybe I was mistaken, by I was unable to find any rating to loop on!";
+        return -1;
+    }
+
     ushort current_movie_id = (*ratings_begin)->movie_id();
     
     std::string msg("Looping over all the ratings...");

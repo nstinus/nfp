@@ -154,6 +154,13 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool
     QStringList filter;
     filter << "mv_*.txt.shmkey";
     std::cout << std::endl << "Loading existing segments...";
+
+    if (d->entryList(filter, QDir::Files, QDir::Name).size() == 0) {
+      std::cout << " none found!" << std::endl;
+      LOG(WARNING) << "No dataset files found.";
+      return -1;
+    }
+
     boost::progress_display show_progress(d->entryList(filter, QDir::Files, QDir::Name).size());
     delete d;
     
@@ -187,8 +194,14 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool
 }
 
 void NFP::shm::RatingsManager::refreshRatingsList() {
+    if (segments_.size() == 0) {
+      LOG(WARNING) << "No segments found!";
+      return;
+    }
+
     LOG(INFO) << "Refreshing ratings list...";
     std::cout << std::endl << "Refreshing ratings list...";
+
     boost::progress_display display(segments_.size());
     
     ratings_.clear();
@@ -206,7 +219,10 @@ void NFP::shm::RatingsManager::refreshRatingsList() {
         }
         ++display;
     }
-    
+    if (nb_ratings() == 0) {
+        LOG(WARNING) << "Ratings list is empty!";
+    }
+
     LOG(INFO) << "Done refreshing ratings list.";
 }
 
