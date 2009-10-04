@@ -54,8 +54,8 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
         std::string dataFileName, keyFileName;
         dataFileName = keyFileName = dirp->d_name;
     
-        if (arg_movie_id != "" && (int)dataFileName.find(arg_movie_id) == -1
-                || dataFileName == "."
+        if (((arg_movie_id != "" && (int)dataFileName.find(arg_movie_id) == -1)
+	        || dataFileName == ".")
                 || dataFileName == "..")
             continue;
     
