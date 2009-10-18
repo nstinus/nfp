@@ -4,7 +4,7 @@
 
 #include <QDate>
 #include <QString>
-#include <QByteArray>
+
 
 /** 
  *  Converts a ushort value of a date stored in the a Rating

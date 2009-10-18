@@ -150,11 +150,12 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool
      return errno;
     }
     
+    /*
     QDir* d = new QDir(QString::fromStdString(NFP_SHM_FILES));
     QStringList filter;
     filter << "mv_*.txt.shmkey";
     std::cout << std::endl << "Loading existing segments...";
-
+    
     if (d->entryList(filter, QDir::Files, QDir::Name).size() == 0) {
       std::cout << " none found!" << std::endl;
       LOG(WARNING) << "No dataset files found.";
@@ -163,9 +164,11 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool
 
     boost::progress_display show_progress(d->entryList(filter, QDir::Files, QDir::Name).size());
     delete d;
+    */
     
     while ((dirp = readdir(dp)) != NULL) {
         std::string keyFileName = dirp->d_name;
+	LOG(INFO) << "## Dir entry: " << keyFileName;
  
         if ((int)keyFileName.find(".shmkey") == -1 ||
             (arg_movie_id != "" && (int)keyFileName.find(arg_movie_id) == -1))
@@ -182,7 +185,7 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool
         addSegment(mySSR);
         LOG(INFO) << msg;
         if (feedback) { std::cout << msg << std::endl; }
-        ++show_progress;
+        //++show_progress;
     }
     closedir(dp);
     

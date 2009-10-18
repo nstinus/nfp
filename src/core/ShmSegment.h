@@ -1,6 +1,8 @@
 #ifndef __NFP__SHMSEGMENT_H__
 #define __NFP__SHMSEGMENT_H__
 
+#include <sys/types.h>
+
 namespace NFP
 {
     

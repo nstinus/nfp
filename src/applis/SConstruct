@@ -1,0 +1,10 @@
+Program("nfpshm",
+        ("./nfpshm.cpp", Glob("../core/*.cpp"), Glob("../algos/*.cpp")),
+        LIBS=('QtCore', 'glog'),
+        #LIBPATH=("/Library/Frameworks/QtCore.framework/"),
+	CPPPATH=("/Library/Frameworks/QtCore.framework/Headers",
+		 "../core",
+		 "../algos"),
+        CPPFLAGS="-O3 -DNDEBUG -pipe -combine -ansi -Wall -fno-strict-aliasing")
+#        CPPFLAGS="-pipe -combine -pg -ansi -Wall -fno-strict-aliasing")
+

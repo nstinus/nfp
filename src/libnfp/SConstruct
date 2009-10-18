@@ -1,3 +1,0 @@
-StaticLibrary("nfp", Glob("*.cpp"), LIBS=('QtCore',),
-		     		    LIBPATH="/Library/Frameworks/QtCore.framework",
-				    CPPPATH="/Library/Frameworks/QtCore.framework/Headers")
