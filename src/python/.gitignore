@@ -1,0 +1,5 @@
+*.so
+*_wrap.cc
+*.os
+*.pyc
+nfp.py
