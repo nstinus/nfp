@@ -102,6 +102,7 @@ public:
     void set_user_id(uint const&);
     void set_rate(uchar const&);
     void set_date(ushort const&);
+    void set_date(std::string const&);
 
 };
 

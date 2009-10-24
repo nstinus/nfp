@@ -132,3 +132,8 @@ void NFP::model::Rating::set_date(ushort const& d)
 {
     *(ushort*)&data_[BASICRATING__DATE_POS] = (d & (ushort)BASICRATING__DATE_MASK);
 }
+
+void NFP::model::Rating::set_date(std::string const& d)
+{
+    set_date(utils::DateS2US(d));
+}

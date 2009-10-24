@@ -1,6 +1,6 @@
 import distutils.sysconfig
 
-env = Environment(SWIGFLAGS=['-c++ -python '.split()],
+env = Environment(SWIGFLAGS=['-c++ -python'.split()],
                   CPPPATH=("/Library/Frameworks/Python.framework/Versions/2.6/include/python2.6",
 		           "/Library/Frameworks/QtCore.framework/Headers",
 			   "../core"),
@@ -10,4 +10,5 @@ env = Environment(SWIGFLAGS=['-c++ -python '.split()],
 		  CPPFLAGS="-O3 -DNDEBUG -pipe -combine -ansi -Wall -fno-strict-aliasing")
 
 env.SharedLibrary('_nfp.so',
-		  ['nfp.i', Glob('../core/*.cpp')])
+		  ['nfp.i', '../core/Rating.cpp'])
+
