@@ -2,14 +2,16 @@
 %{
 #include "Rating.h"
 #include "RatingsManager.h"
+#include "MovieMeanAlgo.h"
 #include "Singleton.hxx"
 #include "log.h"
 %}
 
 %include "std_string.i"
 %include "std_list.i"
+%include "std_map.i"
 
-%template(RatingsList) std::list<NFP::model::Rating*>;
+//%template(RatingsList) std::list<NFP::model::Rating*>;
 
 void initLogging(std::string);
 
@@ -60,6 +62,18 @@ public:
 };
 
 } // NFP::shm
+
+namespace algos
+{
+class MovieMeanAlgo
+{
+public:
+    MovieMeanAlgo();
+    virtual int run();
+    //std::map<unsigned short, float>* result();
+    virtual float get_predicted_rate(unsigned int, unsigned short, std::string);
+};
+} // NFP::algos
 
 
 }
