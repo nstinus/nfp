@@ -1,5 +1,8 @@
 *.a
 *.o
+*.os
+.sconsign.dblite
+*~
 Makefile*
 .DS_Store
 debug

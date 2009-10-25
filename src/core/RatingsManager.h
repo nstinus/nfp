@@ -22,7 +22,9 @@ class RatingsManager : public base::Singleton<RatingsManager>
 {
     friend class base::Singleton<RatingsManager>;
 
-public:   
+public:
+    // FIXME: needed to take RatingsManger() public for swig. Find a way to have it back in private.
+    RatingsManager();
     ~RatingsManager();
     int load(std::string arg_movie_id = "", bool feedback = false);
     int remove(std::string arg_movie_id = "", bool feedback = false);
@@ -35,7 +37,6 @@ public:
     std::list<NFP::model::Rating*>::const_iterator ratings_end() {return ratings_.end();};
     
 private:
-    RatingsManager();
     int init(std::string arg_movie_id = "", bool feedback = false, bool preloadSegments = false);
     void rebuildLoadedSegments();
     void addSegment(RatingsShmSegment*);

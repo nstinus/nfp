@@ -10,5 +10,5 @@ env = Environment(SWIGFLAGS=['-c++ -python'.split()],
 		  CPPFLAGS="-O3 -DNDEBUG -pipe -combine -ansi -Wall -fno-strict-aliasing")
 
 env.SharedLibrary('_nfp.so',
-		  ['nfp.i', '../core/Rating.cpp'])
+		  ['nfp.i', Glob('../core/*.cpp')])
 
