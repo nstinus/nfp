@@ -13,7 +13,11 @@
 
 //%template(RatingsList) std::list<NFP::model::Rating*>;
 
-void initLogging(std::string);
+void initLogging(std::string const& appli_name);
+void LOG_INFO (std::string const& message);
+void LOG_WARN (std::string const& message);
+void LOG_ERROR(std::string const& message);
+void LOG_FATAL(std::string const& message);
 
 namespace NFP
 {
