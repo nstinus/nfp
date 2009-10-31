@@ -12,3 +12,5 @@ original_data
 model_test
 doc
 bin
+gmon.out
+*.pyo
