@@ -1,0 +1,49 @@
+MODE = 'release'
+PROFILING = False
+
+BASE_CPPFLAGS = ['-pipe',
+            '-combine',
+            '-ansi',
+            '-Wall',
+            '-fno-strict-aliasing']
+ADD_CPPFLAGS = dict()
+ADD_CPPFLAGS['release'] = ['-O3',
+                         '-DNDEBUG']
+ADD_CPPFLAGS['debug'] = ['-fno-omit-frame-pointer',
+                         '-fno-inline-functions',
+                         '-fno-inline-functions-called-once',
+                         '-fno-optimize-sibling-calls',
+                         '-fno-default-inline',
+                         '-fno-inline']
+ADD_CPPFLAGS['prof'] = ['-g',
+                        '-pg']
+                        
+
+BASE_LINKFLAGS = []
+ADD_LINKFLAGS = dict()
+ADD_LINKFLAGS['release'] = []
+ADD_LINKFLAGS['debug'] = []
+ADD_LINKFLAGS['prof'] = ['-pg',]
+
+LINKFLAGS = BASE_LINKFLAGS
+CPPFLAGS =  BASE_CPPFLAGS
+
+LINKFLAGS += ADD_LINKFLAGS[MODE]
+CPPFLAGS += ADD_CPPFLAGS[MODE]
+
+if PROFILING:
+   LINKFLAGS += ADD_LINKFLAGS['prof']
+   CPPFLAGS +=  ADD_CPPFLAGS['prof']
+
+
+LIBS = ['QtCore', 'glog']
+
+env = Environment(CPPFLAGS = CPPFLAGS,
+      	          LINKFLAGS = LINKFLAGS)
+
+Export('env')
+
+SConscript([#'core/SConscript',
+            #'algos/SConscript',
+            'app/SConscript',
+	    'python/SConscript'])

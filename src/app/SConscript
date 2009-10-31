@@ -1,0 +1,9 @@
+Import('env')
+
+env.Program("nfpshm",
+        ("./nfpshm.cpp", Glob("../core/*.cpp"), Glob("../algos/*.cpp")),
+        LIBS=('QtCore', 'glog'),
+        CPPPATH=("/Library/Frameworks/QtCore.framework/Headers",
+		 "../core",
+		 "../algos"))
+
