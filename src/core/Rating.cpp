@@ -6,7 +6,7 @@
 #include <QString>
 
 
-/** 
+/**
  *  Converts a ushort value of a date stored in the a Rating
  *  to a formatted YYYY-MM-DD string.
  */
@@ -16,7 +16,7 @@ std::string NFP::utils::DateUS2S(ushort const& d)
         (int)BASICRATING__DATE_OFFSET).toString("yyyy-MM-dd").toStdString();
 }
 
-/** 
+/**
  *  Converts a formatted YYYY-MM-DD string
  *  to an offsetted ushort used by a Rating.
  */
@@ -68,8 +68,8 @@ ushort NFP::model::Rating::movie_id() const
     return (int)ret;
 }*/
 
-uint NFP::model::Rating::user_id() const 
-{ 
+uint NFP::model::Rating::user_id() const
+{
     return *((uint*)&data_[BASICRATING__USER_ID_POS]) & (uint)BASICRATING__USER_ID_MASK;
 }
 
