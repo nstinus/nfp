@@ -5,6 +5,7 @@
 #include "MovieMeanAlgo.h"
 #include "Singleton.hxx"
 #include "log.h"
+#include "MoviesInfoProviderWrapper.h"
 %}
 
 %include "std_string.i"
@@ -78,6 +79,16 @@ public:
     virtual float get_predicted_rate(unsigned int, unsigned short, std::string);
 };
 } // NFP::algos
+
+
+namespace utils
+{
+
+int movieYear(int);
+std::string movieName(int);
+int MoviesInfoProvider_nbMovies();
+
+}
 
 
 }

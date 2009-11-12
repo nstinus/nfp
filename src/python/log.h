@@ -1,3 +1,6 @@
+#ifndef __NFP__PYTHON__LOG_H__
+#define __NFP__PYTHON__LOG_H__
+
 #include <glog/logging.h>
 #include <string>
 
@@ -27,3 +30,5 @@ inline void LOG_INFO (std::string const& message) {LOG_(message, 1);}
 inline void LOG_WARN (std::string const& message) {LOG_(message, 2);}
 inline void LOG_ERROR(std::string const& message) {LOG_(message, 3);}
 inline void LOG_FATAL(std::string const& message) {LOG_(message, 4);}
+
+#endif // __NFP__PYTHON__LOG_H__
