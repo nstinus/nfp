@@ -20,6 +20,7 @@
 //#include "User.h"
 #include "MovieMeanAlgo.h"
 #include "UserMeanAlgo.h"
+#include "MoviesInfoProvider.h"
 
 const std::string NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
 const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
@@ -38,14 +39,7 @@ void usage();
 int ratings(const std::string, const std::string);
 int ratings2();
 
-int movieYear(int);
-std::string movieName(int);
-void fillMoviesMaps();
 std::string hr_size(int);
-
-std::map<int, int> movieYears;
-std::map<int, std::string> movieNames;
-
 
 int main (int argc, char* argv[])
 {
@@ -183,8 +177,8 @@ int infos(std::string movie_id = "")
             nb_ratings,
             nb_ratings * RATING_DATA_SIZE,
             armean_rate,
-            movieYear(m_id),
-            movieName(m_id).c_str());
+            NFP::utils::MoviesInfoProvider::instance()->getMovieYear(m_id),
+            NFP::utils::MoviesInfoProvider::instance()->getMovieName(m_id)->c_str());
         std::cout << msg << std::endl;
 
         allR_mean = (allR_mean*total_ratings + armean_rate*nb_ratings);
@@ -271,66 +265,6 @@ int ratings(const std::string arg_movie_id = "", const std::string arg_user_id =
     closedir(dp);
 
     return 0;
-}
-
-
-int movieYear(int movie_id)
-{
-    int ret = 0;
-    if (movieYears.empty())
-        fillMoviesMaps();
-    if (movieYears.find(movie_id) == movieYears.end())
-        LOG(WARNING) << movie_id << " not found in movieYears map";
-    else ret = movieYears[movie_id];
-    return ret;
-}
-
-
-std::string movieName(int movie_id)
-{
-    std::string ret("");
-    if (movieNames.empty())
-        fillMoviesMaps();
-    if (movieNames.find(movie_id) == movieNames.end())
-        LOG(WARNING) << movie_id << " not found in movieNames map";
-    else ret = movieNames[movie_id];
-    return ret;
-}
-
-
-void fillMoviesMaps()
-{
-    LOG(INFO) << "movieYears and/or movieNames maps are empty. Filling up ...";
-
-    std::string movie_titlesFilePath = getenv("NFP_MOVIE_TITLES_FILE");
-
-    std::ifstream in(movie_titlesFilePath.c_str());
-
-    if (in.is_open())
-    {
-        std::string line;
-        QRegExp mvFileLineRegExp("^(\\d+),(\\d+|NULL),(.*)$");
-
-        int movie_id = -1;
-        int year = -1;
-        std::string name("");
-
-        while (!in.eof()) {
-            getline(in, line);
-            DLOG(INFO) << "Read line: \"" << line << "\"";
-            if (mvFileLineRegExp.indexIn(QString::fromStdString(line)) > -1) {
-                movie_id = mvFileLineRegExp.cap(1).toInt();
-                year = mvFileLineRegExp.cap(2).toInt();
-                year = year > 0 ? year : -1;
-                name = mvFileLineRegExp.cap(3).toStdString();
-                movieYears[movie_id] = year;
-                movieNames[movie_id] = name;
-            }
-        }
-    } else LOG(ERROR) << "Unable to open " << movie_titlesFilePath;
-
-    in.close();
-    LOG(INFO) << "... done";
 }
 
 void usage()
@@ -448,8 +382,8 @@ int infos2(/*std::string movie_id = ""*/)
             sprintf(msg, "%07d  %5.3f  %4d  %s",
                 m_id,
                 res,
-                movieYear(m_id),
-                movieName(m_id).c_str());
+                NFP::utils::MoviesInfoProvider::instance()->getMovieYear(m_id),
+                NFP::utils::MoviesInfoProvider::instance()->getMovieName(m_id)->c_str());
             std::cout << msg << std::endl;
         } else {
              skipped++;
