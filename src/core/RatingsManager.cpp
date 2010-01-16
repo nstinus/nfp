@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <list>
 
-#include <QDir>
+//#include <QDir>
 #include <QString>
 #include <boost/progress.hpp>
 
@@ -21,7 +21,7 @@ NFP::shm::RatingsManager::RatingsManager()
         NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
         LOG(INFO) << "NFP_TRAINING_SET_DIR = " << NFP_TRAINING_SET_DIR;
     }
-    
+
     if (getenv("NFP_SHM_FILES") == NULL) {
         LOG(FATAL) << "Unable to find NFP_SHM_FILES env. variable. Exiting";
         exit(1);
@@ -29,7 +29,7 @@ NFP::shm::RatingsManager::RatingsManager()
         NFP_SHM_FILES = getenv("NFP_SHM_FILES");
         LOG(INFO) << "NFP_SHM_FILES = " << NFP_SHM_FILES;
     }
-    
+
     segments_.reserve(17700); // Max segments in the original dataset.
     init("", false, false);
 }
@@ -41,27 +41,27 @@ NFP::shm::RatingsManager::~RatingsManager()
 int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
 {
     int ret = 0;
-    
+
     DIR *dp;
     struct dirent *dirp;
     if((dp  = opendir(NFP_TRAINING_SET_DIR.c_str())) == NULL) {
         LOG(ERROR) << "Error(" << errno << ") opening " << NFP_TRAINING_SET_DIR;
         return errno;
     }
-    
+
     while ((dirp = readdir(dp)) != NULL) {
         int local_err = 0;
         std::string dataFileName, keyFileName;
         dataFileName = keyFileName = dirp->d_name;
-    
+
         if (((arg_movie_id != "" && (int)dataFileName.find(arg_movie_id) == -1)
 	        || dataFileName == ".")
                 || dataFileName == "..")
             continue;
-    
+
         dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
         keyFileName  = NFP_SHM_FILES + std::string("/") + keyFileName + std::string(".shmkey");
-        
+
         if (loadedSegments_.find(keyFileName) == loadedSegments_.end()) {
             NFP::shm::RatingsShmSegment* mySSR;
             mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
@@ -83,9 +83,9 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
                 LOG(INFO) << msg;
                 if (feedback) { std::cout << msg << std::endl; }
             } else { LOG(WARNING) << "Unable to load " << dataFileName; }
-            ret += local_err;            
+            ret += local_err;
         }
-        
+
         DLOG(INFO) << "NB segments " << nbSegments();
     }
     closedir(dp);
@@ -98,7 +98,7 @@ int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
 {
     std::string msg;
     std::list<RatingsSegments::iterator> erasionList;
-    
+
     RatingsSegments::iterator it = segments_.begin();
     bool fundCandidates = false;
     for (it = segments_.begin(); true; ) {
@@ -149,31 +149,16 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool
      LOG(ERROR) << "Error(" << errno << ") opening " << NFP_SHM_FILES;
      return errno;
     }
-    
-    /*
-    QDir* d = new QDir(QString::fromStdString(NFP_SHM_FILES));
-    QStringList filter;
-    filter << "mv_*.txt.shmkey";
-    std::cout << std::endl << "Loading existing segments...";
-    
-    if (d->entryList(filter, QDir::Files, QDir::Name).size() == 0) {
-      std::cout << " none found!" << std::endl;
-      LOG(WARNING) << "No dataset files found.";
-      return -1;
-    }
 
-    boost::progress_display show_progress(d->entryList(filter, QDir::Files, QDir::Name).size());
-    delete d;
-    */
-    
+    LOG(INFO) << "Looking for shmsegments...";
     while ((dirp = readdir(dp)) != NULL) {
         std::string keyFileName = dirp->d_name;
-	LOG(INFO) << "## Dir entry: " << keyFileName;
- 
+        //LOG(INFO) << "## Dir entry: " << keyFileName;
+
         if ((int)keyFileName.find(".shmkey") == -1 ||
             (arg_movie_id != "" && (int)keyFileName.find(arg_movie_id) == -1))
             continue;
-     
+
         std::string dataFileName = keyFileName;
         dataFileName.erase(dataFileName.end()-7, dataFileName.end());
         dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
@@ -181,17 +166,19 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool
 
         NFP::shm::RatingsShmSegment* mySSR;
         mySSR = new NFP::shm::RatingsShmSegment(dataFileName, keyFileName);
-        std::string msg("Found   " + mySSR->info());
         addSegment(mySSR);
-        LOG(INFO) << msg;
-        if (feedback) { std::cout << msg << std::endl; }
-        //++show_progress;
+        if (feedback) {
+            std::string msg("Found   " + mySSR->info());
+            LOG(INFO) << msg;
+            std::cout << msg << std::endl;
+        }
     }
     closedir(dp);
-    
+    LOG(INFO) << "Done finding shmsegments.";
+
     rebuildLoadedSegments();
     if (preloadSegments) refreshRatingsList();
-    
+
     LOG(INFO) << "Init done";
     return 0;
 }
@@ -206,7 +193,7 @@ void NFP::shm::RatingsManager::refreshRatingsList() {
     std::cout << std::endl << "Refreshing ratings list...";
 
     boost::progress_display display(segments_.size());
-    
+
     ratings_.clear();
     std::vector<RatingsShmSegment*>::iterator it;
     for (it = segments_.begin(); it != segments_.end(); it++) {

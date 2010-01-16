@@ -14,19 +14,19 @@ void NFP::algos::MovieMeanAlgo::init(){
 int NFP::algos::MovieMeanAlgo::run()
 {
     logStart();
-    
+
     init();
-    
+
     long sum_rates = 0;
     long nb_rates = 0;
-    
+
     if (NFP::shm::RatingsManager::instance()->nb_ratings() == 0) {
         LOG(WARNING) << "Maybe I was mistaken, by I was unable to find any rating to loop on!";
         return -1;
     }
 
     ushort current_movie_id = (*ratings_begin)->movie_id();
-    
+
     std::string msg("Looping over all the ratings...");
     LOG(INFO) << msg;
     std::cout << std::endl << msg;
@@ -36,9 +36,9 @@ int NFP::algos::MovieMeanAlgo::run()
             LOG(ERROR) << "ptr is null!";
             return -1;
         }
-        
+
         ushort movie_id = (*it)->movie_id();
-        
+
        if (current_movie_id == movie_id) {
             sum_rates += (*it)->rate();
             nb_rates++;
@@ -55,10 +55,7 @@ int NFP::algos::MovieMeanAlgo::run()
         ++show_progress_ratings;
     }
     mean_rates_[current_movie_id] = (float)sum_rates / (float)nb_rates;
-    #ifndef NDEBUG
-    DLOG(INFO) << "Finished processing movie "
-               << current_movie_id << " mean_rate=" << mean_rates_[current_movie_id];
-    #endif
+    LOG(INFO) << "Finished processing ratings.";
     logEnd();
     return 0;
 }

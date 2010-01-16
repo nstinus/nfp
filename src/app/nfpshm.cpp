@@ -13,7 +13,7 @@
 #include <fstream>
 
 #include <QString>
-#include <QRegExp>
+//#include <QRegExp>
 
 #include "RatingsShmSegment.h"
 #include "RatingsManager.h"
@@ -374,8 +374,10 @@ int infos2(/*std::string movie_id = ""*/)
         "R ArM",
         "Year",
         "Name");
+    LOG(INFO) << "Printing header: " << msg;
     std::cout << msg << std::endl << std::endl;
 
+    LOG(INFO) << "Printing results to stdout...";
     for (uint m_id = 1; m_id <= nb_segments + (skipped == 0 ? 0 : skipped-1); m_id++) {
         float res = m_mean_alg->get_predicted_rate(0, m_id, "");
         if (res > 0) {
@@ -389,6 +391,7 @@ int infos2(/*std::string movie_id = ""*/)
              skipped++;
         }
     }
+    LOG(INFO) << "Done printing.";
 
     return ret;
 }

@@ -36,6 +36,6 @@ print "Average rate by movie:"
 # The c++ way...
 Algo = MovieMeanAlgo()
 Algo.run()
-for i in range(1, RatingsManager_instance().nbSegments() + 1):
+for i in range(1, RatingsManager_instance().nbSegments()):
     print "%5d %.3f" % (i, round(Algo.get_predicted_rate(0, i, ''), 3))
 

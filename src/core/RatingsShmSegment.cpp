@@ -41,7 +41,7 @@ NFP::shm::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::st
 int NFP::shm::RatingsShmSegment::load()
 {
     std::ifstream in(dataFileName_.c_str());
-    
+
     if (in.is_open())
     {
         LOG(INFO) << "Parsing file " << dataFileName_;
@@ -64,9 +64,9 @@ int NFP::shm::RatingsShmSegment::load()
 	        }
             }
         }
-        
+
         in.close();
-        
+
         LOG(INFO) << "File read for movie " << movie_id << ", "
             << ratings.size() << " ratings found.";
 
@@ -75,9 +75,9 @@ int NFP::shm::RatingsShmSegment::load()
         out.close();
 
         size(ratings.size() * RATING_DATA_SIZE);
-        
+
         int err = 0;
-        
+
         if (create()) {
             LOG(ERROR) << "An error occured while creating shm segment";
             err++;
@@ -86,7 +86,7 @@ int NFP::shm::RatingsShmSegment::load()
             LOG(ERROR) << "An error occured while attaching shm segment";
             err++;
         }
-        
+
         if (err == 0) {
             LOG(INFO) << "Loading ShmSegment (size " << size() << ") ...";
             int i = 0;
