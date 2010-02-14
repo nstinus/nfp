@@ -1,16 +1,14 @@
 #include <stdlib.h>
+#include <string.h>
 
 #include <iostream>
 #include <fstream>
-
-#include <QRegExp>
-#include <QString>
 
 #include <glog/logging.h>
 
 #include "MoviesInfoProvider.h"
 
-NFP::utils::MoviesInfoProvider::MoviesInfoProvider() : initialized_(FALSE)
+NFP::utils::MoviesInfoProvider::MoviesInfoProvider() : initialized_(false)
 {
     init();
 }
@@ -53,29 +51,34 @@ void NFP::utils::MoviesInfoProvider::init()
 
     if (in.is_open())
     {
-        std::string line;
-        QRegExp mvFileLineRegExp("^(\\d+),(\\d+|NULL),(.*)$");
-
+        char line[512] = "";
         int movie_id = -1;
         int year = -1;
-        std::string name("");
+        char* buf = NULL;
         NFP::model::Movie const * movie;
 
         while (!in.eof()) {
-            getline(in, line);
+            in.getline(line, 512);
             DLOG(INFO) << "Read line: \"" << line << "\"";
-            if (mvFileLineRegExp.indexIn(QString::fromStdString(line)) > -1) {
-                movie_id = mvFileLineRegExp.cap(1).toInt();
-                year = mvFileLineRegExp.cap(2).toInt();
-                //year = year > 0 ? year : -1;
-                name = mvFileLineRegExp.cap(3).toStdString();
-                movie = new NFP::model::Movie(year, name);
-                movies_[movie_id] = movie;
+            buf = strtok(line, ",");
+            if (buf != NULL) {
+              movie_id = atoi(buf);
+            }
+            buf = strtok(NULL, ",");
+            if (buf != NULL && strcmp(buf, "NULL") != 0) {
+              year = atoi(buf);
+            } else {
+              year = 0;
+            }
+            buf = strtok(NULL, ",");
+            if (buf != NULL) {
+              movie = new NFP::model::Movie(year, buf);
+              movies_[movie_id] = movie;
             }
         }
     } else LOG(ERROR) << "Unable to open " << movie_titlesFilePath;
 
     in.close();
     LOG(INFO) << "Done parsing. Found " << nbMovies() << " movies.";
-    initialized_ = TRUE;
+    initialized_ = true;
 }
