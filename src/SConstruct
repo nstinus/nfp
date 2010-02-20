@@ -19,7 +19,6 @@ if os.getenv("CXX") not in ("", None):
 if os.getenv("CC") not in ("", None):
     ALL_FLAGS['CC'] = os.getenv("CC")
 
-
 BASE_CPPFLAGS = ['-pipe',
                  '-combine',
                  '-ansi',
@@ -33,7 +32,8 @@ ADD_CPPFLAGS['debug'] = ['-fno-omit-frame-pointer',
                          '-fno-inline-functions-called-once',
                          '-fno-optimize-sibling-calls',
                          '-fno-default-inline',
-                         '-fno-inline']
+                         '-fno-inline',
+                         '-D_GLIBCXX_PROFILE']
 ADD_CPPFLAGS['prof'] = ['-g',
                         '-pg']
                         
