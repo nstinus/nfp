@@ -45,5 +45,5 @@ Export('env')
 
 SConscript([#'core/SConscript',
             #'algos/SConscript',
-            'app/SConscript',
-	    'python/SConscript'])
+            'app/SConscript',])
+	    #'python/SConscript'])
