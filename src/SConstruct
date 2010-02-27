@@ -1,14 +1,14 @@
-MODE = 'release'
+MODE = 'debug'
 PROFILING = False
 
 BASE_CPPFLAGS = ['-pipe',
-            '-combine',
-            '-ansi',
-            '-Wall',
-            '-fno-strict-aliasing']
+                 '-combine',
+                 '-ansi',
+                 '-Wall',
+                 '-fno-strict-aliasing',
+                 '-m32']
 ADD_CPPFLAGS = dict()
-ADD_CPPFLAGS['release'] = ['-O3',
-                         '-DNDEBUG']
+ADD_CPPFLAGS['release'] = ['-O3', '-DNDEBUG']
 ADD_CPPFLAGS['debug'] = ['-fno-omit-frame-pointer',
                          '-fno-inline-functions',
                          '-fno-inline-functions-called-once',
@@ -19,7 +19,7 @@ ADD_CPPFLAGS['prof'] = ['-g',
                         '-pg']
                         
 
-BASE_LINKFLAGS = []
+BASE_LINKFLAGS = ['-m32',]
 ADD_LINKFLAGS = dict()
 ADD_LINKFLAGS['release'] = []
 ADD_LINKFLAGS['debug'] = []
