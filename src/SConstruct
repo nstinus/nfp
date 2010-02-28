@@ -1,5 +1,24 @@
-MODE = 'debug'
-PROFILING = False
+import os
+
+ALL_FLAGS = dict()
+
+if ARGUMENTS.get('release', 0) == '1':
+    MODE = 'release'
+else:
+    MODE = 'debug'
+
+if ARGUMENTS.get('profile', 0) == '1':
+    PROFILING = True
+else:
+    PROFILING = False
+
+
+
+if os.getenv("CXX") not in ("", None):
+    ALL_FLAGS['CXX'] = os.getenv("CXX")
+if os.getenv("CC") not in ("", None):
+    ALL_FLAGS['CC'] = os.getenv("CC")
+
 
 BASE_CPPFLAGS = ['-pipe',
                  '-combine',
@@ -25,21 +44,18 @@ ADD_LINKFLAGS['release'] = []
 ADD_LINKFLAGS['debug'] = []
 ADD_LINKFLAGS['prof'] = ['-pg',]
 
-LINKFLAGS = BASE_LINKFLAGS
-CPPFLAGS =  BASE_CPPFLAGS
-
-LINKFLAGS += ADD_LINKFLAGS[MODE]
-CPPFLAGS += ADD_CPPFLAGS[MODE]
+ALL_FLAGS['LINKFLAGS'] = BASE_LINKFLAGS + ADD_LINKFLAGS[MODE]
+ALL_FLAGS['CPPFLAGS'] =  BASE_CPPFLAGS + ADD_CPPFLAGS[MODE]
 
 if PROFILING:
-   LINKFLAGS += ADD_LINKFLAGS['prof']
-   CPPFLAGS +=  ADD_CPPFLAGS['prof']
+   ALL_FLAGS['LINKFLAGS'] += ADD_LINKFLAGS['prof']
+   ALL_FLAGS['CPPFLAGS'] +=  ADD_CPPFLAGS['prof']
 
 
-LIBS = ['QtCore', 'glog']
+ALL_FLAGS['LIBS'] = ['QtCore', 'glog']
 
-env = Environment(CPPFLAGS = CPPFLAGS,
-      	          LINKFLAGS = LINKFLAGS)
+
+env = Environment(**ALL_FLAGS)
 
 Export('env')
 
