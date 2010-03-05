@@ -2,17 +2,11 @@ import os
 
 ALL_FLAGS = dict()
 
-if ARGUMENTS.get('release', 0) == '1':
-    MODE = 'release'
-else:
-    MODE = 'debug'
-
-if ARGUMENTS.get('profile', 0) == '1':
-    PROFILING = True
-else:
-    PROFILING = False
-
-
+MODE = (ARGUMENTS.get('release', 0) == '1') and  'release'or 'debug'
+# By default, we'll compile in 32b as 64b seems to freeze apps
+# probably something wrong with types/pointers used...
+I686 = (ARGUMENTS.get('arch', 0) == "64") and False or True
+PROFILING = (ARGUMENTS.get('profile', 0) == '1') and True or False
 
 if os.getenv("CXX") not in ("", None):
     ALL_FLAGS['CXX'] = os.getenv("CXX")
@@ -23,10 +17,17 @@ BASE_CPPFLAGS = ['-pipe',
                  '-combine',
                  '-ansi',
                  '-Wall',
-                 '-fno-strict-aliasing',
-                 '-m32']
+                 '-fno-strict-aliasing']
+
+if I686:
+    BASE_CPPFLAGS += ['-m32',]
+
 ADD_CPPFLAGS = dict()
-ADD_CPPFLAGS['release'] = ['-O3', '-DNDEBUG']
+ADD_CPPFLAGS['release'] = ['-O3', '-DNDEBUG',]
+
+# Tried various flags like -march=pentium4 or -march=core2
+# both seem to be giving pretty bad results...
+# That might need more testing though...
 ADD_CPPFLAGS['debug'] = ['-fno-omit-frame-pointer',
                          '-fno-inline-functions',
                          '-fno-inline-functions-called-once',
@@ -34,11 +35,12 @@ ADD_CPPFLAGS['debug'] = ['-fno-omit-frame-pointer',
                          '-fno-default-inline',
                          '-fno-inline',
                          '-D_GLIBCXX_PROFILE']
-ADD_CPPFLAGS['prof'] = ['-g',
-                        '-pg']
-                        
+ADD_CPPFLAGS['prof'] = ['-g', '-pg']
 
-BASE_LINKFLAGS = ['-m32',]
+if I686:
+   BASE_LINKFLAGS = ['-m32',]
+else:
+   BASE_LINKFLAGS = ['-m64', '-L/usr/local/lib64']
 ADD_LINKFLAGS = dict()
 ADD_LINKFLAGS['release'] = []
 ADD_LINKFLAGS['debug'] = []
@@ -51,9 +53,7 @@ if PROFILING:
    ALL_FLAGS['LINKFLAGS'] += ADD_LINKFLAGS['prof']
    ALL_FLAGS['CPPFLAGS'] +=  ADD_CPPFLAGS['prof']
 
-
 ALL_FLAGS['LIBS'] = ['QtCore', 'glog']
-
 
 env = Environment(**ALL_FLAGS)
 
