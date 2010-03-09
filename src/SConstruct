@@ -2,11 +2,11 @@ import os
 
 ALL_FLAGS = dict()
 
-MODE = (ARGUMENTS.get('release', 0) == '1') and  'release'or 'debug'
+MODE = (ARGUMENTS.get('release') == '1') and 'release' or 'debug'
 # By default, we'll compile in 32b as 64b seems to freeze apps
 # probably something wrong with types/pointers used...
-I686 = (ARGUMENTS.get('arch', 0) == "64") and False or True
-PROFILING = (ARGUMENTS.get('profile', 0) == '1') and True or False
+I686 = (ARGUMENTS.get('arch') != '64')
+PROFILING = (ARGUMENTS.get('profile', 0) == '1')
 
 if os.getenv("CXX") not in ("", None):
     ALL_FLAGS['CXX'] = os.getenv("CXX")
