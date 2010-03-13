@@ -1,0 +1,8 @@
+#/bin/sh
+
+for i in $(git branch -l | cut -b 3- | grep -v -e next -e master)
+do
+  git rebase --onto next --root $i
+done
+
+git rebase --onto nf/import_export_shm_segments --root nf/import_export_shm_segments_in_c

@@ -1,0 +1,5 @@
+#!/bin/sh
+
+find -E . -regex '.*\.(cpp|h|C|H|hpp|hxx|cxx)' > /tmp/FILES
+ebrowse -v -f /tmp/FILES
+rm /tmp/FILES
