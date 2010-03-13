@@ -6,12 +6,22 @@ MODE = (ARGUMENTS.get('release') == '1') and 'release' or 'debug'
 # By default, we'll compile in 32b as 64b seems to freeze apps
 # probably something wrong with types/pointers used...
 I686 = (ARGUMENTS.get('arch') != '64')
-PROFILING = (ARGUMENTS.get('profile', 0) == '1')
+PROFILING = (ARGUMENTS.get('prof', 0) == '1')
 
 if os.getenv("CXX") not in ("", None):
     ALL_FLAGS['CXX'] = os.getenv("CXX")
 if os.getenv("CC") not in ("", None):
     ALL_FLAGS['CC'] = os.getenv("CC")
+
+# Seems like we know everything we need, giving some feedback abour the compilation
+print
+print "+" + "-" * (7 + 8 + 1) + "+"
+print "| MODE: %8s |" % MODE
+print "| ARCH: %8s |" % (I686 and "32b" or "64b")
+print "| PROF: %8s |" % PROFILING
+print "+" + "-" * (7 + 8 + 1) + "+"
+print
+
 
 BASE_CPPFLAGS = ['-pipe',
                  '-combine',
