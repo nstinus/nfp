@@ -44,8 +44,9 @@ ADD_CPPFLAGS['debug'] = ['-fno-omit-frame-pointer',
                          '-fno-optimize-sibling-calls',
                          '-fno-default-inline',
                          '-fno-inline',
+                         '-g',
                          '-D_GLIBCXX_PROFILE']
-ADD_CPPFLAGS['prof'] = ['-g', '-pg']
+ADD_CPPFLAGS['prof'] = ['-pg',]
 
 if I686:
    BASE_LINKFLAGS = ['-m32',]
