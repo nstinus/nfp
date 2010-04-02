@@ -22,6 +22,7 @@
 #include "UserMeanAlgo.h"
 #include "MoviesInfoProvider.h"
 #include "Defs.h"
+#include "macros.h"
 
 const std::string NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
 const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
@@ -44,10 +45,8 @@ std::string hr_size(int);
 
 int main (int argc, char* argv[])
 {
-    google::InitGoogleLogging(argv[0]);
-    google::InstallFailureSignalHandler();
-
     LOG(INFO) << "Starting main()";
+    LOG_BUILD_INFO;
 
     int ret = 0;
 

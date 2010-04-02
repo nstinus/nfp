@@ -1,4 +1,10 @@
 import os
+import commands
+
+
+def git_commit():
+    return  commands.getoutput("git show --format=%h | head -n 1")
+
 
 ALL_FLAGS = dict()
 
@@ -27,7 +33,11 @@ BASE_CPPFLAGS = ['-pipe',
                  '-combine',
                  '-ansi',
                  '-Wall',
-                 '-fno-strict-aliasing']
+                 '-fno-strict-aliasing',
+                 '-DBUILD__GIT=%s' % git_commit(),
+                 '-DBUILD__MODE=%s' % MODE,
+                 '-DBUILD__PROF=%s' % PROFILING,
+                 '-DBUILD__ARCH=%s' % (I686 and "32b" or "64b")]
 
 if I686:
     BASE_CPPFLAGS += ['-m32',]
@@ -48,10 +58,11 @@ ADD_CPPFLAGS['debug'] = ['-fno-omit-frame-pointer',
                          '-D_GLIBCXX_PROFILE']
 ADD_CPPFLAGS['prof'] = ['-pg',]
 
+BASE_LINKFLAGS = []
 if I686:
-   BASE_LINKFLAGS = ['-m32',]
+   BASE_LINKFLAGS += ['-m32',]
 else:
-   BASE_LINKFLAGS = ['-m64', '-L/usr/local/lib64']
+   BASE_LINKFLAGS += ['-m64', '-L/usr/local/lib64']
 ADD_LINKFLAGS = dict()
 ADD_LINKFLAGS['release'] = []
 ADD_LINKFLAGS['debug'] = []
