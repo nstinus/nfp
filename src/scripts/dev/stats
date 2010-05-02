@@ -1,0 +1,3 @@
+#!/bin/zsh
+
+find -E . -regex '.*\.(cpp|h|hpp|hxx|py)' -or -regex '.*(SConstruct|SConscript)' | xargs wc -l | tail -1 | awk '{print $1}'
