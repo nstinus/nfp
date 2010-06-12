@@ -21,6 +21,7 @@
 #include "MovieMeanAlgo.h"
 #include "UserMeanAlgo.h"
 #include "MoviesInfoProvider.h"
+#include "Defs.h"
 
 const std::string NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
 const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");
@@ -67,11 +68,11 @@ int main (int argc, char* argv[])
     else if (argc > 1 && strcmp(argv[1], "ratings") == 0)
         ret += ratings((argc > 2) ? argv[2] : "", (argc > 3) ? argv[3] : "");
     else if (argc > 1 && strcmp(argv[1], "ratings2") == 0)
-        ret += ratings2();
+      ret += ratings2();
     else if (argc > 1 && strcmp(argv[1], "users") == 0)
         ret += users();
     else if (argc > 1 && strcmp(argv[1], "users2") == 0)
-        ret += users2();
+      ret += users2();
     else
         usage();
 
@@ -364,10 +365,7 @@ int infos2(/*std::string movie_id = ""*/)
 
     char* msg = new char[256];
 
-    uint skipped = 0, nb_segments = (uint)NFP::shm::RatingsManager::instance()->nbSegments();
-    if (nb_segments == 0) {
-        return -1;
-    }
+    uint skipped = 0;
 
     sprintf(msg, "%7s  %5s  %4s  %s",
         "#    id",
@@ -378,7 +376,7 @@ int infos2(/*std::string movie_id = ""*/)
     std::cout << msg << std::endl << std::endl;
 
     LOG(INFO) << "Printing results to stdout...";
-    for (uint m_id = 1; m_id <= nb_segments + (skipped == 0 ? 0 : skipped-1); m_id++) {
+    for (uint m_id = 1; m_id <= MAX_NB_MOVIES; m_id++) {
         float res = m_mean_alg->get_predicted_rate(0, m_id, "");
         if (res > 0) {
             sprintf(msg, "%07d  %5.3f  %4d  %s",
@@ -397,6 +395,7 @@ int infos2(/*std::string movie_id = ""*/)
 }
 
 
+
 int users2()
 {
     NFP::algos::UserMeanAlgo* u_mean_alg = new NFP::algos::UserMeanAlgo();
@@ -405,30 +404,24 @@ int users2()
     char* msg = new char[256];
     sprintf(msg, "%9s  %5s", "# user_id", "R ArM");
     std::cout << msg << std::endl << std::endl;
-    std::vector<uint>::const_iterator u;
-    for (u = u_mean_alg->users_begin(); u != u_mean_alg->users_end(); u++) {
-        float mean = u_mean_alg->get_mean_rate(*u);
-        int nb = u_mean_alg->get_nb_rates(*u);
+    std::map<uint, NFP::algos::User*>::const_iterator it;
+    for (it = u_mean_alg->get_users().begin(); it != u_mean_alg->get_users().end(); it++) {
+        float mean = it->second->mean_rating;
+        int nb = it->second->nb_ratings;
         if (mean != -1 && nb != -1) {
-            sprintf(msg, "%09d  %6d  %5.3f", *u, nb, mean);
+            sprintf(msg, "%09d  %6d  %5.3f", it->first, nb, mean);
             std::cout << msg << std::endl;
         }
     }
-
     return ret;
 }
 
+
+
 int ratings2()
 {
-  NFP::shm::RatingsManager::instance()->refreshRatingsList();
-    std::list<NFP::model::Rating*>::const_iterator it, end;
-    DLOG(INFO) << "Getting start begin() on ratings...";
-    it = NFP::shm::RatingsManager::instance()->ratings_begin();
-    DLOG(INFO) << "Getting start end() on ratings...";
-    end = NFP::shm::RatingsManager::instance()->ratings_end();
-    DLOG(INFO) << "Let's loop...";
-    for (; it != end; it++)
-        //LOG(INFO) << *it << " " << NULL;
+    NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin___();
+    for (; it != NFP::shm::RatingsManager::instance()->end___(); it++)
         std::cout << (*it)->to_string() << std::endl;
     return 0;
 }

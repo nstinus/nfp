@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <list>
 
-//#include <QDir>
 #include <QString>
 #include <boost/progress.hpp>
 
@@ -56,7 +55,7 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
 
         if (((arg_movie_id != "" && (int)dataFileName.find(arg_movie_id) == -1)
 	        || dataFileName == ".")
-                || dataFileName == "..")
+            || dataFileName == "..")
             continue;
 
         dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
@@ -68,17 +67,6 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
             local_err = mySSR->create();
             if (local_err == 0) {
                 segments_.push_back(mySSR);
-                LOG(INFO) << "Loading " << mySSR->nb_ratings() << " ratings...";
-                for (int i = 0; i < mySSR->nb_ratings(); i++) {
-                    NFP::model::Rating* r = (NFP::model::Rating*)(mySSR->ptr() + i);
-                    if (r == NULL) {
-                        LOG(ERROR) << "ptr==null";
-                        continue;
-                    }
-                    else {
-                        ratings_.push_back(r);
-                    }
-                }
                 std::string msg("Loaded  " + mySSR->info());
                 LOG(INFO) << msg;
                 if (feedback) { std::cout << msg << std::endl; }
@@ -90,7 +78,6 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
     }
     closedir(dp);
     LOG(INFO) << "Loading done.";
-    //refreshRatingsList();
     return ret;
 }
 
@@ -121,7 +108,6 @@ int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
         if (feedback)
             std::cout << msg << std::endl;
     }
-    //refreshRatingsList();
     return 0;
 }
 
@@ -153,7 +139,6 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool
     LOG(INFO) << "Looking for shmsegments...";
     while ((dirp = readdir(dp)) != NULL) {
         std::string keyFileName = dirp->d_name;
-        //LOG(INFO) << "## Dir entry: " << keyFileName;
 
         if ((int)keyFileName.find(".shmkey") == -1 ||
             (arg_movie_id != "" && (int)keyFileName.find(arg_movie_id) == -1))
@@ -177,45 +162,10 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool
     LOG(INFO) << "Done finding shmsegments.";
 
     rebuildLoadedSegments();
-    if (preloadSegments) refreshRatingsList();
 
     LOG(INFO) << "Init done";
     return 0;
 }
-
-void NFP::shm::RatingsManager::refreshRatingsList() {
-    if (segments_.size() == 0) {
-      LOG(WARNING) << "No segments found!";
-      return;
-    }
-
-    LOG(INFO) << "Refreshing ratings list...";
-    std::cout << std::endl << "Refreshing ratings list...";
-
-    boost::progress_display display(segments_.size());
-
-    ratings_.clear();
-    std::vector<RatingsShmSegment*>::iterator it;
-    for (it = segments_.begin(); it != segments_.end(); it++) {
-        for (int i = 0; i < (*it)->nb_ratings(); i++) {
-            NFP::model::Rating* r = (NFP::model::Rating*)((*it)->ptr() + i);
-            if (r == NULL) {
-                LOG(ERROR) << "ptr==null";
-                continue;
-            }
-            else {
-                ratings_.push_back(r);
-            }
-        }
-        ++display;
-    }
-    if (nb_ratings() == 0) {
-        LOG(WARNING) << "Ratings list is empty!";
-    }
-
-    LOG(INFO) << "Done refreshing ratings list.";
-}
-
 
 int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool /*feedback*/)
 {
@@ -244,8 +194,30 @@ int NFP::shm::RatingsManager::removeAll()
     }
     segments_.clear();
     LOG(INFO) << "Segments list cleared.";
-    ratings_.clear();
-    LOG(INFO) << "Ratings list cleared.";
     return ret;
 }
 
+NFP::model::Rating* NFP::shm::RatingsIterator::operator*()
+{
+  return (NFP::model::Rating*)((*rs_it_)->ptr() + r_idx_);
+}
+
+NFP::shm::RatingsIterator& NFP::shm::RatingsIterator::operator++(int i)
+{
+  NFP::shm::RatingsIterator& tmp = *this;
+  ++r_idx_;
+  if (r_idx_ > (*rs_it_)->nb_ratings()) {
+    ++rs_it_; r_idx_ = 0;
+  }
+  return tmp;
+}
+
+bool NFP::shm::RatingsIterator::operator!=(const NFP::shm::RatingsIterator& other) {
+    return rs_it_ != other.rs_it_ || r_idx_ != other.r_idx_;
+}
+
+/*
+bool NFP::shm::RatingsIterator::operator==(const NFP::shm::RatingsIterator& other) {
+    return rs_it_ == other.rs_it_ && r_idx_ == other.r_idx_;
+}
+*/

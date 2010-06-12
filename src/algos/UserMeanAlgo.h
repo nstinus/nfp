@@ -15,28 +15,49 @@ namespace NFP
 namespace algos
 {
 
+struct User
+{
+  uint user_id;
+  uint nb_ratings;
+  unsigned long long summed_ratings;
+  float mean_rating;
+
+  User(uint uid): user_id(uid), nb_ratings(0), summed_ratings(0), mean_rating(-1) {}
+  User(): user_id(-1), nb_ratings(0), summed_ratings(0), mean_rating(-1) {}
+  
+  void add_rating(ushort r) {
+    summed_ratings += r;
+    nb_ratings++;
+  }
+
+  void compute() {
+    mean_rating = (float)((double)summed_ratings/(double)nb_ratings);
+  }
+};
+
 class UserMeanAlgo : public BaseAlgo
 {
 
 public:
     UserMeanAlgo() : BaseAlgo("User_Mean", "0.1") {}
     virtual int run();
-    std::map<uint, float>* result() {return &user_mean_rates_;}
-    void* get_results() {return &user_mean_rates_;}
-    virtual float get_predicted_rate(uint u_id, ushort, std::string) {return get_mean_rate(u_id);}
-    float get_mean_rate(uint);
-    uint get_nb_rates(uint);
-    std::vector<uint>::const_iterator users_begin() {return users.begin();}
-    std::vector<uint>::const_iterator users_end() {return users.end();}
+    float get_mean_rating(uint uid) {
+      User* u = users_.find(uid)->second;
+      return (u != NULL) ? u->mean_rating : -1;
+    }
+    uint get_nb_ratings(uint uid) {
+      User* u = users_.find(uid)->second;
+      return (u != NULL) ? u->nb_ratings : 0;
+    }
+    virtual float get_predicted_rate(uint u_id, ushort /*m_id*/, std::string /*date*/) {
+      return get_mean_rating(u_id);
+    }
+    std::map<uint, User*> const& get_users() const{
+      return users_;
+    }
     
 private:
-    std::map<uint, float> user_mean_rates_;
-    std::map<uint, uint> user_nb_rates_;
-    std::list<NFP::model::Rating*>::const_iterator ratings_begin;
-    std::list<NFP::model::Rating*>::const_iterator ratings_end;
-    std::vector<uint> users;
-    
-    void init();
+    std::map<uint, User*> users_;
 };
 
     

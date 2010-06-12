@@ -1,75 +1,42 @@
 #include "UserMeanAlgo.h"
 #include "RatingsManager.h"
 #include "Rating.h"
-#include <boost/progress.hpp>
 
-void NFP::algos::UserMeanAlgo::init(){
-    LOG(INFO) << "Init...";
-    NFP::shm::RatingsManager::instance()->refreshRatingsList();
-    ratings_begin = NFP::shm::RatingsManager::instance()->ratings_begin();
-    ratings_end = NFP::shm::RatingsManager::instance()->ratings_end();
-    LOG(INFO) << "...done";
-}
 
 int NFP::algos::UserMeanAlgo::run()
 {
+    clock_t start = clock();
     logStart();
-    
-    init();
-    
-    std::map<uint, unsigned long long> user_summed_rates_;
-    //std::map<uint, uint> user_nb_rates_;
-    
-    std::string msg("Looping over all the ratings...");
-    LOG(INFO) << msg;
-    std::cout << std::endl << msg;
-    int nb_processed_ratings = 0;
-    boost::progress_display show_progress_ratings(NFP::shm::RatingsManager::instance()->nb_ratings());
-    for (std::list<NFP::model::Rating*>::const_iterator it = ratings_begin; it != ratings_end; it++) {
+
+    LOG(INFO) << "Looping over all the ratings...";
+
+    NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin___();
+    for (; it != NFP::shm::RatingsManager::instance()->end___(); it++) {
         if (*it == NULL) {
             LOG(ERROR) << "ptr is null!";
             return -1;
         }
-        
+
         uint user_id = (*it)->user_id();
-        ushort rate = (*it)->rate();
-        
-        if (user_summed_rates_.find(user_id) == user_summed_rates_.end()) {
-            user_summed_rates_[user_id] = 0;
-            users.push_back(user_id);
-        }
-        user_summed_rates_[user_id] += rate;
-        if (user_nb_rates_.find(user_id) == user_nb_rates_.end())
-            user_nb_rates_[user_id] = 0;
-        user_nb_rates_[user_id]++;
-        nb_processed_ratings++;
-        LOG_EVERY_N(INFO, 1000000) << "Processed " << nb_processed_ratings << " ratings";
-        ++show_progress_ratings;
+
+        std::map<uint, User*>::iterator u_it = users_.find(user_id);
+        if (u_it == users_.end())
+          users_[user_id] = new User(user_id);
+        users_[user_id]->add_rating((*it)->rate());
+
+        DLOG(INFO) << "Added rate to " << user_id;
     }
-    
-    msg = "Calculating average rate per user...";
-    LOG(INFO) << msg;
-    std::cout << std::endl << msg;
-    boost::progress_display show_progress_users(users.size());
-    for (std::vector<uint>::iterator u_id = users.begin(); u_id != users.end(); u_id++) {
-        user_mean_rates_[*u_id] = (float)user_summed_rates_[*u_id] / (float)user_nb_rates_[*u_id];
-        LOG(INFO) << "user_id = " << *u_id << ", nb_ratings = " << user_nb_rates_[*u_id]
-            << ", mean_rate = " << user_mean_rates_[*u_id];
-        ++show_progress_users;
+    LOG(INFO) << "Finished processing ratings in " << clock() - start << " cpu cycles.";
+
+    start = clock();
+    LOG(INFO) << "Calculating average rate per user...";
+    for (std::map<uint, User*>::iterator u_it = users_.begin(); u_it != users_.end(); u_it++) {
+      u_it->second->compute();
+      DLOG(INFO) << "user_id = " << u_it->first
+                 << ", nb_ratings = " << u_it->second->nb_ratings
+                 << ", mean_rating = " << u_it->second->mean_rating;
     }
-    
-    LOG(INFO) << "nb_users = " << users.size();
-    
+    LOG(INFO) << "Computation(!) done in " << clock() - start << " cpu cycles.";
     logEnd();
     return 0;
-}
-
-float NFP::algos::UserMeanAlgo::get_mean_rate(uint u_id)
-{
-    return user_mean_rates_.find(u_id) == user_mean_rates_.end() ? -1.0 : user_mean_rates_[u_id];
-}
-
-uint NFP::algos::UserMeanAlgo::get_nb_rates(uint u_id)
-{
-    return user_nb_rates_.find(u_id) == user_nb_rates_.end() ? -1.0 : user_nb_rates_[u_id];
 }

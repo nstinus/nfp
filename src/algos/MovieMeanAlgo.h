@@ -2,7 +2,6 @@
 #define __NFP__MOVIEMEANALGO_H__
 
 #include <map>
-#include <list>
 #include <string>
 
 #include "BaseAlgo.h"
@@ -27,10 +26,6 @@ public:
     
 private:
     std::map<ushort, float> mean_rates_;
-    std::list<NFP::model::Rating*>::const_iterator ratings_begin;
-    std::list<NFP::model::Rating*>::const_iterator ratings_end;
-    
-    void init();
 };
 
     
