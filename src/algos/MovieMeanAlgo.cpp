@@ -1,10 +1,10 @@
 #include "MovieMeanAlgo.h"
 #include "RatingsManager.h"
 #include "Rating.h"
-#include <boost/progress.hpp>
 
 int NFP::algos::MovieMeanAlgo::run()
 {
+    clock_t start = clock();
     logStart();
 
     long sum_rates = 0;
@@ -12,9 +12,7 @@ int NFP::algos::MovieMeanAlgo::run()
 
     ushort current_movie_id = (*NFP::shm::RatingsManager::instance()->begin___())->movie_id();
 
-    std::string msg("Looping over all the ratings...");
-    LOG(INFO) << msg;
-    std::cout << std::endl << msg;
+    LOG(INFO) << "Looping over all the ratings...";
     for (NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin___();
 		 it != NFP::shm::RatingsManager::instance()->end___();
 		 it++) {
@@ -30,10 +28,7 @@ int NFP::algos::MovieMeanAlgo::run()
             nb_rates++;
         } else {
             mean_rates_[current_movie_id] = (float)sum_rates / (float)nb_rates;
-            #ifndef NDEBUG
-            DLOG(INFO) << "Finished processing movie "
-                       << current_movie_id << " mean_rate=" << mean_rates_[current_movie_id];
-            #endif
+            DLOG(INFO) << "movie_id=" << current_movie_id << ", mean_rate=" << mean_rates_[current_movie_id];
             if ((*it)->movie_id() == 0) {
                 continue;
             }
@@ -43,13 +38,12 @@ int NFP::algos::MovieMeanAlgo::run()
         }
     }
     mean_rates_[current_movie_id] = (float)sum_rates / (float)nb_rates;
-    LOG(INFO) << "Finished processing ratings.";
+    LOG(INFO) << "Finished processing ratings in " << clock() - start << " cpu cycles.";
     logEnd();
     return 0;
 }
 
 float NFP::algos::MovieMeanAlgo::get_predicted_rate(uint /*u_id*/, ushort m_id, std::string /*date = ""*/)
 {
-    //FIXME: warnings about u_id, date, unused.
-    return mean_rates_.find(m_id) == mean_rates_.end() ? -1.0 : mean_rates_[m_id];
+    return mean_rates_[m_id];
 }

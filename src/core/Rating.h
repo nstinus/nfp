@@ -7,7 +7,7 @@
 /*                                                                                               */
 /*  Abstract:                                                                                    */
 /*    Low-level representation for a rating from the training_set.                               */
-/*    The fields are: movie_id [0, 17770],   card = 17770  < 2**15 -> 15 bits                    */
+/*    The fields are: movie_id [1, 17770],   card = 17770  < 2**15 -> 15 bits                    */
 /*                    user_id  [6, 2649429], card = 480189 < 2**24 -> 24 bits                    */
 /*                    rate     [1, 5],       card = 5      < 2**3  ->  3 bits                    */
 /*                    date     [0, 2182],    card = 2182   < 2**12 -> 12 bits                    */

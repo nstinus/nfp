@@ -6,6 +6,7 @@
 
 #include "BaseAlgo.h"
 #include "RatingsManager.h"
+#include "Defs.h"
 
 namespace NFP
 {
@@ -17,15 +18,17 @@ class MovieMeanAlgo : public BaseAlgo
 {
 
 public:
-    MovieMeanAlgo() : BaseAlgo("Movie_Mean", "0.1") {}
+    MovieMeanAlgo() : BaseAlgo("Movie_Mean", "0.1") {
+        for (int i = 0; i < MAX_NB_MOVIES; ++i) {
+            mean_rates_[i] = -1.0;
+        }
+    }
     virtual int run();
-    std::map<ushort, float>* result() {return &mean_rates_;}
-    void* get_results() {return &mean_rates_;}
     virtual float get_predicted_rate(uint, ushort, std::string);
     
     
 private:
-    std::map<ushort, float> mean_rates_;
+    float mean_rates_[MAX_NB_MOVIES];
 };
 
     

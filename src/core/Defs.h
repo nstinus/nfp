@@ -1,0 +1,3 @@
+#define MIN_MOVIE_ID 1
+#define MAX_MOVIE_ID 17770
+#define MAX_NB_MOVIES 17770
