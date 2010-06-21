@@ -186,8 +186,7 @@ int infos(std::string movie_id = "")
         total_ratings += nb_ratings;
         allR_mean /= (double)(total_ratings);
         nb_movies++;
-
-        LOG(INFO) << msg;
+        DLOG(INFO) << msg;
     }
     closedir(dp);
 
@@ -372,7 +371,7 @@ int infos2(/*std::string movie_id = ""*/)
         "R ArM",
         "Year",
         "Name");
-    LOG(INFO) << "Printing header: " << msg;
+    DLOG(INFO) << "Printing header: " << msg;
     std::cout << msg << std::endl << std::endl;
 
     LOG(INFO) << "Printing results to stdout...";

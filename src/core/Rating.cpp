@@ -50,11 +50,7 @@ NFP::model::Rating::Rating(int const& m, int const& u, int const& r, std::string
 
 NFP::model::Rating::Rating(char const* data)
 {
-    //DLOG(INFO) << "\" "
-    //    << QString(QByteArray(data, RATING_DATA_SIZE).toHex()).toStdString()
-    //    << " \"";
     memcpy(data_, data, RATING_DATA_SIZE);
-    //if (memcmp(data, data_, RATING_DATA_SIZE)) LOG(ERROR) << "Ouch!";
 }
 
 ushort NFP::model::Rating::movie_id() const
