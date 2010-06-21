@@ -2,11 +2,10 @@
 #define __NFP__MOVIESINFOPROVIDER_H__
 
 #include "typedefs.h"
+#include "Defs.h"
 #include "Singleton.hxx"
 
 #include <string>
-#include <map>
-
 
 const uint MOVIE__YEAR_OFFSET = 1896;
 
@@ -23,6 +22,7 @@ public:
         year(y);
         name(n);
     }
+    Movie() : year_(0), name_("") {}
     virtual ~Movie() {}
 
     void year(const int y) { year_ = (ushort)(y - MOVIE__YEAR_OFFSET); }
@@ -50,11 +50,10 @@ public:
     NFP::model::Movie const * getInfos(const uint) const;
     int getMovieYear(const uint movie_id) const { return getInfos(movie_id)->year(); }
     std::string const * getMovieName(const uint movie_id) const { return getInfos(movie_id)->name(); }
-    int nbMovies() { return movies_.size(); }
 
 private:
     void init();
-    std::map<uint, NFP::model::Movie const *> movies_;
+    NFP::model::Movie *movies_[MAX_NB_MOVIES];
     bool initialized_;
 };
 

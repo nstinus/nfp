@@ -16,11 +16,9 @@ NFP::utils::MoviesInfoProvider::MoviesInfoProvider() : initialized_(false)
 
 NFP::utils::MoviesInfoProvider::~MoviesInfoProvider()
 {
-    std::map<uint, NFP::model::Movie const *>::iterator it = movies_.begin();
-    for (; it != movies_.end(); ++it) {
-        delete it->second;
-    }
-    movies_.empty();
+  for (int i = 0; i < MAX_NB_MOVIES; ++i) {
+    delete movies_[i];
+  }
 }
 
 
@@ -30,24 +28,25 @@ NFP::model::Movie const * NFP::utils::MoviesInfoProvider::getInfos(const uint mo
     if (!initialized_) {
         LOG(WARNING) << "Try to fetch data before initialization!";
     }
-
-    std::map<uint, NFP::model::Movie const *>::const_iterator it = movies_.find(movie_id);
-    if (it == movies_.end()) {
-        LOG(WARNING) << movie_id << " not found in movies map";
-        return NULL;
-    } else {
-        return it->second;
+    NFP::model::Movie* m = movies_[movie_id-1];
+    if (m == NULL) {
+      LOG(WARNING) << movie_id << " not found!";
     }
+    return m;
 }
 
 
 void NFP::utils::MoviesInfoProvider::init()
 {
+    clock_t start = clock();
+
     std::string movie_titlesFilePath = getenv("NFP_MOVIE_TITLES_FILE");
 
     LOG(INFO) << "Parsing " << movie_titlesFilePath;
 
     std::ifstream in(movie_titlesFilePath.c_str());
+
+    int nb_movies = 0;
 
     if (in.is_open())
     {
@@ -55,7 +54,6 @@ void NFP::utils::MoviesInfoProvider::init()
         int movie_id = -1;
         int year = -1;
         char* buf = NULL;
-        NFP::model::Movie const * movie;
 
         while (!in.eof()) {
             in.getline(line, 512);
@@ -72,13 +70,12 @@ void NFP::utils::MoviesInfoProvider::init()
             }
             buf = strtok(NULL, ",");
             if (buf != NULL) {
-              movie = new NFP::model::Movie(year, buf);
-              movies_[movie_id] = movie;
+              movies_[movie_id-1] = new NFP::model::Movie(year, buf);
+              ++nb_movies;
             }
         }
     } else LOG(ERROR) << "Unable to open " << movie_titlesFilePath;
-
     in.close();
-    LOG(INFO) << "Done parsing. Found " << nbMovies() << " movies.";
     initialized_ = true;
+    LOG(INFO) << "Done parsing in " << clock() - start << " cpu cycles. Found " << nb_movies << " movies.";
 }
