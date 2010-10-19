@@ -419,8 +419,8 @@ int users2()
 
 int ratings2()
 {
-    NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin___();
-    for (; it != NFP::shm::RatingsManager::instance()->end___(); it++)
+    NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin();
+    for (; it != NFP::shm::RatingsManager::instance()->end(); it++)
         std::cout << (*it)->to_string() << std::endl;
     return 0;
 }

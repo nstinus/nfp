@@ -10,8 +10,8 @@ int NFP::algos::UserMeanAlgo::run()
 
     LOG(INFO) << "Looping over all the ratings...";
 
-    NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin___();
-    for (; it != NFP::shm::RatingsManager::instance()->end___(); it++) {
+    NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin();
+    for (; it != NFP::shm::RatingsManager::instance()->end(); it++) {
         if (*it == NULL) {
             LOG(ERROR) << "ptr is null!";
             return -1;

@@ -10,11 +10,11 @@ int NFP::algos::MovieMeanAlgo::run()
     long sum_rates = 0;
     long nb_rates = 0;
 
-    ushort current_movie_id = (*NFP::shm::RatingsManager::instance()->begin___())->movie_id();
+    ushort current_movie_id = (*NFP::shm::RatingsManager::instance()->begin())->movie_id();
 
     LOG(INFO) << "Looping over all the ratings...";
-    for (NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin___();
-		 it != NFP::shm::RatingsManager::instance()->end___();
+    for (NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin();
+		 it != NFP::shm::RatingsManager::instance()->end();
 		 it++) {
         if (*it == NULL) {
             LOG(ERROR) << "ptr is null!";

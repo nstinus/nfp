@@ -51,10 +51,10 @@ public:
     int nbSegments() {return segments_.size();};
     RatingsSegments& segments() {return segments_;}
 
-    RatingsIterator begin___() {
+    RatingsIterator begin() {
       return RatingsIterator(segments_.begin(), 0);
     }
-    RatingsIterator end___() {
+    RatingsIterator end() {
       return RatingsIterator(segments_.end(), 0);
     }
 
