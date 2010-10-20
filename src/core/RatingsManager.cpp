@@ -7,7 +7,6 @@
 #include <list>
 
 #include <QString>
-#include <boost/progress.hpp>
 
 #include "RatingsManager.h"
 
@@ -171,14 +170,12 @@ int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool /*feedback*/)
 {
     int ret = 0;
     std::cout << std::endl << "Saving segments...";
-    boost::progress_display show_progress(segments_.size());
     RatingsSegments::const_iterator it = segments_.begin();
     for (it = segments_.begin(); it != segments_.end(); it++) {
         if ((*it)->keyFileName().find(arg_movie_id, 0) != std::string::npos) {
             std::string filename = QString::fromStdString((*it)->keyFileName()).replace(".txt.shmkey", ".bin").toStdString();
             ret += (*it)->save_raw(filename.c_str());
         }
-        ++show_progress;
     }
     return ret;
 }
