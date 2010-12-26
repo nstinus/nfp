@@ -3,7 +3,7 @@ import commands
 
 
 def git_commit():
-    return  commands.getoutput("git show --format=%h | head -n 1")
+    return  commands.getoutput("git describe --tags --long --dirty --abbrev=4")
 
 
 ALL_FLAGS = dict()
