@@ -193,28 +193,3 @@ int NFP::shm::RatingsManager::removeAll()
     LOG(INFO) << "Segments list cleared.";
     return ret;
 }
-
-NFP::model::Rating* NFP::shm::RatingsIterator::operator*()
-{
-  return (NFP::model::Rating*)((*rs_it_)->ptr() + r_idx_);
-}
-
-NFP::shm::RatingsIterator& NFP::shm::RatingsIterator::operator++(int i)
-{
-  NFP::shm::RatingsIterator& tmp = *this;
-  ++r_idx_;
-  if (r_idx_ > (*rs_it_)->nb_ratings()) {
-    ++rs_it_; r_idx_ = 0;
-  }
-  return tmp;
-}
-
-bool NFP::shm::RatingsIterator::operator!=(const NFP::shm::RatingsIterator& other) {
-    return rs_it_ != other.rs_it_ || r_idx_ != other.r_idx_;
-}
-
-/*
-bool NFP::shm::RatingsIterator::operator==(const NFP::shm::RatingsIterator& other) {
-    return rs_it_ == other.rs_it_ && r_idx_ == other.r_idx_;
-}
-*/
