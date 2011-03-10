@@ -45,7 +45,7 @@ std::string hr_size(int);
 
 int main (int argc, char* argv[])
 {
-    google::InitGoogleLogging(argv[0]);
+    INIT_LOG();
     LOG(INFO) << "Starting main()";
     LOG_BUILD_INFO;
 
