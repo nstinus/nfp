@@ -11,7 +11,7 @@ ALL_FLAGS = dict()
 MODE = (ARGUMENTS.get('release') == '1') and 'release' or 'debug'
 # By default, we'll compile in 32b as 64b seems to freeze apps
 # probably something wrong with types/pointers used...
-I686 = (ARGUMENTS.get('arch') != '64')
+I686 = (ARGUMENTS.get('arch') == '32')
 PROFILING = (ARGUMENTS.get('prof', 0) == '1')
 
 if os.getenv("CXX") not in ("", None):
