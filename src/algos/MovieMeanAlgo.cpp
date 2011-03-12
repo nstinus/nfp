@@ -13,7 +13,7 @@ int NFP::algos::MovieMeanAlgo::run()
     uint16_t current_movie_id = (*NFP::shm::RatingsManager::instance()->begin())->movie_id();
 
     LOG(INFO) << "Looping over all the ratings...";
-    for (NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin();
+    for (auto it = NFP::shm::RatingsManager::instance()->begin();
 		 it != NFP::shm::RatingsManager::instance()->end();
 		 it++) {
         if (*it == NULL) {
