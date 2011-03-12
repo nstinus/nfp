@@ -30,8 +30,7 @@ float NFP::model::User::avg_rating()
     }
     else {
         long sRates = 0;
-        std::list<NFP::model::Rating*>::iterator i;
-        for (i = _ratings.begin(); i != _ratings.end(); i++) {
+        for (auto i = _ratings.begin(); i != _ratings.end(); i++) {
             sRates += (*i)->rate();
         }
         return (float)sRates / (float)nb_ratings();
