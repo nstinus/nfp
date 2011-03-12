@@ -36,7 +36,8 @@ public:
   RatingsIterator const& operator++(int) {
     ++r_idx_;
     if (r_idx_ > (*rs_it_)->nb_ratings()) {
-      ++rs_it_; r_idx_ = 0;
+      ++rs_it_;
+      r_idx_ = 0;
     }
     return *this;
   }

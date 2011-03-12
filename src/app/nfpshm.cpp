@@ -145,12 +145,11 @@ int ratings(const std::string arg_movie_id = "", const std::string arg_user_id =
 
         NFP::model::Rating* myRating = NULL;
 
-        char* msg = new char[50];
+        char msg[50];
         sprintf(msg, "%5s  %8s  %1s  %10s", "#m_id", "user_id", "R", "Date");
         std::cout << msg << std::endl;
-        delete[] msg;
 
-        char* myRuId_s = new char[10];
+        char myRuId_s[10];
         std::string myRuIdS("");
 
         for (int i = 0; i < nb_ratings; i++) {
@@ -160,7 +159,6 @@ int ratings(const std::string arg_movie_id = "", const std::string arg_user_id =
             if (arg_user_id == "" || (int)myRuIdS.find(arg_user_id) != -1)
                 std::cout << myRating->to_string() << std::endl;
         }
-        delete[] myRuId_s;
 
         mySSR.detach();
     }
@@ -189,7 +187,7 @@ std::string hr_size(int bsize)
         iter++;
     }
 
-    char* msg = new char[10];
+    char msg[10];
     sprintf(msg, "%d%-2s", bsize, units[iter].c_str());
     return std::string(msg);
 }
@@ -200,7 +198,7 @@ int infos()
     NFP::algos::MovieMeanAlgo* m_mean_alg = new NFP::algos::MovieMeanAlgo();
     int ret = m_mean_alg->run();
 
-    char* msg = new char[256];
+    char msg[256];
 
     uint32_t skipped = 0;
 
@@ -238,7 +236,7 @@ int users()
     NFP::algos::UserMeanAlgo* u_mean_alg = new NFP::algos::UserMeanAlgo();
     int ret = u_mean_alg->run();
 
-    char* msg = new char[256];
+    char msg[256];
     sprintf(msg, "%9s  %5s", "# user_id", "R ArM");
     std::cout << msg << std::endl << std::endl;
     std::map<uint32_t, NFP::algos::User*>::const_iterator it;
