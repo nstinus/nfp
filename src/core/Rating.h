@@ -82,8 +82,8 @@ public:
     uint8_t raw_rate() const;
     uint16_t rate() const;
     uint16_t raw_date() const;
-    std::string date() const;
-    std::string to_string();
+    std::string const date() const;
+    std::string const to_string() const;
     void data(char[]) const;
 
     /*************/
