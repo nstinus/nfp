@@ -107,14 +107,13 @@ int NFP::base::ShmSegment::remove()
 
 std::string NFP::base::ShmSegment::info()
 {
-    char* msg = new char[255];
+    char msg[255];
     sprintf(msg, "%s shmid: %8d shmkey: 0x%x size: %8d",
         keyFileName_.c_str(),
         (int)shmid_,
         (int)key_,
         (int)size_);
     return std::string(msg);
-    delete[] msg;
 }
 
 
