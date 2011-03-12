@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <math.h>
 #include <stdlib.h>
+#include <float.h>
 
 #include <string>
 #include <map>
@@ -213,7 +214,7 @@ int infos()
     LOG(INFO) << "Printing results to stdout...";
     for (uint32_t m_id = 1; m_id <= MAX_NB_MOVIES; m_id++) {
         float res = m_mean_alg->get_predicted_rate(0, m_id, "");
-        if (res > 0) {
+        if (res > FLT_EPSILON) {
             sprintf(msg, "%07d  %5.3f  %4d  %s",
                 m_id,
                 res,
