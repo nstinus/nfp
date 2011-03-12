@@ -220,7 +220,7 @@ int infos()
                 m_id,
                 res,
                 NFP::utils::MoviesInfoProvider::instance()->getMovieYear(m_id),
-                NFP::utils::MoviesInfoProvider::instance()->getMovieName(m_id)->c_str());
+                NFP::utils::MoviesInfoProvider::instance()->getMovieName(m_id).c_str());
             std::cout << msg << std::endl;
         } else {
              skipped++;

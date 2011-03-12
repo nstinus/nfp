@@ -27,7 +27,7 @@ public:
     void year(const int y) { year_ = (uint16_t)(y - MOVIE__YEAR_OFFSET); }
     int year() const { return (int)(year_ + MOVIE__YEAR_OFFSET); }
     void name(std::string const& n) { name_ = n; }
-    std::string const * name() const { return &name_; }
+    std::string const& name() const { return name_; }
 
 private:
     uint16_t year_;
@@ -46,13 +46,13 @@ class MoviesInfoProvider : public NFP::base::Singleton<MoviesInfoProvider>
 public:
     MoviesInfoProvider();
     virtual ~MoviesInfoProvider();
-    NFP::model::Movie const * getInfos(const uint32_t) const;
-    int getMovieYear(const uint32_t movie_id) const { return getInfos(movie_id)->year(); }
-    std::string const * getMovieName(const uint32_t movie_id) const { return getInfos(movie_id)->name(); }
+    NFP::model::Movie const& getInfos(const uint32_t) const;
+    int getMovieYear(const uint32_t movie_id) const { return getInfos(movie_id).year(); }
+    std::string const& getMovieName(const uint32_t movie_id) const { return getInfos(movie_id).name(); }
 
 private:
     void init();
-    NFP::model::Movie *movies_[MAX_NB_MOVIES];
+    NFP::model::Movie* movies_[MAX_NB_MOVIES];
     bool initialized_;
 };
 

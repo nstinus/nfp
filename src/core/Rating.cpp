@@ -84,7 +84,7 @@ uint16_t NFP::model::Rating::raw_date() const
     return *(uint16_t*)&data_[BASICRATING__DATE_POS];
 }
 
-std::string NFP::model::Rating::date() const
+std::string const NFP::model::Rating::date() const
 {
     return utils::DateUS2S(raw_date());
 }
@@ -94,7 +94,7 @@ void NFP::model::Rating::data(char dest[RATING_DATA_SIZE]) const
     memcpy(dest, data_, RATING_DATA_SIZE);
 }
 
-std::string NFP::model::Rating::to_string()
+std::string const NFP::model::Rating::to_string() const
 {
     char ret[40];
     sprintf(ret, "%05d  %08d  %1d  %10s",
