@@ -303,7 +303,7 @@ int users()
     //     return errno;
     // }
     //
-    // std::map<uint, NFP::model::User*> users;
+    // std::map<uint32_t, NFP::model::User*> users;
     //
     // while ((dirp = readdir(dp)) != NULL) {
     //     std::string keyFileName = dirp->d_name;
@@ -364,7 +364,7 @@ int infos2(/*std::string movie_id = ""*/)
 
     char* msg = new char[256];
 
-    uint skipped = 0;
+    uint32_t skipped = 0;
 
     sprintf(msg, "%7s  %5s  %4s  %s",
         "#    id",
@@ -375,7 +375,7 @@ int infos2(/*std::string movie_id = ""*/)
     std::cout << msg << std::endl << std::endl;
 
     LOG(INFO) << "Printing results to stdout...";
-    for (uint m_id = 1; m_id <= MAX_NB_MOVIES; m_id++) {
+    for (uint32_t m_id = 1; m_id <= MAX_NB_MOVIES; m_id++) {
         float res = m_mean_alg->get_predicted_rate(0, m_id, "");
         if (res > 0) {
             sprintf(msg, "%07d  %5.3f  %4d  %s",
@@ -403,7 +403,7 @@ int users2()
     char* msg = new char[256];
     sprintf(msg, "%9s  %5s", "# user_id", "R ArM");
     std::cout << msg << std::endl << std::endl;
-    std::map<uint, NFP::algos::User*>::const_iterator it;
+    std::map<uint32_t, NFP::algos::User*>::const_iterator it;
     for (it = u_mean_alg->get_users().begin(); it != u_mean_alg->get_users().end(); it++) {
         float mean = it->second->mean_rating;
         int nb = it->second->nb_ratings;

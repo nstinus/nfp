@@ -11,11 +11,11 @@ namespace utils
 {
 
 int movieYear(int m) {
-    return NFP::utils::MoviesInfoProvider::instance()->getMovieYear((uint)m);
+    return NFP::utils::MoviesInfoProvider::instance()->getMovieYear((uint32_t)m);
 }
 
 std::string movieName(int m) {
-    return *(NFP::utils::MoviesInfoProvider::instance()->getMovieName((uint)m));
+    return *(NFP::utils::MoviesInfoProvider::instance()->getMovieName((uint32_t)m));
 }
 
 int MoviesInfoProvider_nbMovies() {

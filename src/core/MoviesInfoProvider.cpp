@@ -23,7 +23,7 @@ NFP::utils::MoviesInfoProvider::~MoviesInfoProvider()
 
 
 
-NFP::model::Movie const * NFP::utils::MoviesInfoProvider::getInfos(const uint movie_id) const
+NFP::model::Movie const * NFP::utils::MoviesInfoProvider::getInfos(const uint32_t movie_id) const
 {
     if (!initialized_) {
         LOG(WARNING) << "Try to fetch data before initialization!";

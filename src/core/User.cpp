@@ -2,7 +2,7 @@
 
 //#include <numeric>
 
-NFP::model::User::User(uint user_id) : _user_id(user_id)
+NFP::model::User::User(uint32_t user_id) : _user_id(user_id)
 {
     _avg_rating = -1;
 }
@@ -12,7 +12,7 @@ void NFP::model::User::add_rating(NFP::model::Rating* r)
     _ratings.push_back(r);
 }
 
-uint NFP::model::User::nb_ratings()
+uint32_t NFP::model::User::nb_ratings()
 {
     return _ratings.size();
 }

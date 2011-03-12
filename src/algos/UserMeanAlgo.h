@@ -17,15 +17,15 @@ namespace algos
 
 struct User
 {
-  uint user_id;
-  uint nb_ratings;
+  uint32_t user_id;
+  uint32_t nb_ratings;
   unsigned long long summed_ratings;
   float mean_rating;
 
-  User(uint uid): user_id(uid), nb_ratings(0), summed_ratings(0), mean_rating(-1) {}
+  User(uint32_t uid): user_id(uid), nb_ratings(0), summed_ratings(0), mean_rating(-1) {}
   User(): user_id(-1), nb_ratings(0), summed_ratings(0), mean_rating(-1) {}
   
-  void add_rating(ushort r) {
+  void add_rating(uint16_t r) {
     summed_ratings += r;
     nb_ratings++;
   }
@@ -41,23 +41,23 @@ class UserMeanAlgo : public BaseAlgo
 public:
     UserMeanAlgo() : BaseAlgo("User_Mean", "0.1") {}
     virtual int run();
-    float get_mean_rating(uint uid) {
+    float get_mean_rating(uint32_t uid) {
       User* u = users_.find(uid)->second;
       return (u != NULL) ? u->mean_rating : -1;
     }
-    uint get_nb_ratings(uint uid) {
+    uint32_t get_nb_ratings(uint32_t uid) {
       User* u = users_.find(uid)->second;
       return (u != NULL) ? u->nb_ratings : 0;
     }
-    virtual float get_predicted_rate(uint u_id, ushort /*m_id*/, std::string /*date*/) {
+    virtual float get_predicted_rate(uint32_t u_id, uint16_t /*m_id*/, std::string /*date*/) {
       return get_mean_rating(u_id);
     }
-    std::map<uint, User*> const& get_users() const{
+    std::map<uint32_t, User*> const& get_users() const{
       return users_;
     }
     
 private:
-    std::map<uint, User*> users_;
+    std::map<uint32_t, User*> users_;
 };
 
     

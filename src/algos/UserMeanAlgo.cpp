@@ -17,9 +17,9 @@ int NFP::algos::UserMeanAlgo::run()
             return -1;
         }
 
-        uint user_id = (*it)->user_id();
+        uint32_t user_id = (*it)->user_id();
 
-        std::map<uint, User*>::iterator u_it = users_.find(user_id);
+        std::map<uint32_t, User*>::iterator u_it = users_.find(user_id);
         if (u_it == users_.end())
           users_[user_id] = new User(user_id);
         users_[user_id]->add_rating((*it)->rate());
@@ -30,7 +30,7 @@ int NFP::algos::UserMeanAlgo::run()
 
     start = clock();
     LOG(INFO) << "Calculating average rate per user...";
-    for (std::map<uint, User*>::iterator u_it = users_.begin(); u_it != users_.end(); u_it++) {
+    for (std::map<uint32_t, User*>::iterator u_it = users_.begin(); u_it != users_.end(); u_it++) {
       u_it->second->compute();
       DLOG(INFO) << "user_id = " << u_it->first
                  << ", nb_ratings = " << u_it->second->nb_ratings

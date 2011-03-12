@@ -26,7 +26,7 @@ public:
     virtual int run() = 0;
     void logStart() { LOG(INFO) << "Starting " << name_ << " - " << version_; }
     void logEnd() { LOG(INFO) << "Done " << name_ << " - " << version_; }
-    virtual float get_predicted_rate(uint /* user_id */, ushort /* movie_id */, std::string /* date */) = 0;
+    virtual float get_predicted_rate(uint32_t /* user_id */, uint16_t /* movie_id */, std::string /* date */) = 0;
         
 private:
     std::string name_;

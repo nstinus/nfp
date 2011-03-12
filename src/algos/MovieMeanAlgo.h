@@ -24,7 +24,7 @@ public:
         }
     }
     virtual int run();
-    virtual float get_predicted_rate(uint, ushort, std::string);
+    virtual float get_predicted_rate(uint32_t, uint16_t, std::string);
     
     
 private:

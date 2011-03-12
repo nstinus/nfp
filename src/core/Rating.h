@@ -28,34 +28,28 @@
 /*************************************************************************************************/
 
 #include <string>
+#include <cstdint>
 
-typedef unsigned short int usint;
-typedef unsigned long int ulong;
-typedef unsigned char uchar;
+const uint32_t BASICRATING__DATE_POS      = 0;
+const uint32_t BASICRATING__RATE_POS      = 2;
+const uint32_t BASICRATING__USER_ID_POS   = 3;
+const uint32_t BASICRATING__MOVIE_ID_POS  = 6;
 
-typedef unsigned int uint;
-typedef unsigned short ushort;
+const uint32_t BASICRATING__DATE_MASK     = 0x0FFF;
+const uint32_t BASICRATING__RATE_MASK     = 0x0007;
+const uint32_t BASICRATING__USER_ID_MASK  = 0x00FFFFFF;
+const uint32_t BASICRATING__MOVIE_ID_MASK = 0x7FFF;
 
-const uint BASICRATING__DATE_POS      = 0;
-const uint BASICRATING__RATE_POS      = 2;
-const uint BASICRATING__USER_ID_POS   = 3;
-const uint BASICRATING__MOVIE_ID_POS  = 6;
+const uint32_t RATING_DATA_SIZE = 8;
 
-const uint BASICRATING__DATE_MASK     = 0x0FFF;
-const uint BASICRATING__RATE_MASK     = 0x0007;
-const uint BASICRATING__USER_ID_MASK  = 0x00FFFFFF;
-const uint BASICRATING__MOVIE_ID_MASK = 0x7FFF;
-
-const uint RATING_DATA_SIZE = 8;
-
-const uint BASICRATING__DATE_OFFSET = 2451494;
+const uint32_t BASICRATING__DATE_OFFSET = 2451494;
 
 namespace NFP
 {
 
 namespace utils {
-std::string DateUS2S(ushort const&);
-ushort DateS2US(std::string const&);
+std::string DateUS2S(uint16_t const&);
+uint16_t DateS2US(std::string const&);
 }    
 
 namespace model
@@ -72,7 +66,7 @@ public:
     /*****************/    
     
     Rating();
-    Rating(ushort const&, uint const&, uchar const&, ushort const&);
+    Rating(uint16_t const&, uint32_t const&, uint8_t const&, uint16_t const&);
     Rating(int const&, int const&, int const&, std::string const&);
     Rating(char const*);
     
@@ -82,12 +76,12 @@ public:
     /*  Getters  */
     /*************/
 
-    ushort movie_id() const;
+    uint16_t movie_id() const;
     //int movie_id() const;
-    uint user_id() const;
-    uchar raw_rate() const;
-    ushort rate() const;
-    ushort raw_date() const;
+    uint32_t user_id() const;
+    uint8_t raw_rate() const;
+    uint16_t rate() const;
+    uint16_t raw_date() const;
     std::string date() const;
     std::string to_string();
     void data(char[]) const;
@@ -98,10 +92,10 @@ public:
 
 public:
     
-    void set_movie_id(ushort const&);
-    void set_user_id(uint const&);
-    void set_rate(uchar const&);
-    void set_date(ushort const&);
+    void set_movie_id(uint16_t const&);
+    void set_user_id(uint32_t const&);
+    void set_rate(uint8_t const&);
+    void set_date(uint16_t const&);
     void set_date(std::string const&);
 
 };

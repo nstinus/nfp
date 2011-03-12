@@ -15,14 +15,14 @@ namespace model
 class User
 {
     private:
-        uint _user_id;
+        uint32_t _user_id;
         std::list<NFP::model::Rating*> _ratings;
         
         float _avg_rating;
         
     public:
-        User(uint);
-        uint nb_ratings();
+        User(uint32_t);
+        uint32_t nb_ratings();
         void add_rating(NFP::model::Rating*);
         float avg_rating();
         std::list<NFP::model::Rating*>* ratings() {return &_ratings;};

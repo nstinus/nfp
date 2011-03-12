@@ -37,7 +37,8 @@ BASE_CPPFLAGS = ['-pipe',
                  '-DBUILD__GIT=%s' % git_commit(),
                  '-DBUILD__MODE=%s' % MODE,
                  '-DBUILD__PROF=%s' % PROFILING,
-                 '-DBUILD__ARCH=%s' % (I686 and "32b" or "64b")]
+                 '-DBUILD__ARCH=%s' % (I686 and "32b" or "64b"),
+                 '-std=c++0x']
 
 if I686:
     BASE_CPPFLAGS += ['-m32',]
