@@ -33,10 +33,8 @@ int rmAll();
 int load(std::string);
 int reload(std::string);
 int save(std::string);
-int infos(std::string);
-int infos2(/*std::string*/);
+int infos();
 int users();
-int users2();
 void usage();
 int ratings(const std::string, const std::string);
 int ratings2();
@@ -62,17 +60,13 @@ int main (int argc, char* argv[])
     else if (argc > 1 && strcmp(argv[1], "save") == 0)
         ret += save((argc > 2) ? argv[2] : "");
     else if (argc > 1 && strcmp(argv[1], "infos") == 0)
-        ret += infos((argc > 2) ? argv[2] : "");
-    else if (argc > 1 && strcmp(argv[1], "infos2") == 0)
-        ret += infos2(/*(argc > 2) ? argv[2] : ""*/);
+        ret += infos();
     else if (argc > 1 && strcmp(argv[1], "ratings") == 0)
         ret += ratings((argc > 2) ? argv[2] : "", (argc > 3) ? argv[3] : "");
     else if (argc > 1 && strcmp(argv[1], "ratings2") == 0)
       ret += ratings2();
     else if (argc > 1 && strcmp(argv[1], "users") == 0)
         ret += users();
-    else if (argc > 1 && strcmp(argv[1], "users2") == 0)
-      ret += users2();
     else
         usage();
 
@@ -109,98 +103,6 @@ int save(std::string arg_movie_id = "")
 int reload(std::string arg_movie_id = "")
 {
     return rm(arg_movie_id) + load(arg_movie_id);
-}
-
-int infos(std::string movie_id = "")
-{
-    LOG(INFO) << "NFP_SHM_FILES = " << NFP_SHM_FILES;
-
-    DIR *dp;
-    struct dirent *dirp;
-    if((dp  = opendir(NFP_SHM_FILES.c_str())) == NULL) {
-        LOG(ERROR) << "Error(" << errno << ") opening " << NFP_SHM_FILES;
-        return errno;
-    }
-
-    char* msg = new char[256];
-    int total_ratings = 0;
-    double allR_mean = 0;
-    int nb_movies = 0;
-
-    sprintf(msg, "%7s  %9s  %9s  %5s  %4s  %s",
-        "#    id",
-        "Nb. Rat.",
-        "Mem.",
-        "R ArM",
-        "Year",
-        "Name");
-    std::cout << msg << std::endl;
-
-    while ((dirp = readdir(dp)) != NULL) {
-        std::string keyFileName = dirp->d_name;
-
-        if ((int)keyFileName.find(".shmkey") == -1 ||
-                (movie_id != "" && (int)keyFileName.find(movie_id) == -1))
-            continue;
-
-        std::string dataFileName = keyFileName;
-        dataFileName.erase(dataFileName.end()-7, dataFileName.end());
-        dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
-        keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
-
-        NFP::shm::RatingsShmSegment mySSR(dataFileName, keyFileName);
-
-        if (mySSR.create()) {
-            LOG(ERROR) << "An error occured creating shm segment. ";
-            continue;
-        }
-        if (mySSR.attach()) {
-            LOG(ERROR) << "An error occured attaching to shm segment. ";
-            continue;
-        }
-
-        int m_id = mySSR.ptr()->movie_id();
-        int nb_ratings = mySSR.nb_ratings();
-
-        double armean_rate = 0;
-        int myRate = 0;
-
-        for (int i = 0; i < nb_ratings; i++) {
-            myRate = ((NFP::model::Rating*)(mySSR.ptr() + i))->rate();
-            armean_rate += (double)myRate;
-        }
-        mySSR.detach();
-
-        armean_rate /= nb_ratings;
-
-        sprintf(msg, "%07d  %9d  %9d  %5.3f  %4d  %s",
-            m_id,
-            nb_ratings,
-            nb_ratings * RATING_DATA_SIZE,
-            armean_rate,
-            NFP::utils::MoviesInfoProvider::instance()->getMovieYear(m_id),
-            NFP::utils::MoviesInfoProvider::instance()->getMovieName(m_id)->c_str());
-        std::cout << msg << std::endl;
-
-        allR_mean = (allR_mean*total_ratings + armean_rate*nb_ratings);
-        total_ratings += nb_ratings;
-        allR_mean /= (double)(total_ratings);
-        nb_movies++;
-        DLOG(INFO) << msg;
-    }
-    closedir(dp);
-
-    sprintf(msg, "NB%5d  %9d  %9d  %11.9f  %s",
-        nb_movies,
-        total_ratings,
-        total_ratings * RATING_DATA_SIZE,
-        allR_mean,
-        hr_size(total_ratings * RATING_DATA_SIZE * 4 / 8).c_str());
-    std::cout << std::endl << msg << std::endl;
-
-    delete[] msg;
-
-    return 0;
 }
 
 
@@ -270,7 +172,7 @@ int ratings(const std::string arg_movie_id = "", const std::string arg_user_id =
 void usage()
 {
     std::string desc;
-    desc  = "nfpshm <load|remove[-all]|infos[2]|users|save> [movie_id pattern]\n";
+    desc  = "nfpshm <load|remove[-all]|infos|ratings|users|save> [movie_id pattern]\n";
     std::cout << desc << std::endl;
 }
 
@@ -292,72 +194,8 @@ std::string hr_size(int bsize)
     return std::string(msg);
 }
 
-int users()
-{
-    // LOG(INFO) << "NFP_SHM_FILES = " << NFP_SHM_FILES;
-    //
-    // DIR *dp;
-    // struct dirent *dirp;
-    // if((dp  = opendir(NFP_SHM_FILES.c_str())) == NULL) {
-    //     LOG(ERROR) << "Error(" << errno << ") opening " << NFP_SHM_FILES;
-    //     return errno;
-    // }
-    //
-    // std::map<uint32_t, NFP::model::User*> users;
-    //
-    // while ((dirp = readdir(dp)) != NULL) {
-    //     std::string keyFileName = dirp->d_name;
-    //
-    //     if ((int)keyFileName.find(".shmkey") == -1)
-    //         continue;
-    //
-    //     std::string dataFileName = keyFileName;
-    //     dataFileName.erase(dataFileName.end()-7, dataFileName.end());
-    //     dataFileName = NFP_TRAINING_SET_DIR + std::string("/") + dataFileName;
-    //     keyFileName = NFP_SHM_FILES + std::string("/") + keyFileName;
-    //
-    //     NFP::shm::RatingsShmSegment mySSR(dataFileName, keyFileName);
-    //
-    //     if (mySSR.create()) {
-    //         LOG(ERROR) << "An error occured creating shm segment. ";
-    //         continue;
-    //     }
-    //     if (mySSR.attach()) {
-    //         LOG(ERROR)<< "An error occured attaching to shm segment. ";
-    //         continue;
-    //     }
-    //
-    //     int nb_ratings = mySSR.nb_ratings();
-    //     LOG(INFO) << "Found " << nb_ratings;
-    //
-    //     NFP::model::Rating* myRating = NULL;
-    //
-    //     char* msg = new char[50];
-    //     sprintf(msg, "%5s  %8s  %1s  %10s", "#m_id", "user_id", "R", "Date");
-    //     std::cout << msg << std::endl;
-    //     delete[] msg;
-    //
-    //     char* myRuId_s = new char[10];
-    //     std::string myRuIdS("");
-    //
-    //     for (int i = 0; i < nb_ratings; i++) {
-    //         myRating = (NFP::model::Rating*)(mySSR.ptr() + i);
-    //         if (not users.has_key(myRating->user_id())
-    //             sprintf(myRuId_s, "%d", myRating->user_id());
-    //         myRuIdS = myRuId_s;
-    //         if (arg_user_id == "" || (int)myRuIdS.find(arg_user_id) != -1)
-    //             std::cout << myRating->to_string() << std::endl;
-    //     }
-    //     delete[] myRuId_s;
-    //
-    //     mySSR.detach();
-    // }
-    // closedir(dp);
-    //
-    return 0;
-}
 
-int infos2(/*std::string movie_id = ""*/)
+int infos()
 {
     NFP::algos::MovieMeanAlgo* m_mean_alg = new NFP::algos::MovieMeanAlgo();
     int ret = m_mean_alg->run();
@@ -367,10 +205,10 @@ int infos2(/*std::string movie_id = ""*/)
     uint32_t skipped = 0;
 
     sprintf(msg, "%7s  %5s  %4s  %s",
-        "#    id",
-        "R ArM",
-        "Year",
-        "Name");
+            "#    id",
+            "R ArM",
+            "Year",
+            "Name");
     DLOG(INFO) << "Printing header: " << msg;
     std::cout << msg << std::endl << std::endl;
 
@@ -395,7 +233,7 @@ int infos2(/*std::string movie_id = ""*/)
 
 
 
-int users2()
+int users()
 {
     NFP::algos::UserMeanAlgo* u_mean_alg = new NFP::algos::UserMeanAlgo();
     int ret = u_mean_alg->run();
