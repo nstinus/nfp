@@ -1,0 +1,4 @@
+Import('env')
+
+env.StaticLibrary("nfpalgos",
+                  Glob("*.cpp"))

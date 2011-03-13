@@ -58,11 +58,8 @@ ADD_CPPFLAGS['debug'] = ['-fno-omit-frame-pointer',
                          '-D_GLIBCXX_PROFILE']
 ADD_CPPFLAGS['prof'] = ['-pg',]
 
-BASE_LINKFLAGS = []
-if I686:
-   BASE_LINKFLAGS += ['-m32',]
-else:
-   BASE_LINKFLAGS += ['-m64', '-L/usr/local/lib64']
+BASE_LINKFLAGS = I686 and ['-m32',] or ['-m64',]
+
 ADD_LINKFLAGS = dict()
 ADD_LINKFLAGS['release'] = []
 ADD_LINKFLAGS['debug'] = []
@@ -77,6 +74,14 @@ if PROFILING:
 
 ALL_FLAGS['LIBS'] = ['QtCore', 'glog']
 
+ALL_FLAGS['LIBPATH'] = ['/usr/local/lib64',
+                        '/Users/nico/projects/dev/nfp/src/core',
+                        '/Users/nico/projects/dev/nfp/src/algos']
+
+ALL_FLAGS['CPPPATH'] = ["/Library/Frameworks/QtCore.framework/Headers",
+                        "/Users/nico/projects/dev/nfp/src/core",
+                        "/Users/nico/projects/dev/nfp/src/algos"]
+
 ALL_FLAGS['ENV'] = {'PATH': os.getenv('PATH'),
                     'TERM': os.getenv('TERM'),
                     'HOME': os.getenv('HOME')}
@@ -85,7 +90,7 @@ env = Environment(**ALL_FLAGS)
 
 Export('env')
 
-SConscript([#'core/SConscript',
-            #'algos/SConscript',
+SConscript(['core/SConscript',
+            'algos/SConscript',
             'app/SConscript',])
 	    #'python/SConscript'])

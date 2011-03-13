@@ -1,11 +1,6 @@
 Import('env')
 
-env.Program("nfpshm",
-        ("./nfpshm.cpp", Glob("../core/*.cpp"),
-        "../algos/MovieMeanAlgo.cpp",
-        "../algos/UserMeanAlgo.cpp"),
-        LIBS=('QtCore', 'glog'),
-        CPPPATH=("/Library/Frameworks/QtCore.framework/Headers",
-		 "../core",
-		 "../algos"))
+env['LIBS'] += ['nfpcore', 'nfpalgos']
 
+env.Program("nfpshm",
+            "./nfpshm.cpp")
