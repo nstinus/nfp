@@ -40,6 +40,12 @@ class UserMeanAlgo : public BaseAlgo
 
 public:
     UserMeanAlgo() : BaseAlgo("User_Mean", "0.1") {}
+    ~UserMeanAlgo() {
+      for (auto it = users_.begin();
+           it != users_.end();
+           ++it)
+        delete it->second;
+    }
     virtual int run();
     float get_mean_rating(uint32_t uid) {
       User* u = users_.find(uid)->second;
