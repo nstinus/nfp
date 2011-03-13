@@ -80,24 +80,22 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
     return ret;
 }
 
-int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
+int NFP::shm::RatingsManager::remove(std::string const& arg_movie_id, bool feedback)
 {
     std::string msg;
     std::list<RatingsSegments::iterator> erasionList;
 
-    RatingsSegments::iterator it = segments_.begin();
     bool fundCandidates = false;
-    for (it = segments_.begin(); true; ) {
+    for (auto it = segments_.begin(); it != segments_.end(); ++it) {
         if ((int)(*it)->keyFileName().find(arg_movie_id) != -1) {
-            msg = "Removed " + (*it)->info();
             (*it)->remove();
+            msg = "Removed " + (*it)->info();
             erasionList.push_back(it);
             LOG(INFO) << msg;
-            if (feedback) { std::cout << msg << std::endl; }
+            if (feedback)
+              std::cout << msg << std::endl;
             fundCandidates = true;
         }
-	it++;
-	if (it == segments_.end()) break;
     }
     if (fundCandidates) {
         rebuildLoadedSegments();
@@ -113,8 +111,7 @@ int NFP::shm::RatingsManager::remove(std::string arg_movie_id, bool feedback)
 void NFP::shm::RatingsManager::rebuildLoadedSegments()
 {
     loadedSegments_.clear();
-    RatingsSegments::iterator it = segments_.begin();
-    for (it = segments_.begin(); it != segments_.end(); it++) {
+    for (auto it = segments_.begin(); it != segments_.end(); it++) {
         loadedSegments_.insert((*it)->keyFileName());
     }
 }
@@ -170,8 +167,7 @@ int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool /*feedback*/)
 {
     int ret = 0;
     std::cout << std::endl << "Saving segments...";
-    RatingsSegments::const_iterator it = segments_.begin();
-    for (it = segments_.begin(); it != segments_.end(); it++) {
+    for (auto it = segments_.begin(); it != segments_.end(); it++) {
         if ((*it)->keyFileName().find(arg_movie_id, 0) != std::string::npos) {
             std::string filename = QString::fromStdString((*it)->keyFileName()).replace(".txt.shmkey", ".bin").toStdString();
             ret += (*it)->save_raw(filename.c_str());
@@ -183,8 +179,7 @@ int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool /*feedback*/)
 int NFP::shm::RatingsManager::removeAll()
 {
     int ret = 0;
-    RatingsSegments::iterator it;
-    for (it = segments_.begin(); it != segments_.end(); ++it) {
+    for (auto it = segments_.begin(); it != segments_.end(); ++it) {
             std::string msg("Removed " + (*it)->info());
             (*it)->remove();
             LOG(INFO) << msg;

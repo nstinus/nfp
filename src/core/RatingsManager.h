@@ -29,14 +29,15 @@ public:
     rs_it_(rs_it),
     r_idx_(r_idx) {}
 
-  NFP::model::Rating* operator*() const {
+  const NFP::model::Rating* operator*() const {
     return (NFP::model::Rating*)((*rs_it_)->ptr() + r_idx_);
   }
 
-  RatingsIterator& operator++(int) {
+  RatingsIterator const& operator++(int) {
     ++r_idx_;
     if (r_idx_ > (*rs_it_)->nb_ratings()) {
-      ++rs_it_; r_idx_ = 0;
+      ++rs_it_;
+      r_idx_ = 0;
     }
     return *this;
   }
@@ -61,7 +62,7 @@ public:
     RatingsManager();
     ~RatingsManager();
     int load(std::string arg_movie_id = "", bool feedback = false);
-    int remove(std::string arg_movie_id = "", bool feedback = false);
+    int remove(std::string const& arg_movie_id = "", bool feedback = false);
     int removeAll();
     int save(std::string arg_movie_id = "", bool feedback = false);
     int nbSegments() {return segments_.size();};

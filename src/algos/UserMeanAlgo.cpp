@@ -10,8 +10,9 @@ int NFP::algos::UserMeanAlgo::run()
 
     LOG(INFO) << "Looping over all the ratings...";
 
-    NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin();
-    for (; it != NFP::shm::RatingsManager::instance()->end(); it++) {
+    for (auto it = NFP::shm::RatingsManager::instance()->begin();
+         it != NFP::shm::RatingsManager::instance()->end();
+         it++) {
         if (*it == NULL) {
             LOG(ERROR) << "ptr is null!";
             return -1;
@@ -19,7 +20,7 @@ int NFP::algos::UserMeanAlgo::run()
 
         uint32_t user_id = (*it)->user_id();
 
-        std::map<uint32_t, User*>::iterator u_it = users_.find(user_id);
+        auto u_it = users_.find(user_id);
         if (u_it == users_.end())
           users_[user_id] = new User(user_id);
         users_[user_id]->add_rating((*it)->rate());
@@ -30,7 +31,7 @@ int NFP::algos::UserMeanAlgo::run()
 
     start = clock();
     LOG(INFO) << "Calculating average rate per user...";
-    for (std::map<uint32_t, User*>::iterator u_it = users_.begin(); u_it != users_.end(); u_it++) {
+    for (auto u_it = users_.begin(); u_it != users_.end(); u_it++) {
       u_it->second->compute();
       DLOG(INFO) << "user_id = " << u_it->first
                  << ", nb_ratings = " << u_it->second->nb_ratings
