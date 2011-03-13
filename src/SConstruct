@@ -77,6 +77,10 @@ if PROFILING:
 
 ALL_FLAGS['LIBS'] = ['QtCore', 'glog']
 
+ALL_FLAGS['ENV'] = {'PATH': os.getenv('PATH'),
+                    'TERM': os.getenv('TERM'),
+                    'HOME': os.getenv('HOME')}
+
 env = Environment(**ALL_FLAGS)
 
 Export('env')
