@@ -1,6 +1,7 @@
 import os
 import commands
 
+CacheDir("/tmp/build-cache/nfp")
 
 def git_commit():
     return  commands.getoutput("git describe --tags --long --dirty --abbrev=4")
@@ -8,10 +9,8 @@ def git_commit():
 
 ALL_FLAGS = dict()
 
-MODE = (ARGUMENTS.get('release') == '1') and 'release' or 'debug'
-# By default, we'll compile in 32b as 64b seems to freeze apps
-# probably something wrong with types/pointers used...
-I686 = (ARGUMENTS.get('arch') == '32')
+MODE = (ARGUMENTS.get('release', 0) == '1') and 'release' or 'debug'
+I686 = (ARGUMENTS.get('arch', '64') == '32')
 PROFILING = (ARGUMENTS.get('prof', 0) == '1')
 
 if os.getenv("CXX") not in ("", None):
