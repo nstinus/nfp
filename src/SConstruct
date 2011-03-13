@@ -1,6 +1,8 @@
 import os
 import commands
 
+NFP_ROOT = os.getenv("NFP_ROOT")
+
 CacheDir("/tmp/build-cache/nfp")
 
 def git_commit():
@@ -75,12 +77,12 @@ if PROFILING:
 ALL_FLAGS['LIBS'] = ['QtCore', 'glog']
 
 ALL_FLAGS['LIBPATH'] = ['/usr/local/lib64',
-                        '/Users/nico/projects/dev/nfp/src/core',
-                        '/Users/nico/projects/dev/nfp/src/algos']
+                        '%s/src/core' % NFP_ROOT,
+                        '%s/src/algos' % NFP_ROOT]
 
 ALL_FLAGS['CPPPATH'] = ["/Library/Frameworks/QtCore.framework/Headers",
-                        "/Users/nico/projects/dev/nfp/src/core",
-                        "/Users/nico/projects/dev/nfp/src/algos"]
+                        "%s/src/core" % NFP_ROOT,
+                        "%s/src/algos" % NFP_ROOT]
 
 ALL_FLAGS['ENV'] = {'PATH': os.getenv('PATH'),
                     'TERM': os.getenv('TERM'),
