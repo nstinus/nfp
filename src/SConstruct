@@ -1,8 +1,6 @@
 import os
 import commands
 
-NFP_ROOT = os.getenv("NFP_ROOT")
-
 CacheDir("/tmp/build-cache/nfp")
 
 def git_commit():
@@ -38,11 +36,9 @@ BASE_CPPFLAGS = ['-pipe',
                  '-DBUILD__GIT=%s' % git_commit(),
                  '-DBUILD__MODE=%s' % MODE,
                  '-DBUILD__PROF=%s' % PROFILING,
-                 '-DBUILD__ARCH=%s' % (I686 and "32b" or "64b"),
                  '-std=c++0x']
 
-if I686:
-    BASE_CPPFLAGS += ['-m32',]
+BASE_CPPFLAGS += I686 and ['-m32',] or ['-m64',]
 
 ADD_CPPFLAGS = dict()
 ADD_CPPFLAGS['release'] = ['-O3', '-DNDEBUG',]
@@ -75,14 +71,10 @@ if PROFILING:
    ALL_FLAGS['CPPFLAGS'] +=  ADD_CPPFLAGS['prof']
 
 ALL_FLAGS['LIBS'] = ['QtCore', 'glog']
-
-ALL_FLAGS['LIBPATH'] = ['/usr/local/lib64',
-                        '%s/src/core' % NFP_ROOT,
-                        '%s/src/algos' % NFP_ROOT]
-
-ALL_FLAGS['CPPPATH'] = ["/Library/Frameworks/QtCore.framework/Headers",
-                        "%s/src/core" % NFP_ROOT,
-                        "%s/src/algos" % NFP_ROOT]
+ALL_FLAGS['LIBPATH'] = []
+if not I686:
+    ALL_FLAGS['LIBPATH'] = ['/usr/local/lib64',]
+ALL_FLAGS['CPPPATH'] = ["/Library/Frameworks/QtCore.framework/Headers",]
 
 ALL_FLAGS['ENV'] = {'PATH': os.getenv('PATH'),
                     'TERM': os.getenv('TERM'),

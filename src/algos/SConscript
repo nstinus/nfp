@@ -1,4 +1,6 @@
 Import('env')
 
+#env['CPPPATH'] += ['#core',]
+
 env.StaticLibrary("nfpalgos",
                   Glob("*.cpp"))
