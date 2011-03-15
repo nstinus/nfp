@@ -1,6 +1,8 @@
 Import('env')
 
+env['CPPPATH'] += ['#core', '#algos']
 env['LIBS'] += ['nfpcore', 'nfpalgos']
+env['LIBPATH'] += ['#core', '#algos']
 
 env.Program("nfpshm",
             "./nfpshm.cpp")
