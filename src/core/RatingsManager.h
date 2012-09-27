@@ -77,7 +77,7 @@ public:
 
 
 private:
-    int init(std::string arg_movie_id = "", bool feedback = false, bool preloadSegments = false);
+    int init(std::string arg_movie_id = "", bool feedback = false);
     void rebuildLoadedSegments();
     void addSegment(RatingsShmSegment*);
 
