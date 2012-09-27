@@ -1,4 +1,4 @@
-include_directories(${QT_INCLUDE_DIR})
+include(${QT_USE_FILE})
 
 add_library(nfpcore
         Rating.cpp

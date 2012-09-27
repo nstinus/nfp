@@ -1,0 +1,4 @@
+find_library(GLOG_LIBRARY NAMES glog)
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(libglog DEFAULT_MSG GLOG_LIBRARY)
+mark_as_advanced(GLOG_LIBRARY)
