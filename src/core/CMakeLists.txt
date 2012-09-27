@@ -1,10 +1,13 @@
 include(${QT_USE_FILE})
 
+add_library(RATING_OBJECT OBJECT Rating.cpp)
+set_target_properties(RATING_OBJECT PROPERTIES COMPILE_FLAGS "-fno-strict-aliasing")
+
 add_library(nfpcore
-        Rating.cpp
         User.cpp
         ShmSegment.cpp
         RatingsShmSegment.cpp
         RatingsManager.cpp
         MoviesInfoProvider.cpp
+        $<TARGET_OBJECTS:RATING_OBJECT>
 )

@@ -11,7 +11,7 @@ find_package(Glog REQUIRED)
 
 # Use -DCMAKE_CXX_FLAGS="-m32" to build a 32b binary
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -combine -ansi -Wall -Werror -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -combine -ansi -Wall -Wextra -Werror -std=c++0x")
 
 set(CMAKE_CXX_FLAGS_DEBUG "-fno-omit-frame-pointer -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline -g -D_GLIBCXX_PROFILE")
 
