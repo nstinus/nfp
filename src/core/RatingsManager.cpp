@@ -29,7 +29,7 @@ NFP::shm::RatingsManager::RatingsManager()
     }
 
     segments_.reserve(17700); // Max segments in the original dataset.
-    init("", false, false);
+    init("", false);
 }
 
 NFP::shm::RatingsManager::~RatingsManager()
@@ -123,7 +123,7 @@ void NFP::shm::RatingsManager::addSegment(RatingsShmSegment* rss)
 }
 
 
-int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback, bool preloadSegments)
+int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
 {
     DIR *dp;
     struct dirent *dirp;
