@@ -4,8 +4,6 @@ project(nfp)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
 
-find_package(Qt4 REQUIRED)
-set(QT_DONT_USE_QTGUI 1)
 find_package(Glog REQUIRED)
 
 set(NFP_CORE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)

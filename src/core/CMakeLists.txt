@@ -1,4 +1,3 @@
-include(${QT_USE_FILE})
 
 add_library(RATING_OBJECT OBJECT Rating.cpp)
 set_target_properties(RATING_OBJECT PROPERTIES COMPILE_FLAGS "-fno-strict-aliasing")
