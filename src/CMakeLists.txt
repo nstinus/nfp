@@ -8,6 +8,10 @@ find_package(Qt4 REQUIRED)
 set(QT_DONT_USE_QTGUI 1)
 find_package(Glog REQUIRED)
 
+set(NFP_CORE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)
+set(NFP_ALGOS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/algos)
+set(NFP_APP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/app)
+
 
 # Use -DCMAKE_CXX_FLAGS="-m32" to build a 32b binary
 
@@ -17,6 +21,12 @@ set(CMAKE_CXX_FLAGS_DEBUG "-fno-omit-frame-pointer -fno-inline-functions -fno-in
 
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
-add_subdirectory(core)
-add_subdirectory(app)
-add_subdirectory(algos)
+if (${BUILD_TESTS})
+   enable_testing()
+   set(GTEST_LIB gtest)
+   add_subdirectory(${GTEST_DIR} ${GTEST_LIB})
+endif(${BUILD_TESTS})
+
+add_subdirectory(${NFP_CORE_DIR})
+add_subdirectory(${NFP_ALGOS_DIR})
+add_subdirectory(${NFP_APP_DIR})

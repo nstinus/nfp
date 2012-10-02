@@ -11,3 +11,7 @@ add_library(nfpcore
         MoviesInfoProvider.cpp
         $<TARGET_OBJECTS:RATING_OBJECT>
 )
+
+if(${BUILD_TESTS})
+        add_subdirectory(test)
+endif(${BUILD_TESTS})

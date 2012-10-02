@@ -1,5 +1,6 @@
-include_directories("../core")
-include_directories("../algos")
+include_directories(${NFP_CORE_DIR})
+include_directories(${NFP_ALGOS_DIR})
+
 include(${QT_USE_FILE})
 
 link_directories(${GLOG_LIBRARY_PATH})
@@ -11,4 +12,5 @@ target_link_libraries(nfpshm
         nfpcore
         nfpalgos
         ${GLOG_LIBRARY}
-        ${QT_LIBRARIES}) 
+        ${QT_LIBRARIES}
+) 
