@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <list>
 
-#include <QString>
-
 #include "RatingsManager.h"
 
 NFP::shm::RatingsManager::RatingsManager()
@@ -163,14 +161,25 @@ int NFP::shm::RatingsManager::init(std::string arg_movie_id, bool feedback)
     return 0;
 }
 
+void str_replace(std::string& str, const std::string& oldStr, const std::string& newStr)
+{
+  size_t pos = 0;
+  while((pos = str.find(oldStr, pos)) != std::string::npos)
+  {
+     str.replace(pos, oldStr.length(), newStr);
+     pos += newStr.length();
+  }
+}
+
 int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool /*feedback*/)
 {
     int ret = 0;
     std::cout << std::endl << "Saving segments...";
     for (auto it = segments_.begin(); it != segments_.end(); it++) {
         if ((*it)->keyFileName().find(arg_movie_id, 0) != std::string::npos) {
-            std::string filename = QString::fromStdString((*it)->keyFileName()).replace(".txt.shmkey", ".bin").toStdString();
-            ret += (*it)->save_raw(filename.c_str());
+          std::string filename((*it)->keyFileName());
+          str_replace(filename, ".txt.shmkey", ".bin");
+          ret += (*it)->save_raw(filename.c_str());
         }
     }
     return ret;

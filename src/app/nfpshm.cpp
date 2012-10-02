@@ -13,9 +13,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <QString>
-//#include <QRegExp>
-
 #include "RatingsShmSegment.h"
 #include "RatingsManager.h"
 //#include "User.h"

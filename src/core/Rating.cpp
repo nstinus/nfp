@@ -1,9 +1,8 @@
 #include "Rating.h"
-#include <glog/logging.h>
-#include <stdio.h>
+#include "Date.h"
 
-#include <QDate>
-#include <QString>
+#include <stdio.h>
+#include <string.h>
 
 
 /**
@@ -12,8 +11,7 @@
  */
 std::string NFP::utils::DateUS2S(uint16_t const& d)
 {
-    return QDate::fromJulianDay((int)d +
-        (int)BASICRATING__DATE_OFFSET).toString("yyyy-MM-dd").toStdString();
+  return NFP::utils::fromJulianDay(d + BASICRATING__DATE_OFFSET);
 }
 
 /**
@@ -22,8 +20,7 @@ std::string NFP::utils::DateUS2S(uint16_t const& d)
  */
 uint16_t NFP::utils::DateS2US(std::string const& d)
 {
-   return (uint16_t)(QDate::fromString(QString::fromStdString(d),
-       QString("yyyy-MM-dd")).toJulianDay() - (int)BASICRATING__DATE_OFFSET);
+  return (uint16_t)(NFP::utils::toJulianDay(d) - BASICRATING__DATE_OFFSET);
 }
 
 NFP::model::Rating::Rating()
