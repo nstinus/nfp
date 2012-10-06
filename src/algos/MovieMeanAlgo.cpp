@@ -1,6 +1,6 @@
-#include "MovieMeanAlgo.h"
-#include "RatingsManager.h"
-#include "Rating.h"
+#include "algos/MovieMeanAlgo.h"
+#include "core/RatingsManager.h"
+#include "core/Rating.h"
 
 int NFP::algos::MovieMeanAlgo::run()
 {

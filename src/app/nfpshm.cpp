@@ -13,14 +13,14 @@
 #include <iostream>
 #include <fstream>
 
-#include "RatingsShmSegment.h"
-#include "RatingsManager.h"
+#include "core/RatingsShmSegment.h"
+#include "core/RatingsManager.h"
 //#include "User.h"
-#include "MovieMeanAlgo.h"
-#include "UserMeanAlgo.h"
-#include "MoviesInfoProvider.h"
-#include "Defs.h"
-#include "macros.h"
+#include "algos/MovieMeanAlgo.h"
+#include "algos/UserMeanAlgo.h"
+#include "core/MoviesInfoProvider.h"
+#include "core/Defs.h"
+#include "core/macros.h"
 
 const std::string NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
 const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");

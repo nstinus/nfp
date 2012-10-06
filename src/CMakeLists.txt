@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(nfp)
+project(nfp CXX)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
 
@@ -25,6 +25,19 @@ if (${BUILD_TESTS})
    add_subdirectory(${GTEST_DIR} ${GTEST_LIB})
 endif(${BUILD_TESTS})
 
-add_subdirectory(${NFP_CORE_DIR})
-add_subdirectory(${NFP_ALGOS_DIR})
-add_subdirectory(${NFP_APP_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+add_subdirectory(core)
+add_subdirectory(algos)
+add_subdirectory(app)
+
+# INCLUDE(InstallRequiredSystemLibraries)
+
+# SET(CPACK_PACKAGE_VERSION_MAJOR "0")
+# SET(CPACK_PACKAGE_VERSION_MINOR "2")
+# SET(CPACK_PACKAGE_VERSION_PATCH "2-20-g222aa09")
+#
+# set(CPACK_GENERATOR "TBZ2")
+# # set(CPACK_STRIP_FILES "bin/nfpshm")
+#
+# include(CPack)

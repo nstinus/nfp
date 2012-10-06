@@ -6,8 +6,8 @@
 #include <vector>
 #include <string>
 
-#include "BaseAlgo.h"
-#include "RatingsManager.h"
+#include "algos/BaseAlgo.h"
+#include "core/RatingsManager.h"
 
 namespace NFP
 {

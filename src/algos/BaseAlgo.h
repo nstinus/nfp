@@ -3,7 +3,7 @@
 
 #include <glog/logging.h>
 #include <string>
-#include "Singleton.hxx"
+#include "core/Singleton.hxx"
 
 
 
