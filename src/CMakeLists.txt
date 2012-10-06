@@ -13,11 +13,16 @@ set(NFP_APP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/app)
 
 # Use -DCMAKE_CXX_FLAGS="-m32" to build a 32b binary
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -combine -ansi -Wall -Wextra -Werror -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -Wall -Wextra -Werror -std=c++0x")
+set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3")
 
-set(CMAKE_CXX_FLAGS_DEBUG "-fno-omit-frame-pointer -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline -g -D_GLIBCXX_PROFILE")
+if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
+   # pass
+elseif (CMAKE_COMPILER_IS_GNUCXX)
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -combine -ansi")
+   set(CMAKE_CXX_FLAGS_DEBUG "-fno-omit-frame-pointer -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline -g -D_GLIBCXX_PROFILE")
+endif ()
 
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
 
 if (${BUILD_TESTS})
    enable_testing()
