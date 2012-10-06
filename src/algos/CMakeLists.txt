@@ -1,6 +1,2 @@
-include_directories(${NFP_CORE_DIR})
-
-add_library(nfpalgos
-        MovieMeanAlgo.cpp
-        UserMeanAlgo.cpp
-)
+file(GLOB algos_src "*.cpp")
+add_library(algos_obj OBJECT ${algos_src})

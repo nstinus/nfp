@@ -1,15 +1,9 @@
+file(GLOB core_src "*.cpp")
 
-add_library(RATING_OBJECT OBJECT Rating.cpp)
-set_target_properties(RATING_OBJECT PROPERTIES COMPILE_FLAGS "-fno-strict-aliasing")
+add_library(core_obj OBJECT ${core_src})
+set_target_properties(core_obj PROPERTIES COMPILE_FLAGS "-fno-strict-aliasing")
 
-add_library(nfpcore
-        User.cpp
-        ShmSegment.cpp
-        RatingsShmSegment.cpp
-        RatingsManager.cpp
-        MoviesInfoProvider.cpp
-        $<TARGET_OBJECTS:RATING_OBJECT>
-)
+# install(TARGETS nfpcore DESTINATION lib)
 
 if(${BUILD_TESTS})
         add_subdirectory(test)

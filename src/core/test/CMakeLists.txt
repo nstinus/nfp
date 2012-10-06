@@ -1,10 +1,13 @@
 include_directories(${NFP_CORE_DIR})
 include_directories(${GTEST_DIR}/include)
 
-add_executable(test_rating Rating_test.cpp)
+add_executable(test_rating
+        Rating_test.cpp
+        $<TARGET_OBJECTS:core_obj>
+)
+
 target_link_libraries(test_rating
     ${GTEST_LIB}
-    nfpcore
     ${GLOG_LIBRARY}
     ${QT_LIBRARIES}
 ) 

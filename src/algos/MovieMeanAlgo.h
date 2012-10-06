@@ -4,9 +4,9 @@
 #include <map>
 #include <string>
 
-#include "BaseAlgo.h"
-#include "RatingsManager.h"
-#include "Defs.h"
+#include "algos/BaseAlgo.h"
+#include "core/RatingsManager.h"
+#include "core/Defs.h"
 
 namespace NFP
 {
