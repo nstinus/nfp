@@ -11,10 +11,10 @@ target_link_libraries(test_rating
     ${GLOG_LIBRARY}
     ${QT_LIBRARIES}
 ) 
-add_test(rating test_rating)
+add_test("core/rating" test_rating)
 
 add_executable(test_date Date_test.cpp)
 target_link_libraries(test_date
     ${GTEST_LIB}
 ) 
-add_test(date test_date)
+add_test("core/date" test_date)

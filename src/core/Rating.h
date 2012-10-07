@@ -28,7 +28,7 @@
 /*************************************************************************************************/
 
 #include <string>
-#include <tr1/cstdint>
+#include <stdint.h>
 
 const uint32_t BASICRATING__DATE_POS      = 0;
 const uint32_t BASICRATING__RATE_POS      = 2;
