@@ -13,13 +13,13 @@ set(NFP_APP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/app)
 
 # Use -DCMAKE_CXX_FLAGS="-m32" to build a 32b binary
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -Wall -Wextra -Werror -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -Werror -std=c++0x")
 set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3")
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
-   # pass
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra")
 elseif (CMAKE_COMPILER_IS_GNUCXX)
-   set(CMAKE_CXX_FLAGS "-combine -ansi ${CMAKE_CXX_FLAGS}")
+   set(CMAKE_CXX_FLAGS "-combine -ansi -Wall -Wextra ${CMAKE_CXX_FLAGS}")
    set(CMAKE_CXX_FLAGS_DEBUG "-fno-omit-frame-pointer -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline -g -D_GLIBCXX_PROFILE")
 endif ()
 
