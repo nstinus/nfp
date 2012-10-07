@@ -1,4 +1,5 @@
 #include <math.h>
+#include <stdint.h>
 
 namespace NFP {
   namespace utils {
