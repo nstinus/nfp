@@ -3,6 +3,8 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <list>
+#include <vector>
+#include <algorithm>
 
 #include "core/RatingsManager.h"
 #include "core/logging.h"
@@ -44,10 +46,19 @@ int NFP::shm::RatingsManager::load(std::string arg_movie_id, bool feedback)
         return errno;
     }
 
+    std::vector<std::string> files;
+    files.reserve(17770);
+
     while ((dirp = readdir(dp)) != NULL) {
+        files.push_back(dirp->d_name);
+    }
+
+    std::sort(files.begin(), files.end());
+    std::vector<std::string>::const_iterator it;
+    for (it = files.begin(); it != files.end(); ++it) {
         int local_err = 0;
         std::string dataFileName, keyFileName;
-        dataFileName = keyFileName = dirp->d_name;
+        dataFileName = keyFileName = *it;
 
         if (((arg_movie_id != "" && (int)dataFileName.find(arg_movie_id) == -1)
 	        || dataFileName == ".")
