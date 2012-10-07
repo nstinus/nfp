@@ -19,7 +19,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG -O3")
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
    # pass
 elseif (CMAKE_COMPILER_IS_GNUCXX)
-   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -combine -ansi")
+   set(CMAKE_CXX_FLAGS "-combine -ansi ${CMAKE_CXX_FLAGS}")
    set(CMAKE_CXX_FLAGS_DEBUG "-fno-omit-frame-pointer -fno-inline-functions -fno-inline-functions-called-once -fno-optimize-sibling-calls -fno-default-inline -fno-inline -g -D_GLIBCXX_PROFILE")
 endif ()
 
