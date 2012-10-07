@@ -258,4 +258,3 @@ int ratings2()
     return 0;
 }
 
-

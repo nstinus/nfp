@@ -38,3 +38,4 @@ T* Singleton<T>::_singleton = NULL;
 }
 
 #endif  // __NFP__SINGLETON_H__
+
