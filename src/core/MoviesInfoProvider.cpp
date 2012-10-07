@@ -4,9 +4,8 @@
 #include <iostream>
 #include <fstream>
 
-#include <glog/logging.h>
-
-#include "MoviesInfoProvider.h"
+#include "core/logging.h"
+#include "core/MoviesInfoProvider.h"
 
 NFP::utils::MoviesInfoProvider::MoviesInfoProvider() : initialized_(false)
 {

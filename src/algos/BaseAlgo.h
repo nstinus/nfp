@@ -1,11 +1,10 @@
 #ifndef __NFP__BASEALGO_H__
 #define __NFP__BASEALGO_H__
 
-#include <glog/logging.h>
 #include <string>
+
+#include "core/logging.h"
 #include "core/Singleton.hxx"
-
-
 
 namespace NFP
 {
