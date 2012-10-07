@@ -236,7 +236,8 @@ int users()
     char msg[256];
     sprintf(msg, "%9s  %5s", "# user_id", "R ArM");
     std::cout << msg << std::endl << std::endl;
-    for (auto it = u_mean_alg->get_users().begin(); it != u_mean_alg->get_users().end(); it++) {
+    std::map<uint32_t, NFP::algos::User*>::const_iterator it;
+    for (it = u_mean_alg->get_users().begin(); it != u_mean_alg->get_users().end(); it++) {
         float mean = it->second->mean_rating;
         int nb = it->second->nb_ratings;
         if (mean != -1 && nb != -1) {
@@ -251,7 +252,7 @@ int users()
 
 int ratings2()
 {
-    auto it = NFP::shm::RatingsManager::instance()->begin();
+    NFP::shm::RatingsIterator it = NFP::shm::RatingsManager::instance()->begin();
     for (; it != NFP::shm::RatingsManager::instance()->end(); it++)
         std::cout << (*it)->to_string() << std::endl;
     return 0;

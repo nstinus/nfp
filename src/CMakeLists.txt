@@ -13,7 +13,7 @@ set(NFP_APP_DIR ${CMAKE_CURRENT_SOURCE_DIR}/app)
 
 # Use -DCMAKE_CXX_FLAGS="-m32" to build a 32b binary
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -Wall -Wextra -std=c++0x")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pipe -Wall -Wextra -std=c++98")
 set(CMAKE_CXX_FLAGS_RELEASE "-Werror -DNDEBUG -O3")
 
 if (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")
