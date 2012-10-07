@@ -1,5 +1,4 @@
-//#include <tclap/CmdLine.h>
-#include <glog/logging.h>
+#include "core/logging.h"
 
 #include <dirent.h>
 #include <errno.h>

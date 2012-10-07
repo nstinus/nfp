@@ -1,5 +1,3 @@
-#include <glog/logging.h>
-
 #include <string>
 #include <iostream>
 #include <fstream>
@@ -8,7 +6,8 @@
 //#include <sys/ipc.h>
 #include <errno.h>
 
-#include "ShmSegment.h"
+#include "core/logging.h"
+#include "core/ShmSegment.h"
 
 NFP::base::ShmSegment::ShmSegment() :
     keyFileName_(""),

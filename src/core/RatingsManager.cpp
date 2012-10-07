@@ -1,12 +1,11 @@
-#include <glog/logging.h>
-
 #include <iostream>
 #include <string>
 #include <dirent.h>
 #include <stdlib.h>
 #include <list>
 
-#include "RatingsManager.h"
+#include "core/RatingsManager.h"
+#include "core/logging.h"
 
 NFP::shm::RatingsManager::RatingsManager()
 {

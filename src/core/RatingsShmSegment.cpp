@@ -1,5 +1,3 @@
-#include <glog/logging.h>
-
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -8,8 +6,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "RatingsShmSegment.h"
-#include "Rating.h"
+#include "core/logging.h"
+#include "core/RatingsShmSegment.h"
+#include "core/Rating.h"
+
+
 
 NFP::shm::RatingsShmSegment::RatingsShmSegment(std::string dataFileName, std::string keyFileName)
 {
