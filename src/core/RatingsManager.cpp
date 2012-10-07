@@ -94,7 +94,8 @@ int NFP::shm::RatingsManager::remove(std::string const& arg_movie_id, bool feedb
     std::list<RatingsSegments::iterator> erasionList;
 
     bool fundCandidates = false;
-    for (auto it = segments_.begin(); it != segments_.end(); ++it) {
+    RatingsSegments::iterator it;
+    for (it = segments_.begin(); it != segments_.end(); ++it) {
         if ((int)(*it)->keyFileName().find(arg_movie_id) != -1) {
             (*it)->remove();
             msg = "Removed " + (*it)->info();
@@ -119,7 +120,8 @@ int NFP::shm::RatingsManager::remove(std::string const& arg_movie_id, bool feedb
 void NFP::shm::RatingsManager::rebuildLoadedSegments()
 {
     loadedSegments_.clear();
-    for (auto it = segments_.begin(); it != segments_.end(); it++) {
+    RatingsSegments::iterator it = segments_.begin();
+    for (it = segments_.begin(); it != segments_.end(); it++) {
         loadedSegments_.insert((*it)->keyFileName());
     }
 }
@@ -185,7 +187,8 @@ int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool /*feedback*/)
 {
     int ret = 0;
     std::cout << std::endl << "Saving segments...";
-    for (auto it = segments_.begin(); it != segments_.end(); it++) {
+    RatingsSegments::const_iterator it = segments_.begin();
+    for (it = segments_.begin(); it != segments_.end(); it++) {
         if ((*it)->keyFileName().find(arg_movie_id, 0) != std::string::npos) {
           std::string filename((*it)->keyFileName());
           str_replace(filename, ".txt.shmkey", ".bin");
@@ -198,7 +201,8 @@ int NFP::shm::RatingsManager::save(std::string arg_movie_id, bool /*feedback*/)
 int NFP::shm::RatingsManager::removeAll()
 {
     int ret = 0;
-    for (auto it = segments_.begin(); it != segments_.end(); ++it) {
+    RatingsSegments::iterator it;
+    for (it = segments_.begin(); it != segments_.end(); ++it) {
             std::string msg("Removed " + (*it)->info());
             (*it)->remove();
             LOG(INFO) << msg;

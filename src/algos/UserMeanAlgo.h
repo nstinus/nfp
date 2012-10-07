@@ -41,7 +41,8 @@ class UserMeanAlgo : public BaseAlgo
 public:
     UserMeanAlgo() : BaseAlgo("User_Mean", "0.1") {}
     ~UserMeanAlgo() {
-      for (auto it = users_.begin();
+      std::map<uint32_t, User*>::iterator it;
+      for ( it = users_.begin();
            it != users_.end();
            ++it)
         delete it->second;
