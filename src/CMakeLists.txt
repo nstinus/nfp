@@ -26,11 +26,17 @@ elseif (CMAKE_COMPILER_IS_GNUCXX)
 endif ()
 
 
-if (${BUILD_TESTS})
-   enable_testing()
-   set(GTEST_LIB gtest)
-   add_subdirectory(${GTEST_DIR} ${GTEST_LIB})
-endif(${BUILD_TESTS})
+if(IS_DIRECTORY ${GTEST_DIR})
+  message(STATUS "Building test suite.")
+  include(CTest)
+  if (${BUILD_TESTING})
+    # enable_testing()
+    set(GTEST_LIB gtest)
+    add_subdirectory(${GTEST_DIR} ${GTEST_LIB})
+  endif(${BUILD_TESTING})
+else(IS_DIRECTORY ${GTEST_DIR})
+  message(STATUS "Not building test suite (GTEST_DIR not specified or not a directory).")
+endif(IS_DIRECTORY ${GTEST_DIR})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 

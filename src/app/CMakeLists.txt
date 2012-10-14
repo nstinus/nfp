@@ -10,7 +10,7 @@ target_link_libraries(nfpshm
 
 # install(TARGETS nfpshm DESTINATION bin)
 
-if (${BUILD_TESTS})
+if (${BUILD_TESTING})
    set(ENV{NFP_SHM_DIR} "/tmp")
    set(movie_id 0000100)
    add_test("app/nfpshm::load" nfpshm load ${movie_id})
@@ -23,4 +23,4 @@ if (${BUILD_TESTS})
    set_property(TEST "app/nfpshm::ratings" PROPERTY ENVIRONMENT "NFP_SHM_FILES=/tmp")
    set_property(TEST "app/nfpshm::users" PROPERTY ENVIRONMENT "NFP_SHM_FILES=/tmp")
    set_property(TEST "app/nfpshm::remove" PROPERTY ENVIRONMENT "NFP_SHM_FILES=/tmp")
-endif (${BUILD_TESTS})
+endif()

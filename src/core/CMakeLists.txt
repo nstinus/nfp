@@ -5,6 +5,6 @@ set_target_properties(core_obj PROPERTIES COMPILE_FLAGS "-fno-strict-aliasing")
 
 # install(TARGETS nfpcore DESTINATION lib)
 
-if(${BUILD_TESTS})
+if(${BUILD_TESTING})
         add_subdirectory(test)
-endif(${BUILD_TESTS})
+endif()
