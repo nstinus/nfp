@@ -8,7 +8,7 @@ target_link_libraries(nfpshm
         ${GLOG_LIBRARY}
 )
 
-# install(TARGETS nfpshm DESTINATION bin)
+install(TARGETS nfpshm DESTINATION bin)
 
 if (${BUILD_TESTING})
    set(ENV{NFP_SHM_DIR} "/tmp")

@@ -1,0 +1,7 @@
+#include "core/version.h"
+
+const char* NFP_MAJOR_VERSION = "@NFP_MAJOR_VERSION@";
+const char* NFP_MINOR_VERSION = "@NFP_MINOR_VERSION@";
+const char* NFP_PATCH_VERSION = "@NFP_PATCH_VERSION@";
+const char* NFP_GIT_SHA1      = "@NFP_GIT_SHA1@";
+const char* NFP_VERSION       = "@NFP_MAJOR_VERSION@.@NFP_MINOR_VERSION@.@NFP_PATCH_VERSION@";

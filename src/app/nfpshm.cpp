@@ -42,7 +42,7 @@ int main (int argc, char* argv[])
 {
     INIT_LOG();
     LOG(INFO) << "Starting main()";
-    LOG_BUILD_INFO;
+    LOG_BUILD_INFO();
 
     int ret = 0;
 

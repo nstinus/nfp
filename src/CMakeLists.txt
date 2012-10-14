@@ -5,6 +5,10 @@ project(nfp CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
 
 find_package(Glog REQUIRED)
+find_package(Python REQUIRED)
+
+find_package(Git REQUIRED)
+set(CMAKE_EXE_LINKER_FLAGS "-D_NFP_GIT_SHA1=\"${NFP_GIT_SHA1}\" ${CMAKE_EXE_LINKER_FLAGS}")
 
 set(NFP_CORE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/core)
 set(NFP_ALGOS_DIR ${CMAKE_CURRENT_SOURCE_DIR}/algos)
@@ -44,13 +48,13 @@ add_subdirectory(core)
 add_subdirectory(algos)
 add_subdirectory(app)
 
-# INCLUDE(InstallRequiredSystemLibraries)
+INCLUDE(InstallRequiredSystemLibraries)
 
-# SET(CPACK_PACKAGE_VERSION_MAJOR "0")
-# SET(CPACK_PACKAGE_VERSION_MINOR "2")
-# SET(CPACK_PACKAGE_VERSION_PATCH "2-20-g222aa09")
-#
-# set(CPACK_GENERATOR "TBZ2")
-# # set(CPACK_STRIP_FILES "bin/nfpshm")
-#
-# include(CPack)
+SET(CPACK_PACKAGE_VERSION_MAJOR ${NFP_MAJOR_VERSION})
+SET(CPACK_PACKAGE_VERSION_MINOR ${NFP_MINOR_VERSION})
+SET(CPACK_PACKAGE_VERSION_PATCH ${NFP_PATCH_VERSION})
+
+set(CPACK_GENERATOR "TBZ2")
+# set(CPACK_STRIP_FILES "bin/nfpshm")
+
+include(CPack)
