@@ -1,11 +1,11 @@
 add_executable(nfpshm
-        nfpshm.cpp
-        $<TARGET_OBJECTS:core_obj>
-        $<TARGET_OBJECTS:algos_obj>
+  nfpshm.cpp
 )
 
 target_link_libraries(nfpshm
-        ${GLOG_LIBRARY}
+  ${NFP_CORE_LIBRARY}
+  ${NFP_ALGOS_LIBRARY}
+  ${GLOG_LIBRARY}
 )
 
 install(TARGETS nfpshm DESTINATION bin)
