@@ -3,10 +3,10 @@ include_directories(${GTEST_DIR}/include)
 
 add_executable(test_rating
         Rating_test.cpp
-        $<TARGET_OBJECTS:core_obj>
 )
 
 target_link_libraries(test_rating
+  ${NFP_CORE_LIBRARY}
     ${GTEST_LIB}
     ${GLOG_LIBRARY}
     ${QT_LIBRARIES}

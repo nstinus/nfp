@@ -5,7 +5,6 @@ project(nfp CXX)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake_modules)
 
 find_package(Glog REQUIRED)
-find_package(Python REQUIRED)
 
 find_package(Git REQUIRED)
 set(CMAKE_EXE_LINKER_FLAGS "-D_NFP_GIT_SHA1=\"${NFP_GIT_SHA1}\" ${CMAKE_EXE_LINKER_FLAGS}")
@@ -34,7 +33,6 @@ if(IS_DIRECTORY ${GTEST_DIR})
   message(STATUS "Building test suite.")
   include(CTest)
   if (${BUILD_TESTING})
-    # enable_testing()
     set(GTEST_LIB gtest)
     add_subdirectory(${GTEST_DIR} ${GTEST_LIB})
   endif(${BUILD_TESTING})
@@ -44,9 +42,13 @@ endif(IS_DIRECTORY ${GTEST_DIR})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+set(NFP_CORE_LIBRARY core)
+set(NFP_ALGOS_LIBRARY algos)
+
 add_subdirectory(core)
 add_subdirectory(algos)
 add_subdirectory(app)
+add_subdirectory(python)
 
 INCLUDE(InstallRequiredSystemLibraries)
 
