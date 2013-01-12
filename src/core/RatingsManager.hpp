@@ -1,8 +1,8 @@
 #ifndef __NFP__RATINGSMANAGER_H__
 #define __NFP__RATINGSMANAGER_H__
 
-#include "RatingsShmSegment.h"
-#include "Rating.h"
+#include "RatingsShmSegment.hpp"
+#include "Rating.hpp"
 #include "Singleton.hxx"
 
 #include <vector>

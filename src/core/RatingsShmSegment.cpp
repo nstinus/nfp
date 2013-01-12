@@ -6,9 +6,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "core/logging.h"
-#include "core/RatingsShmSegment.h"
-#include "core/Rating.h"
+#include "core/logging.hpp"
+#include "core/RatingsShmSegment.hpp"
+#include "core/Rating.hpp"
 
 
 

@@ -6,8 +6,8 @@
 //#include <sys/ipc.h>
 #include <errno.h>
 
-#include "core/logging.h"
-#include "core/ShmSegment.h"
+#include "core/logging.hpp"
+#include "core/ShmSegment.hpp"
 
 NFP::base::ShmSegment::ShmSegment() :
     keyFileName_(""),

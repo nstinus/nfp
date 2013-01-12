@@ -1,5 +1,5 @@
-#include "Rating.h"
-#include "Date.h"
+#include "Rating.hpp"
+#include "Date.hpp"
 
 #include <stdio.h>
 #include <string.h>

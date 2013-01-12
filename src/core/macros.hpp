@@ -1,5 +1,5 @@
-#include "core/logging.h"
-#include "core/version.h"
+#include "core/logging.hpp"
+#include "core/version.hpp"
 
 #define LOG_VAR(x) LOG(INFO) << "" #x "" << " = " << x;
 #define DLOG_VAR(x) DLOG(INFO) << "" #x "" << " = " << x;

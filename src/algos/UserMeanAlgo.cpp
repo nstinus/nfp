@@ -1,6 +1,6 @@
-#include "algos/UserMeanAlgo.h"
-#include "core/RatingsManager.h"
-#include "core/Rating.h"
+#include "algos/UserMeanAlgo.hpp"
+#include "core/RatingsManager.hpp"
+#include "core/Rating.hpp"
 
 
 int NFP::algos::UserMeanAlgo::run()

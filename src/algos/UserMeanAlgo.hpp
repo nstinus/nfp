@@ -6,11 +6,15 @@
 #include <vector>
 #include <string>
 
-#include "algos/BaseAlgo.h"
-#include "core/RatingsManager.h"
+#include "algos/BaseAlgo.hpp"
 
 namespace NFP
 {
+
+namespace model
+{
+class RatingsManager;
+}
 
 namespace algos
 {

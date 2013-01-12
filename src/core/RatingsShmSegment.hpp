@@ -3,8 +3,8 @@
 
 #include <string>
 
-#include "ShmSegment.h"
-#include "Rating.h"
+#include "ShmSegment.hpp"
+#include "Rating.hpp"
 
 
 namespace NFP

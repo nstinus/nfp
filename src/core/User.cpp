@@ -1,4 +1,5 @@
-#include "User.h"
+#include "core/User.hpp"
+#include "core/Rating.hpp"
 
 //#include <numeric>
 

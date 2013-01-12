@@ -4,15 +4,16 @@
 #include <map>
 #include <string>
 
-#include "algos/BaseAlgo.h"
-#include "core/RatingsManager.h"
-#include "core/Defs.h"
+#include "core/Defs.hpp"
+#include "algos/BaseAlgo.hpp"
 
 namespace NFP
 {
 
 namespace algos
 {
+
+class BaseAlgo;
 
 class MovieMeanAlgo : public BaseAlgo
 {

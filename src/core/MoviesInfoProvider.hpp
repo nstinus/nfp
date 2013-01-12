@@ -1,7 +1,7 @@
 #ifndef __NFP__MOVIESINFOPROVIDER_H__
 #define __NFP__MOVIESINFOPROVIDER_H__
 
-#include "Defs.h"
+#include "Defs.hpp"
 #include "Singleton.hxx"
 
 #include <string>

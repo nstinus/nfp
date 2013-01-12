@@ -3,7 +3,7 @@
 
 #include <string>
 
-#include "core/logging.h"
+#include "core/logging.hpp"
 #include "core/Singleton.hxx"
 
 namespace NFP

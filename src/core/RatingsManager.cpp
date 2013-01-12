@@ -6,8 +6,8 @@
 #include <vector>
 #include <algorithm>
 
-#include "core/RatingsManager.h"
-#include "core/logging.h"
+#include "core/RatingsManager.hpp"
+#include "core/logging.hpp"
 
 NFP::shm::RatingsManager::RatingsManager()
 {

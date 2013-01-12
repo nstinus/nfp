@@ -4,8 +4,8 @@
 #include <iostream>
 #include <fstream>
 
-#include "core/logging.h"
-#include "core/MoviesInfoProvider.h"
+#include "core/logging.hpp"
+#include "core/MoviesInfoProvider.hpp"
 
 NFP::utils::MoviesInfoProvider::MoviesInfoProvider() : initialized_(false)
 {

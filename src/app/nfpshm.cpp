@@ -1,5 +1,3 @@
-#include "core/logging.h"
-
 #include <dirent.h>
 #include <errno.h>
 #include <math.h>
@@ -12,14 +10,14 @@
 #include <iostream>
 #include <fstream>
 
-#include "core/RatingsShmSegment.h"
-#include "core/RatingsManager.h"
-//#include "User.h"
-#include "algos/MovieMeanAlgo.h"
-#include "algos/UserMeanAlgo.h"
-#include "core/MoviesInfoProvider.h"
-#include "core/Defs.h"
-#include "core/macros.h"
+#include "core/logging.hpp"
+#include "core/RatingsShmSegment.hpp"
+#include "core/RatingsManager.hpp"
+#include "algos/MovieMeanAlgo.hpp"
+#include "algos/UserMeanAlgo.hpp"
+#include "core/MoviesInfoProvider.hpp"
+#include "core/Defs.hpp"
+#include "core/macros.hpp"
 
 const std::string NFP_TRAINING_SET_DIR = getenv("NFP_TRAINING_SET_DIR");
 const std::string NFP_SHM_FILES        = getenv("NFP_SHM_FILES");

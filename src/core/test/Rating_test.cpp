@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "Rating.h"
+#include "core/Rating.hpp"
 
 using namespace NFP;
 

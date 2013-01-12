@@ -3,12 +3,12 @@
 
 #include <list>
 
-#include "Rating.h"
-
 namespace NFP
 {
 namespace model
 {
+
+class Rating;
     
 //long sum_Rating_rates(NFP::model::Rating*, NFP::model::Rating*);
 
