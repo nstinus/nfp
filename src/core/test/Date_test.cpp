@@ -4,7 +4,7 @@
 
 struct DatePair
 {
-  std::string str;
+  char str[11];
   unsigned int jd;
 };
 

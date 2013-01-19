@@ -25,11 +25,12 @@ uint16_t NFP::utils::DateS2US(std::string const& d)
 
 NFP::model::Rating::Rating()
 {
-    memset(data_, 0, RATING_DATA_SIZE);
+    bzero(data_, RATING_DATA_SIZE);
 }
 
 NFP::model::Rating::Rating(uint16_t const& m, uint32_t const& u, uint8_t const& r, uint16_t const& d)
 {
+    bzero(data_, RATING_DATA_SIZE);
     set_movie_id(m);
     set_user_id(u);
     set_rate(r);
@@ -38,6 +39,7 @@ NFP::model::Rating::Rating(uint16_t const& m, uint32_t const& u, uint8_t const& 
 
 NFP::model::Rating::Rating(int const& m, int const& u, int const& r, std::string const& d)
 {
+    bzero(data_, RATING_DATA_SIZE);
     set_movie_id((uint16_t)m);
     set_user_id((uint32_t)u);
     set_rate((uint8_t)r);

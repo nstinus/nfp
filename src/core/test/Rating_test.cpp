@@ -14,14 +14,54 @@ TEST(Date, DateUS2S) {
 }
 
 TEST(Rating, movie_id) {
-  model::Rating r(1, 0, 0, "2005-07-05");
-  EXPECT_EQ(r.movie_id(), (unsigned int)1);
+  model::Rating r;
+  // First value (actually first is 1)
+  EXPECT_EQ((unsigned int)0, r.movie_id());
+  // Last value
   r.set_movie_id((uint16_t)17770);
-  EXPECT_EQ(r.movie_id(), (unsigned int)17770);
-  r.set_movie_id((uint16_t)1234);
-  EXPECT_EQ(r.movie_id(), (unsigned int)1234);
-  r.set_movie_id((uint16_t)-5);
-  EXPECT_NE(r.movie_id(), -5);
+  EXPECT_EQ((unsigned int)17770, r.movie_id());
+  // Max resolution
+  unsigned int max = (0x1 << 15) - 1;
+  r.set_movie_id(max);
+  EXPECT_EQ(max, r.movie_id());
+}
+
+TEST(Rating, user_id) {
+  model::Rating r;
+  // First value
+  EXPECT_EQ((uint32_t)0, r.user_id());
+  // Last value
+  r.set_user_id((uint32_t)2649429);
+  EXPECT_EQ((uint32_t)2649429, r.user_id());
+  // Max resolution
+  unsigned int max = (0x1 << 24) - 1;
+  r.set_user_id(max);
+  EXPECT_EQ(max, r.user_id());
+}
+
+TEST(Rating, rate) {
+  model::Rating r;
+  EXPECT_EQ((uint16_t)0, r.rate());
+  for (uint16_t i=0; i<6; ++i) {
+    r.set_rate(i);
+    EXPECT_EQ(i, r.rate());
+    EXPECT_EQ((uint8_t)i, r.raw_rate());
+  }
+}
+
+TEST(Rating, date) {
+  model::Rating r;
+  // First value
+  EXPECT_EQ(0, r.raw_date());
+  EXPECT_EQ("1999-11-11", r.date());
+  // Last value
+  r.set_date((uint16_t)2182);
+  EXPECT_EQ((uint16_t)2182, r.raw_date());
+  EXPECT_EQ("2005-11-01", r.date());
+  // Max resolution
+  unsigned int max = (0x1 << 12) - 1;
+  r.set_date(max);
+  EXPECT_EQ(max, r.raw_date());
 }
 
 TEST(Rating, to_string) {
