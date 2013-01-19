@@ -1,6 +1,6 @@
 # FIXME: get rid of this
-set(PYTHON_LIBRARY /Library/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib)
-set(PYTHON_INCLUDE_DIR /Library/Frameworks/Python.framework/Headers)
+set(PYTHON_LIBRARY /System/Library/Frameworks/Python.framework/Versions/2.7/lib/libpython2.7.dylib)
+set(PYTHON_INCLUDE_DIR /System/Library/Frameworks/Python.framework/Versions/2.7/include/python2.7)
 find_package(PythonLibs REQUIRED)
 
 find_package(Swig REQUIRED)

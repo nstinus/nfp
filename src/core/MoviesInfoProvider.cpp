@@ -27,6 +27,9 @@ NFP::model::Movie const& NFP::utils::MoviesInfoProvider::getInfos(const uint32_t
     if (!initialized_) {
         LOG(WARNING) << "Try to fetch data before initialization!";
     }
+    if (movie_id <= 0 || movie_id > MAX_MOVIE_ID) {
+        LOG(FATAL) << "movie_id must be in range [1, " << MAX_MOVIE_ID << "]";
+    }
     NFP::model::Movie* m = movies_[movie_id-1];
     if (m == NULL) {
       LOG(WARNING) << movie_id << " not found!";

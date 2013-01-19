@@ -1,11 +1,13 @@
 %module nfp
 %{
-#include "core/Rating.h"
-#include "core/RatingsManager.h"
+#include "core/Rating.hpp"
+#include "core/RatingsManager.hpp"
 #include "core/Singleton.hxx"
-#include "core/logging.h"
-#include "algos/MovieMeanAlgo.h"
-#include "python/MoviesInfoProviderWrapper.h"
+#include "core/logging.hpp"
+#include "algos/MovieMeanAlgo.hpp"
+#include "python/MoviesInfoProviderWrapper.hpp"
+#include "python/log.hpp"
+
 %}
 
 %include "std_string.i"
@@ -47,46 +49,45 @@ public:
 } // NFP::model
 
 
-namespace shm
-{
-class RatingsManager
-{
-public:
-    //RatingsManager();
-    static RatingsManager* instance();
-    void kill();
-    //int load(std::string, bool);
-    //int remove(std::string, bool);
-    //int removeAll();
-    //int save(std::string arg_movie_id = "", bool feedback = false);
-    int nbSegments();
-    void refreshRatingsList();
-    unsigned int nb_ratings();
-    std::list<NFP::model::Rating*>::const_iterator ratings_begin();
-    std::list<NFP::model::Rating*>::const_iterator ratings_end();
-};
-
-} // NFP::shm
-
-namespace algos
-{
-class MovieMeanAlgo
-{
-public:
-    MovieMeanAlgo();
-    virtual int run();
-    //std::map<unsigned short, float>* result();
-    virtual float get_predicted_rate(unsigned int, unsigned short, std::string);
-};
-} // NFP::algos
+// namespace shm
+// {
+// class RatingsManager
+// {
+// public:
+//     //RatingsManager();
+//     static RatingsManager* instance();
+//     void kill();
+//     //int load(std::string, bool);
+//     //int remove(std::string, bool);
+//     //int removeAll();
+//     //int save(std::string arg_movie_id = "", bool feedback = false);
+//     int nbSegments();
+//     void refreshRatingsList();
+//     unsigned int nb_ratings();
+//     std::list<NFP::model::Rating*>::const_iterator ratings_begin();
+//     std::list<NFP::model::Rating*>::const_iterator ratings_end();
+// };
+// 
+// } // NFP::shm
+// 
+// namespace algos
+// {
+// class MovieMeanAlgo
+// {
+// public:
+//     MovieMeanAlgo();
+//     virtual int run();
+//     //std::map<unsigned short, float>* result();
+//     virtual float get_predicted_rate(unsigned int, unsigned short, std::string);
+// };
+// } // NFP::algos
 
 
 namespace utils
 {
 
 int movieYear(int);
-std::string movieName(int);
-int MoviesInfoProvider_nbMovies();
+std::string const& movieName(int);
 
 }
 
