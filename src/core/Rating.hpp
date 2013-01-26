@@ -12,45 +12,18 @@
 /*                    rate     [1, 5],       card = 5      < 2**3  ->  3 bits                    */
 /*                    date     [0, 2182],    card = 2182   < 2**12 -> 12 bits                    */
 /*                                                                                               */
-/*  Visual representation of the data:                                                           */
-/*                                                                                               */
-/*      Bytes :      |       |       |       |       |       |       |       |       |           */
-/*      char[i]:     -       7       6       5       4       3       2       1       0           */
-/*      Fields:      |X--------------X-----------------------X    X--X   X-----------X           */
-/*      Name:        |    Movie_id   |        User_id        |  Rate |      Date     |           */
-/*      Size:        |       15      |           24          |    3  |       12      |           */
-/*                                                                                               */
-/*  General considerations:                                                                      */
-/*                                                                                               */
-/*      - the data integrity check is made at the insertion. (masks).                            */
-/*      - the getters just do silly casts.                                                       */
-/*                                                                                               */
 /*************************************************************************************************/
 
 #include <string>
-#include <stdint.h>
+#include <tr1/cstdint>
 
-const uint32_t BASICRATING__DATE_POS      = 0;
-const uint32_t BASICRATING__RATE_POS      = 2;
-const uint32_t BASICRATING__USER_ID_POS   = 3;
-const uint32_t BASICRATING__MOVIE_ID_POS  = 6;
+#include "core/Date.hpp"
 
-const uint32_t BASICRATING__DATE_MASK     = 0x0FFF;
-const uint32_t BASICRATING__RATE_MASK     = 0x0007;
-const uint32_t BASICRATING__USER_ID_MASK  = 0x00FFFFFF;
-const uint32_t BASICRATING__MOVIE_ID_MASK = 0x7FFF;
-
-const uint32_t RATING_DATA_SIZE = 8;
 
 const uint32_t BASICRATING__DATE_OFFSET = 2451494;
 
 namespace NFP
 {
-
-namespace utils {
-std::string DateUS2S(uint16_t const&);
-uint16_t DateS2US(std::string const&);
-}    
 
 namespace model
 {
@@ -58,49 +31,79 @@ namespace model
 class Rating
 {
 private:
-    char data_[RATING_DATA_SIZE];
+  uint64_t movie_id_:16;
+  uint64_t user_id_:24;
+  uint64_t rate_:4;
+  uint64_t date_:12;
 
 public:
-    /*****************/
-    /*  Constructor  */
-    /*****************/    
-    
-    Rating();
-    Rating(uint16_t const&, uint32_t const&, uint8_t const&, uint16_t const&);
-    Rating(int const&, int const&, int const&, std::string const&);
-    Rating(char const*);
-    
-    //virtual ~Rating();
-
-    /*************/
-    /*  Getters  */
-    /*************/
-
-    uint16_t movie_id() const;
-    //int movie_id() const;
-    uint32_t user_id() const;
-    uint8_t raw_rate() const;
-    uint16_t rate() const;
-    uint16_t raw_date() const;
-    std::string const date() const;
-    std::string const to_string() const;
-    void data(char[]) const;
-
-    /*************/
-    /*  Setters  */
-    /*************/
+  static std::string DateUS2S(uint16_t const& date) {
+    return NFP::utils::fromJulianDay(date + BASICRATING__DATE_OFFSET);
+  }
+  static uint16_t DateS2US(std::string const& date) {
+    return (uint16_t)(NFP::utils::toJulianDay(date) - BASICRATING__DATE_OFFSET);
+  }
 
 public:
+  /*****************/
+  /*  Constructor  */
+  /*****************/ 
     
-    void set_movie_id(uint16_t const&);
-    void set_user_id(uint32_t const&);
-    void set_rate(uint8_t const&);
-    void set_date(uint16_t const&);
-    void set_date(std::string const&);
+  Rating() :
+    movie_id_(0),
+    user_id_(0),
+    rate_(0),
+    date_(0)
+  {}
+  Rating(uint16_t movie_id, uint32_t user_id, uint8_t rate, uint16_t date) :
+    movie_id_(movie_id),
+    user_id_(user_id),
+    rate_(rate),
+    date_(date)
+  {}
+  Rating(int movie_id, int user_id, int rate, std::string const& date) :
+    movie_id_(movie_id),
+    user_id_(user_id),
+    rate_(rate),
+    date_(DateS2US(date))
+  {}
 
-};
+  /*************/
+  /*  Getters  */
+  /*************/
+
+  uint16_t movie_id() const { return movie_id_; }
+  uint32_t user_id() const { return user_id_; }
+  uint8_t raw_rate() const { return rate_; }
+  uint8_t rate() const { return rate_; }
+  uint16_t raw_date() const { return date_; }
+  std::string const date() const { return DateUS2S(date_); }
+  std::string const to_string() const {
+    char ret[40];
+    sprintf(ret, "%05d  %08d  %1d  %10s",
+	    movie_id(),
+	    user_id(),
+	    rate(),
+	    date().c_str());
+    return (std::string)ret;
+  }
+
+  /*************/
+  /*  Setters  */
+  /*************/
+
+  void set_movie_id(uint16_t movie_id) { movie_id_ = movie_id; }
+  void set_user_id(uint32_t user_id) { user_id_ = user_id; }
+  void set_rate(uint8_t rate) { rate_ = rate; }
+  void set_date(uint16_t date) { date_ = date; }
+  void set_date(std::string const& date) { date_ = DateS2US(date); }
+
+} /*__attribute__((packed))*/;
 
 }
 } // NFP
+
+const uint32_t RATING_DATA_SIZE = sizeof(NFP::model::Rating);
+
 
 #endif // __NFP__RATING_H__

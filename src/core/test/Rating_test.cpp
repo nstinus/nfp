@@ -6,11 +6,16 @@ using namespace NFP;
 
 
 TEST(Date, DateS2US) {
-  EXPECT_EQ(utils::DateS2US("2005-07-05"), 2063);
+  EXPECT_EQ(NFP::model::Rating::DateS2US("2005-07-05"), 2063);
 }
 
 TEST(Date, DateUS2S) {
-  EXPECT_EQ(utils::DateUS2S(2063), "2005-07-05");
+  EXPECT_EQ(NFP::model::Rating::DateUS2S(2063), "2005-07-05");
+}
+
+TEST(Rating, size) {
+  EXPECT_EQ(RATING_DATA_SIZE, (size_t)8);
+  EXPECT_EQ(sizeof(model::Rating), RATING_DATA_SIZE);
 }
 
 TEST(Rating, movie_id) {

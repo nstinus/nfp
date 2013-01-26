@@ -1,3 +1,6 @@
+#ifndef __NFP__DATE_H__
+#define __NFP__DATE_H__
+
 #include <math.h>
 #include <stdint.h>
 
@@ -44,3 +47,5 @@ inline std::string NFP::utils::fromJulianDay(uint32_t jd) {
   sprintf(ret, "%4u-%02u-%02u", Y, M ,D);
   return ret;
 }
+
+#endif // __NFP__DATE_H__

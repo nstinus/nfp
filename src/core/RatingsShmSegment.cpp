@@ -92,11 +92,8 @@ int NFP::shm::RatingsShmSegment::load()
             LOG(INFO) << "Loading ShmSegment (size " << size() << ") ...";
             int i = 0;
             std::list<NFP::model::Rating*>::const_iterator it;
-            char* data = new char[RATING_DATA_SIZE];
-            for (it = ratings.begin(); it != ratings.end(); it++) {
-                (*it)->data(data);
-                memcpy((NFP::model::Rating*)(ptr()) + i, data, RATING_DATA_SIZE);
-                i++;
+            for (it = ratings.begin(); it != ratings.end(); it++, i++) {
+                memcpy((NFP::model::Rating*)(ptr()) + i, *it, RATING_DATA_SIZE);
             }
             LOG(INFO) << "... done";
         }
